@@ -1,0 +1,21 @@
+{
+  "name": "agent-advisor-codex",
+  "version": "1.0.0",
+  "description": "Agent Advisor for Codex: Sol / High declares solo, delegate, audit, or exceptional full delivery before work begins.",
+  "author": {"name": "Daniel McAteer", "url": "https://github.com/DannyMac180"},
+  "homepage": "https://github.com/SanHsien/agent-advisor/tree/main/codex#readme",
+  "repository": "https://github.com/SanHsien/agent-advisor",
+  "license": "MIT",
+  "keywords": ["agent-advisor", "codex", "orchestration", "multi-agent", "gpt-5.6"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agent Advisor for Codex",
+    "shortDescription": "Plan with Sol / High, declare a risk-gated route, and use at most one auxiliary by default.",
+    "longDescription": "Agent Advisor for Codex keeps GPT-5.6 Sol / High in the primary session for architecture, implementation when solo or audit is selected, verification, and acceptance. Before the first task tool call, Sol declares a machine-auditable SELECTIVE ROUTE: solo is the default; delegate uses native GPT-5.6 Luna / Max for bounded work or GPT-5.6 Terra / High for higher-risk work; audit uses a fresh read-only GPT-5.6 Sol / High review; full combines one selected implementer with a fresh review only for a broad or high-risk exception. Observed primary metadata is authoritative; a bundled first-call inspector verifies user-level provenance before a standing attestation may fill unobservable primary fields, while conflicting primary or missing auxiliary routing evidence fails closed.",
+    "developerName": "Daniel McAteer",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/SanHsien/agent-advisor/tree/main/codex",
+    "defaultPrompt": ["Use $agent-advisor-codex:orchestration to declare a SELECTIVE ROUTE before task tools, then build and verify this feature.", "Use solo by default; select delegate, audit, or exceptional full only when the stated risk justifies it."]
+  }
+}

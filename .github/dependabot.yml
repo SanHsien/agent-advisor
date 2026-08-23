@@ -1,0 +1,24 @@
+version: 2
+updates:
+  # 這個 repo 沒有套件 manifest：交付物是 Codex plugin 的 shell scripts 與
+  # agent TOML，執行期不裝任何第三方套件（verify.sh 只用 python3 標準庫的
+  # tomllib）。唯一可由機器更新的依賴面是 workflow 裡釘住的 actions，
+  # 所以也沒有每月的依賴新鮮度檢查——沒有宣告可以拿來跟現行版比對。
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Asia/Taipei"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      # init 與 analyze 必須跑同一個版本——拆開升會出現
+      # "Loaded a configuration file for version X, but running version Y"，
+      # 兩個 PR 各自都是紅的。放同一組讓它們一起升。
+      codeql-action:
+        patterns:
+          - "github/codeql-action*"

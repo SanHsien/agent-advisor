@@ -1,0 +1,60 @@
+name: CodeQL
+
+# 兩種語言，各有各的理由：
+#
+# `actions`：CI 會在 pull_request 事件下執行 repo 內的腳本，workflow 注入與過寬的
+# 權限是這種結構唯一會出事的地方，也是測試問不到的類型。
+#
+# `python`：這個 repo 一度只有 shell／TOML／Markdown，當時沒有 CodeQL 掃得動的
+# 東西。四種 edition 落地後不再成立——`antigravity/scripts/fix_hook_quoting.py`
+# 會**改寫使用者既有的 hooks.json**，`claude/templates/session-start-activation.py`
+# 進使用者的 session 啟動路徑，`codex/tools/check_upstream_updates.py` 會處理外部
+# API 回應。這三種都是「拿別人的資料去動別人的檔案」，正是值得掃的形狀。
+#
+# 交付物的主體（shell 與 PowerShell）CodeQL 仍然不支援，那部分靠 verify.sh
+# 與 dev_check.ps1 的測試守。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Security scan (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [actions, python]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"

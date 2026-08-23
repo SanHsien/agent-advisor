@@ -1,0 +1,29 @@
+{
+  "_comment": "Merge the blocks you need into ~/.claude/settings.json (Windows: %USERPROFILE%\\.claude\\settings.json). Replace <you> with your user name and write full absolute paths, not ~. Restart Claude Code afterwards. Background and traps: claude/docs/ACTIVATION.zh-TW.md",
+
+  "_model_note": "The orchestration skill requires the primary session to run on the Opus family. A full model id is more explicit than the 'opus' alias, which a launcher --model flag can silently override. effortLevel accepts low | medium | high | xhigh | max.",
+
+  "model": "claude-opus-5",
+  "effortLevel": "high",
+
+  "_hook_note": "OPTIONAL fallback only. ~/.claude/CLAUDE.md is already loaded into every session, so the CLAUDE.md snippet alone activates routing. Add this hook only if you also want the directive injected through an independent channel that survives context compaction.",
+
+  "_hook_note_windows": "Never start a hook command with a bare `bash` on Windows: it resolves to C:\\Windows\\System32\\bash.exe (WSL), whose home directory differs, so ~/.claude/hooks/x.sh does not exist there and the hook silently never runs. Python has no such ambiguity and needs no jq.",
+
+  "_hook_note_quoting": "The quoted path below is correct FOR CLAUDE CODE, which passes hook commands to a shell that strips the quotes. Do not copy this form into Antigravity: it splits a hook command into argv itself, so the quotes stay in the filename and Python fails with [Errno 22] Invalid argument. See antigravity/templates/hooks-example.json.",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Users\\<you>\\.claude\\hooks\\session-start-activation.py\"",
+            "timeout": 10,
+            "statusMessage": "Loading agent-advisor routing..."
+          }
+        ]
+      }
+    ]
+  }
+}

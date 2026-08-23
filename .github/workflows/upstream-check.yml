@@ -1,0 +1,66 @@
+name: Upstream check
+
+# 上游是別人的 repo，不會通知我們它動了什麼。這支每週問一次：baseline 之後
+# 有沒有新的 commit、PR 或 issue。判斷寫在 docs/UPSTREAM.md，這裡只負責
+# 「有沒有新的東西」——已經決定過的項目不會被重新問。
+
+on:
+  schedule:
+    # 每週一 08:30（Asia/Taipei）。
+    - cron: "30 0 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - codex/tools/upstream_baseline.json
+      - codex/tools/check_upstream_updates.py
+      - codex/tools/test_check_upstream_updates.py
+      - .github/workflows/upstream-check.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-check
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Upstream review status
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: "1"
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Test the upstream checker
+        run: python -m unittest codex.tools.test_check_upstream_updates
+
+      - name: Compare upstream against the review watermarks
+        id: upstream
+        run: >-
+          python codex/tools/check_upstream_updates.py
+          --github-output
+          --output upstream-review-report.md
+
+      - name: Publish the report to the run summary
+        if: always()
+        run: cat upstream-review-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Mark review as required
+        if: steps.upstream.outputs.needs_attention == 'true'
+        run: |
+          echo "::error::上游有未審查的 commit／PR／issue，見 workflow summary 與 docs/UPSTREAM.md。"
+          exit 1

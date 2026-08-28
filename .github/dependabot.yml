@@ -4,6 +4,7 @@ updates:
   # agent TOML，執行期不裝任何第三方套件（verify.sh 只用 python3 標準庫的
   # tomllib）。唯一可由機器更新的依賴面是 workflow 裡釘住的 actions，
   # 所以也沒有每月的依賴新鮮度檢查——沒有宣告可以拿來跟現行版比對。
+  # fleet-waiver: freshness -- 沒有套件 manifest，沒有宣告可以拿來跟現行版比對
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

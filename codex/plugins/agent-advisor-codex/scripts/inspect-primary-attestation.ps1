@@ -26,7 +26,10 @@ if (-not (Test-Path -LiteralPath $agentsPath -PathType Leaf)) {
 }
 
 $item = Get-Item -LiteralPath $agentsPath -Force
-if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+# LinkType, not the ReparsePoint attribute: OneDrive Files On-Demand sets that
+# attribute on every cloud placeholder, so a file living under OneDrive would be
+# rejected as a link. Only real symlinks and junctions have a LinkType.
+if (-not [string]::IsNullOrEmpty($item.LinkType)) {
     Stop-Inspection "user-level AGENTS.md is a reparse point: $agentsPath"
 }
 if ($item.Length -gt 32768) {

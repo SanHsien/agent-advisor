@@ -12,7 +12,13 @@ function Stop-Install([string]$Message) { throw "ERROR: $Message" }
 function Test-Exists([string]$Path) { return $null -ne (Get-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue) }
 function Test-Reparse([string]$Path) {
     $item = Get-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
-    return $null -ne $item -and (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0)
+    if ($null -eq $item) { return $false }
+    # The ReparsePoint attribute alone is too broad on Windows. OneDrive Files
+    # On-Demand sets it on every cloud placeholder, so a checkout inside a
+    # OneDrive folder makes every shipped template look like a symlink attack
+    # and blocks the install. Only real links carry a LinkType, so test that
+    # instead -- symlinks and junctions are still rejected.
+    return -not [string]::IsNullOrEmpty($item.LinkType)
 }
 function Get-State([string]$Destination, [string]$Template) {
     if (-not (Test-Exists $Destination)) { return 'missing' }

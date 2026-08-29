@@ -12,7 +12,21 @@
 
   "_hook_note_quoting": "The quoted path below is correct FOR CLAUDE CODE, which passes hook commands to a shell that strips the quotes. Do not copy this form into Antigravity: it splits a hook command into argv itself, so the quotes stay in the filename and Python fails with [Errno 22] Invalid argument. See antigravity/templates/hooks-example.json.",
 
+  "_hook_note_enforcement": "OPTIONAL but stronger. The SessionStart hook only injects the directive; route-guard.py refuses Edit/Write/MultiEdit/NotebookEdit until a route is declared in the current turn. It fails open on an unreadable transcript or an unfamiliar payload, because it blocks the very tools needed to repair it.",
+
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Users\\<you>\\.claude\\hooks\\route-guard.py\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [

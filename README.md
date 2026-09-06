@@ -114,13 +114,14 @@ python -m unittest discover -s tests -p "test_*.py"
 
 ## 相關工具
 
-這四個 repo 各自治理 AI coding 的一層，可以單獨用，也可以疊起來用：
+這五個 repo 各自治理 AI coding 的一層，可以單獨用，也可以疊起來用：
 
 | 層 | Repo | 做什麼 |
 | --- | --- | --- |
+| 供應鏈 | [SkillSpector](https://github.com/SanHsien/SkillSpector) | 裝進來之前先掃：agent skill 的漏洞與惡意樣式偵測，輸出風險分數與 `SAFE`／`CAUTION`／`DO_NOT_INSTALL` 建議 |
 | 派工決策 | **Agent Advisor（你在這裡）** | 風險分流路由 `solo`／`delegate`／`audit`／`full`：決定這件事要不要派工、派給誰 |
 | 動作攔截 | [harness-guard](https://github.com/SanHsien/harness-guard) | agent runtime hook，在動手前後與收工時實際攔截危險指令、無證據宣稱、紅燈提交 |
 | 產出品質 | [ai-quality-gates](https://github.com/SanHsien/ai-quality-gates) | 可執行規格與量化門檻：覆蓋率、突變測試、圈複雜度、依賴結構、有界 loop policy |
 | 交付流程 | [paulsha-cortex](https://github.com/SanHsien/paulsha-cortex) | 多 Agent lifecycle：Candidate → Verify → Independent Review → Delivery → CompletionRecord |
 
-相鄰但不同層：[opencodex](https://github.com/SanHsien/opencodex) 是供應商代理，決定這些 agent 背後能跑哪些 LLM，本身不約束 agent 行為。
+相鄰但不同層：[agent-governance-toolkit](https://github.com/SanHsien/agent-governance-toolkit) 治理的是上線後自主運行的 agent——政策強制、零信任身分、沙箱執行與可稽核記錄——不是寫程式的 coding agent。[opencodex](https://github.com/SanHsien/opencodex) 是供應商代理，決定這些 agent 背後能跑哪些 LLM，本身不約束 agent 行為。

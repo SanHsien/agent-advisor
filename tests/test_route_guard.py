@@ -29,6 +29,11 @@ def assistant(text):
         {"type": "text", "text": text}]}}
 
 
+def assistant_tool(**tool_input):
+    return {"type": "assistant", "message": {"role": "assistant", "content": [
+        {"type": "tool_use", "name": "Bash", "input": tool_input}]}}
+
+
 class RouteGuardTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -87,6 +92,36 @@ class RouteGuardTests(unittest.TestCase):
                    tool_result("command output"),
                    assistant("Continuing."))
         self.assertEqual(self.run_hook().returncode, 0)
+
+    # --- declarations carried by tool calls --------------------------------
+
+    def test_declaration_in_a_tool_description_is_allowed(self):
+        # Assistant prose is not always persisted to the transcript; tool calls are.
+        self.write(user("change the config"),
+                   assistant_tool(command="git status", description="SELECTIVE ROUTE: solo (one file)"))
+        self.assertEqual(self.run_hook().returncode, 0)
+
+    def test_tool_description_accepts_a_fullwidth_colon(self):
+        self.write(user("do it"),
+                   assistant_tool(command="ls", description="SELECTIVE ROUTE\uff1adelegate (two repos)"))
+        self.assertEqual(self.run_hook().returncode, 0)
+
+    def test_a_command_that_only_searches_for_the_phrase_does_not_count(self):
+        self.write(user("do it"),
+                   assistant_tool(command="grep -r 'SELECTIVE ROUTE: solo' .",
+                          description="look for old declarations"))
+        self.assertEqual(self.run_hook().returncode, 2)
+
+    def test_a_tool_description_without_a_mode_does_not_count(self):
+        self.write(user("do it"), assistant_tool(command="ls", description="SELECTIVE ROUTE pending"))
+        self.assertEqual(self.run_hook().returncode, 2)
+
+    def test_a_tool_declaration_before_the_latest_user_message_does_not_count(self):
+        self.write(user("first task"),
+                   assistant_tool(command="ls", description="SELECTIVE ROUTE: solo"),
+                   user("a different task"),
+                   assistant_tool(command="ls", description="list files"))
+        self.assertEqual(self.run_hook().returncode, 2)
 
     # --- scope -----------------------------------------------------------
 

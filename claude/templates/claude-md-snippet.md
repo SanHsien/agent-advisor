@@ -9,7 +9,9 @@
 
 **常駐選擇性路由（agent-advisor）**：處理任何非瑣碎任務（要改檔、跨多檔搜尋、實作、重構、
 除錯）之前，先 `Skill("agent-advisor-claude:orchestration")`，並在動工前宣告 SELECTIVE ROUTE：
-`solo` / `delegate` / `audit` / 例外 `full` 擇一，附一句理由。單一問答、狀態查詢、閒聊不需宣告。
+`solo` / `delegate` / `audit` / 例外 `full` 擇一，附一句理由。宣告要**同時**寫進該輪第一個工具
+呼叫的 `description`（例：`SELECTIVE ROUTE: solo（理由）`）：Claude Code 不一定把回覆文字寫進
+transcript，裝了 `route-guard.py` 時只寫在文字裡會被誤擋。單一問答、狀態查詢、閒聊不需宣告。
 plugin 不在（未重開 session）→ 跳過本步，不報錯。
 
 ---
@@ -20,6 +22,9 @@ plugin 不在（未重開 session）→ 跳過本步，不報錯。
 multi-file search, implementation, refactoring, debugging), load
 `Skill("agent-advisor-claude:orchestration")` and declare a SELECTIVE ROUTE before starting
 work: one of `solo` / `delegate` / `audit` / exceptional `full`, with a one-line reason.
+Also put the declaration at the start of that turn's first tool-call `description` (for
+example `SELECTIVE ROUTE: solo (reason)`): Claude Code does not always write reply text to the
+transcript, so with `route-guard.py` installed a text-only declaration can be falsely blocked.
 Single questions, status lookups, and chat need no declaration. If the plugin is not loaded
 (session not restarted yet), skip this step without raising an error.
 

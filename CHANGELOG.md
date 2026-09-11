@@ -8,6 +8,12 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-09-11（route guard 誤擋修正）
+
+### 修復
+
+- **`route-guard.py` 會擋下已經宣告過的編輯。** Claude Code 不一定把 assistant 的文字區塊寫進 transcript：實測一個長 session 的 818 筆 assistant 紀錄只有 45 筆帶文字，但每一次工具呼叫的參數都有寫入。只看文字的判定因此把「有宣告」誤判成「沒宣告」，連續擋下 Edit／Write。現在工具呼叫的 `description` 也算數；那裡要求完整格式 `SELECTIVE ROUTE: solo|delegate|audit|full`（冒號可全形），單純搜尋這個字串的指令不算。拒絕訊息也說明被誤擋時該怎麼補，`claude-md-snippet.md` 也改成要求宣告同時寫進該輪第一個工具呼叫的 `description`。新增 5 個測試，並以移除新分支的突變版本確認新測試會紅。
+
 ## 2026-08-23（上游 PR #26 與 CodeQL 覆蓋）
 
 ### 新增

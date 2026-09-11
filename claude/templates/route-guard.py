@@ -24,6 +24,11 @@ the very tools needed to repair it, so an unreadable transcript, an unfamiliar
 payload shape, or a missing path all allow the edit. It exists to catch "forgot
 to declare", not to prove that a declaration happened.
 
+The declaration is also read from tool-call descriptions. Claude Code does not
+always write the assistant's prose to the transcript (one measured session:
+818 assistant records, 45 with a text block), but it always writes tool-call
+arguments. Reading prose alone turns a real declaration into a false block.
+
 Windows note: register it as ``python "<absolute path>"``. A hook command
 starting with a bare ``bash`` resolves to WSL, where the home directory differs
 and the script does not exist, so the hook silently never runs.
@@ -44,6 +49,16 @@ for _stream in (sys.stdout, sys.stderr):
 
 GUARDED_TOOLS = {"edit", "write", "multiedit", "notebookedit"}
 DECLARATION = re.compile(r"SELECTIVE\s+ROUTE", re.IGNORECASE)
+# A tool call's own arguments are always written to the transcript; the
+# assistant's prose is not (one measured session: 818 assistant records, only
+# 45 with a text block, although nearly every message had visible text). A
+# declaration may therefore also ride in a tool call's description. The full
+# form is required there, so a command that merely searches for the phrase
+# does not count.
+TOOL_DECLARATION = re.compile(
+    r"SELECTIVE\s+ROUTE\s*[:\uff1a]\s*(?:solo|delegate|audit|full)\b", re.IGNORECASE
+)
+TOOL_DECLARATION_FIELDS = ("description",)
 # Scratch and temp files are working material, not deliverables.
 EXEMPT_PATH_PARTS = ("scratchpad", "\\temp\\", "/temp/", "\\tmp\\", "/tmp/")
 MAX_TRANSCRIPT_BYTES = 512_000
@@ -56,7 +71,12 @@ This turn has no route declaration yet. Write one line first, for example:
 
 Pick one of: solo / delegate / audit / exceptional full.
 Single questions, status checks, and chat never reach this hook.
-Once declared, simply retry the edit."""
+Once declared, simply retry the edit.
+
+Already declared and still blocked? Assistant prose is not always written to
+the transcript. Repeat the declaration at the start of the next tool call's
+description (a read-only Bash is enough), e.g. "SELECTIVE ROUTE: solo (reason)",
+then retry the edit."""
 
 
 def read_payload() -> dict:
@@ -129,6 +149,15 @@ def declared_since_last_user_message(path: str) -> bool:
             continue
         for blk in (obj.get("message") or {}).get("content", []):
             if not isinstance(blk, dict):
+                continue
+            if blk.get("type") == "tool_use":
+                args = blk.get("input")
+                if isinstance(args, dict) and any(
+                    isinstance(args.get(field), str)
+                    and TOOL_DECLARATION.search(args[field])
+                    for field in TOOL_DECLARATION_FIELDS
+                ):
+                    return True
                 continue
             text = blk.get("text") or ""
             if isinstance(text, str) and DECLARATION.search(text):

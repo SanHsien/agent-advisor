@@ -9,6 +9,12 @@ The Codex edition is derived from
 
 ---
 
+## 2026-09-11 (route guard false blocks)
+
+### Fixed
+
+- **`route-guard.py` blocked edits that had already been declared.** Claude Code does not always write the assistant's text blocks to the transcript: one long session held 818 assistant records, only 45 with text, while every tool call's arguments were written. Reading prose alone turned a real declaration into a missing one and blocked Edit/Write repeatedly. Tool-call `description` fields now count too; they need the full `SELECTIVE ROUTE: solo|delegate|audit|full` form (a full-width colon is accepted), so a command that merely searches for the phrase does not. The refusal text now says how to recover from a false block, and `claude-md-snippet.md` now asks for the declaration in that turn's first tool-call `description` as well. Five new tests, confirmed to fail against a mutant with the new branch removed.
+
 ## 2026-08-23 (upstream PR #26 and CodeQL coverage)
 
 ### Added

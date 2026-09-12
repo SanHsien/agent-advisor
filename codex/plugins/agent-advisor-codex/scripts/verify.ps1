@@ -52,7 +52,7 @@ Write-Host 'PASS: Codex exact role IDs, models, efforts, and reviewer sandbox re
 
 $skill = Get-Content -LiteralPath (Join-Path $pluginDir 'skills/orchestration/SKILL.md') -Raw
 $operations = Get-Content -LiteralPath (Join-Path $pluginDir 'skills/orchestration/references/operations.md') -Raw
-foreach ($needle in @('SELECTIVE ROUTE', 'mode: solo | delegate | audit | full', 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high')) {
+foreach ($needle in @('SELECTIVE ROUTE', 'mode: solo | delegate | audit | full', 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low')) {
     Assert-True ($skill.Contains($needle)) "Codex orchestration skill omits: $needle"
 }
 foreach ($roleId in @('agent_advisor_codex_luna_implementer', 'agent_advisor_codex_terra_implementer', 'agent_advisor_codex_sol_reviewer')) {
@@ -67,10 +67,22 @@ try {
     $fakeHome = Join-Path $fixtureRoot 'home'
     [IO.Directory]::CreateDirectory($fakeHome) | Out-Null
     $env:CODEX_HOME = $fakeHome
-    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high'
+    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low'
     $output = & $inspector
     Assert-True ($output -contains 'PRIMARY_ATTESTATION PASSED') 'valid primary attestation was refused'
     Assert-True ($output -contains 'provenance=user-level-file') 'inspector omitted verified provenance'
+    Assert-True ($output -contains 'model=gpt-6-astra') 'inspector reported the wrong primary model'
+    Assert-True ($output -contains 'effort=low') 'inspector reported the wrong primary effort'
+    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high'
+    $output = & $inspector
+    Assert-True ($output -contains 'model=gpt-5.6-sol') 'Sol alternative was not reported'
+    Assert-True ($output -contains 'effort=high') 'Sol alternative effort was not reported'
+    Add-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low'
+    Invoke-ExpectedFailure { & $inspector } 'two different primary markers are refused'
+    foreach ($invalidPrimary in @('gpt-5.6-sol/low', 'gpt-6-astra/high', 'unknown/low')) {
+        Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value "AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: $invalidPrimary"
+        Invoke-ExpectedFailure { & $inspector } "wrong primary $invalidPrimary is refused"
+    }
 
     Invoke-ExpectedFailure { & $installer -TargetDir '' } 'explicit empty target is refused'
     Invoke-ExpectedFailure { & $installer -TargetDir $null } 'explicit null target is refused'

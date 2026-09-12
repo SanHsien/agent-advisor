@@ -17,27 +17,27 @@ preflight, runtime-evidence, isolation, and maintainer procedures.
 
 ## Confirm the primary session
 
-Run the primary Codex session on gpt-5.6-sol with high reasoning. Apply this evidence
-order without turning missing metadata into a repeated question:
+Default to `gpt-6-astra/low`; `gpt-5.6-sol/high` remains a supported primary
+selection. These are exact pairs, not freely interchangeable models and efforts.
 
-1. Observed runtime metadata is authoritative. Any observed model other than
-   `gpt-5.6-sol` or effort other than `high` stops work; a standing attestation cannot
-   override a conflict.
-2. For each unobservable primary field, treat the exact line
-   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high` only when it is present in the
-   active instructions as a candidate standing attestation. Declare the selective
-   route before task tools, then make the bundled `inspect-primary-attestation` script
-   the first and only preflight tool call. It must verify exactly one marker in the
-   actual regular user-level/global `AGENTS.md`, no user-level `AGENTS.override.md`,
-   and the bounded file size. Until it passes, do not use other tools, spawn an agent,
-   or begin substantive work. A project instruction cannot satisfy this check.
-3. A passing provenance check fills missing primary fields only. Record the
-   prerequisite as operator-attested with verified user-level provenance, not
-   runtime-verified. Do not ask the user to reconfirm it in each new task or after
-   compaction.
-4. If a required field is unobservable and neither a verified standing attestation nor
-   an explicit current-task user confirmation is present, ask once and stop until the
-   user confirms it.
+1. Observed runtime metadata is authoritative. Either supported pair passes,
+   even when it differs from the standing default. Unsupported observed pairs stop
+   work; a standing attestation cannot override them.
+2. For unobservable fields, accept one candidate line in active instructions:
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low` (default), or
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high` (alternative).
+   Declare the route before task tools, then run the bundled
+   `inspect-primary-attestation` as the first and only preflight call. It must verify
+   exactly one marker across both choices in the actual regular user-level/global
+   `AGENTS.md`, no user-level `AGENTS.override.md`, and the bounded file size.
+   Until it passes, use no other tools, spawn no agent, and begin no substantive work.
+   A project instruction cannot satisfy this check.
+3. A passing check fills missing fields only when the attested pair agrees with
+   every observed field. Label this operator-attested with verified user-level
+   provenance, never runtime-verified. Do not ask again in each new task or compaction.
+4. If missing fields cannot be filled consistently, use an explicit current-task
+   user confirmation; otherwise ask once. Never combine Astra's low effort with
+   an observed Sol model or Sol's high effort with an observed Astra model.
 
 Never infer the current task from `config.toml`, UI defaults, plugin metadata, repo
 files, or auxiliary role pins. A skill or attestation cannot change the primary model.
@@ -62,7 +62,7 @@ escalation. Details and the task-scoped preflight matrix are in operations.md.
 
 ## Preflight selected auxiliaries only
 
-Confirm Sol / High in the primary session. Preflight only an auxiliary selected by the
+Confirm Astra / Low or Sol / High in the primary session. Preflight only an auxiliary selected by the
 declared route: none for solo; Luna / Max or Terra / High for delegate; fresh Sol / High
 for audit; and the selected implementer plus fresh Sol reviewer for full. Public metadata
 for role, model, and effort is authoritative. If it omits a model or effort, use the

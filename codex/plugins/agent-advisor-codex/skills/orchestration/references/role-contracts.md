@@ -21,7 +21,7 @@ Solo is the default; one auxiliary is the default maximum. Full is an explicit b
 or high-risk exception. A later route declaration may only escalate after newly
 observed risk justifies it and supplies that evidence; never silently downgrade.
 
-Establish Sol / High primary evidence using the skill's precedence: observed runtime
+Establish Astra / Low (default) or Sol / High primary evidence using the skill's precedence: observed runtime
 metadata wins, and any observed conflict stops work. A marker in active instructions
 is only a candidate until the bundled first-call inspector proves actual user-level
 file provenance; after that it may fill only unobservable primary fields. A project
@@ -204,7 +204,8 @@ RESIDUAL RISK: <most important remaining risk, or none>
 ~~~
 
 If any fix is made after review, discard the verdict and run a new fresh review.
-Sol reviewing Sol is context-clean, not cross-model-family independence.
+The Sol reviewer uses fresh context regardless of the selected primary; do not claim
+cross-provider independence.
 
 Use observed isolation, not requested isolation:
 

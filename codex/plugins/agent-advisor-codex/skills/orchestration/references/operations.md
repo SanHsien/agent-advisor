@@ -40,10 +40,11 @@ unobservable role/model/effort is a hard stop; never substitute another role.
 
 ## Selective route declaration, preflight, and caching
 
-The primary session must be Sol / High. Observed primary runtime metadata is
-authoritative and any conflict stops work. If one or both primary fields are
+The default primary is Astra / Low; Sol / High is also supported. Observed primary
+runtime metadata is authoritative: either exact pair passes and other pairs stop. If one or both primary fields are
 unobservable, the exact line
-`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high` in active instructions is only a
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low` (or the Sol alternative
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high`) in active instructions is only a
 candidate. Declare the route before task tools, then use the platform-specific bundled
 inspector as the first and only preflight call:
 
@@ -59,7 +60,7 @@ Resolve these paths from this skill directory. The inspector fails closed unless
 actual regular user-level/global `AGENTS.md` contains exactly one marker, is bounded in
 size, and has no user-level `AGENTS.override.md`. A project file cannot satisfy it.
 Until it passes, use no other task tool, spawn no agent, and do no substantive work.
-A pass attests only missing primary fields; label it operator-attested with verified
+A pass attests only missing primary fields consistent with observed metadata; label it operator-attested with verified
 user-level provenance, do not ask again in every new task, and never let it override
 observed metadata. Missing metadata without verified provenance or explicit
 current-task confirmation remains a stop. Static `config.toml`, UI defaults, plugin

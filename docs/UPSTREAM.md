@@ -137,3 +137,11 @@ model 拿不到 effort，含糊帶過會削弱它要強化的那道 gate）、**
 - PR：**#26**（`reviewed_pr_through` 24 → 26。`--state all` 查過 24 之後的全部 PR，#25 這個編號在上游不是 PR，所以 24 之後只有 #26 一筆）
 - issue：仍是 **#25**
 - commit：仍是 `37b75ca`（`37b75ca..upstream/main` 為 0）
+
+## 2026-09-12 fork primary policy
+
+The default Codex primary is `gpt-6-astra/low`; `gpt-5.6-sol/high` remains supported
+for switching, including in the standing attestation, inspectors, and advisory hook.
+This supersedes the historical Sol-only primary policy recorded above; Luna/Max,
+Terra/High, and the Sol/High reviewer are unchanged.
+Historical upstream decisions retain their original model references.

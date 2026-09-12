@@ -40,7 +40,7 @@ gh repo set-default SanHsien/agent-advisor，不要加不存在的 --repo 旗標
 ### PowerShell（主要路徑）
 
 需要已啟用 plugin 的 Codex CLI 或 ChatGPT desktop app，以及 primary session 的
-GPT-5.6 Sol / High。只有選到 delegate 或 full 時才需要 Luna / Max 或
+GPT-6 Astra / Low（預設）或 GPT-5.6 Sol / High。只有選到 delegate 或 full 時才需要 Luna / Max 或
 Terra / High 的權限。
 
 ~~~
@@ -133,8 +133,13 @@ Test-Path -LiteralPath $globalOverride
 `AGENTS.md` 放入一行精準的持久聲明：
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low
 ~~~
+
+若使用 Sol 且 runtime 欄位不可觀測，可將上列唯一 marker 改為
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high`，不要同時放兩筆。
+完整可觀測的兩種合法組合都可直接通過，不受預設 marker 限制；部分欄位缺失時，
+聲明只能補足與已觀測欄位相容的值，不得跨模型混用 effort。
 
 這是使用者聲明，不是 runtime 驗證。合併後指引中的 marker 只算候選，因為
 project `AGENTS.md` 也能仿造文字。先宣告 route，再把 skill 內建
@@ -142,14 +147,14 @@ project `AGENTS.md` 也能仿造文字。先宣告 route，再把 skill 內建
 call；它必須只讀確認實際 user-level/global `AGENTS.md` 恰有一筆 marker、是一般
 檔案、大小合理，且沒有 user-level `AGENTS.override.md`。通過前不得使用其他工具
 或派 agent。觀測到的 metadata 永遠優先：若明確顯示不是
-`gpt-5.6-sol/high`，必須停止；若只缺 model、effort 或兩者，通過來源驗證的聲明
+`gpt-6-astra/low` 或 `gpt-5.6-sol/high` 任一完整組合，必須停止；若只缺 model、effort 或兩者，通過來源驗證的聲明
 只補足缺失欄位，並標記為 operator-attested with verified user-level provenance，
 不得在新 task 或 compaction 後再詢問。
 
 在 fresh task 的第一個 task tool call 前，對實質開發工作使用
 $agent-advisor-codex:orchestration。實質開發包含建立、修改、除錯、重構、測試、
 review、發布與部署程式碼、設定、腳本或 repo 文件。依 observed metadata 優先、
-持久聲明只補缺失欄位的順序建立 primary Sol / High 證據，再宣告一次可機器讀取
+持久聲明只補缺失欄位的順序建立 primary Astra / Low（預設）或 Sol / High 證據，再宣告一次可機器讀取
 的 route：
 
 ~~~
@@ -180,7 +185,7 @@ full。若 skill 未安裝、未載入，或選定角色的 role/model/effort �
 user-level 檔案來源驗證時不得重複詢問。完整評估記錄在
 [UPSTREAM.md](../../docs/UPSTREAM.md)。
 
-建議給 Sol 的起始 prompt：
+建議給目前 primary 的起始 prompt：
 
 ~~~
 Use $agent-advisor-codex:orchestration to build this feature and verify it.
@@ -189,14 +194,14 @@ Declare the selective route before task tools.
 
 ## 4. 四種 route 與原生策略
 
-上游原生策略仍保留，Sol 會根據具體風險選路，不能為了形式而重複實作或
+上游原生策略仍保留，目前 primary 會根據具體風險選路，不能為了形式而重複實作或
 review：
 
 | route | 何時使用 | 執行與驗收 |
 | --- | --- | --- |
-| solo | 預設，風險 contained 且規格不需要獨立審查 | Sol 自己規劃、實作、測試、自我 review；不啟動 auxiliary |
+| solo | 預設，風險 contained 且規格不需要獨立審查 | 目前 primary 自己規劃、實作、測試、自我 review；不啟動 auxiliary |
 | delegate | 一個完整、明確的工作包適合交給一個 implementer | bounded 工作選 Luna / Max；判斷密集、高風險、context-heavy 或 wide blast radius 選 Terra / High；父代理完整驗證，不另加 fresh reviewer |
-| audit | 需要獨立最終 scrutiny，但不需要委派實作 | Sol 自己實作並驗證，之後只啟動 fresh read-only Sol / High reviewer |
+| audit | 需要獨立最終 scrutiny，但不需要委派實作 | 目前 primary 自己實作並驗證，之後只啟動 fresh read-only Sol / High reviewer |
 | full | 明確的 broad 或 high-risk exception | 一個選定 implementer、父代理驗證，再啟動 fresh read-only Sol / High reviewer |
 
 solo 是預設，通常最多一個 auxiliary；full 是例外。fresh Sol reviewer

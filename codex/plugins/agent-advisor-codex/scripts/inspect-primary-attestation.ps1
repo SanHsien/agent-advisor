@@ -2,7 +2,7 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-$marker = 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high'
+$prefix = 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: '
 
 function Stop-Inspection([string]$Message) {
     throw "PRIMARY_ATTESTATION REFUSED: $Message"
@@ -37,13 +37,19 @@ if ($item.Length -gt 32768) {
 }
 
 $lines = Get-Content -LiteralPath $agentsPath
-$count = @($lines | Where-Object { $_ -ceq $marker }).Count
+$markers = @($lines | Where-Object { $_ -cmatch '^AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION:' })
+$count = $markers.Count
 if ($count -ne 1) {
     Stop-Inspection "expected exactly one attestation marker, found $count"
 }
+$pair = $markers[0].Substring($prefix.Length)
+if ($markers[0] -cne ($prefix + $pair) -or $pair -cnotin @('gpt-6-astra/low', 'gpt-5.6-sol/high')) {
+    Stop-Inspection 'unsupported primary model/effort pair'
+}
+$model, $effort = $pair.Split('/')
 
 Write-Output 'PRIMARY_ATTESTATION PASSED'
 Write-Output "source=$agentsPath"
 Write-Output 'provenance=user-level-file'
-Write-Output 'model=gpt-5.6-sol'
-Write-Output 'effort=high'
+Write-Output "model=$model"
+Write-Output "effort=$effort"

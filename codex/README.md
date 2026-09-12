@@ -5,12 +5,12 @@
 > [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-advisor). It retains
 > the original author attribution and MIT license.
 
-**Sol / High runs the show. It declares a risk-gated route before task tools, keeps
+**Astra / Low is the default primary; Sol / High is also supported. It declares a risk-gated route before task tools, keeps
 solo as the default, and uses a single auxiliary only when that improves delivery.**
 
 Agent Advisor for Codex is the Codex-native edition of Agent Advisor for capability-routed
 software delivery. You
-bring the goal and constraints; Sol owns the plan, implementation or delegation,
+bring the goal and constraints; the selected primary owns the plan, implementation or delegation,
 verification, and acceptance.
 
 Windows-first fork、安裝、四種 route、委派工作包、驗證與維護的繁中步驟，請讀
@@ -18,8 +18,8 @@ Windows-first fork、安裝、四種 route、委派工作包、驗證與維護�
 
 ## Quick start
 
-You need a current Codex CLI or ChatGPT desktop app with plugins enabled, GPT-5.6
-Sol / High for the primary session, native custom-agent support, and jq. GPT-5.6
+You need a current Codex CLI or ChatGPT desktop app with plugins enabled, GPT-6
+Astra / Low (default) or GPT-5.6 Sol / High for the primary session, native custom-agent support, and jq. GPT-5.6
 Luna / Max or Terra / High access is needed only when the selected route delegates.
 Maintainer POSIX verification also requires Python 3.11+ because `verify.sh` uses
 the standard-library `tomllib` module, as documented in upstream
@@ -27,14 +27,18 @@ the standard-library `tomllib` module, as documented in upstream
 [issue #1](https://github.com/DannyMac180/sol-advisor/issues/1).
 When primary metadata is unavailable, a bundled first-call inspector verifies the
 user-level standing attestation and avoids repeated confirmation; observed conflicts
-still stop. See [advanced native operations](plugins/agent-advisor-codex/skills/orchestration/references/operations.md).
+outside those two pairs still stop. See [advanced native operations](plugins/agent-advisor-codex/skills/orchestration/references/operations.md).
 
 To enable that fallback, place this exact line once in the regular user-level
 `~/.codex/AGENTS.md` and do not create a user-level `AGENTS.override.md`:
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low
 ~~~
+
+To use the Sol fallback when runtime metadata is missing, replace that one marker
+with `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-5.6-sol/high`; do not add a second
+marker. Fully observed supported runtime selections take priority over the default.
 
 ~~~sh
 codex plugin marketplace add SanHsien/agent-advisor --ref main
@@ -66,8 +70,8 @@ Use $agent-advisor-codex:orchestration to build this feature and verify it. Decl
 
 ## What you do
 
-Give Sol the outcome, constraints, and any important repository context. You do not
-need to select or manage a lane; Sol records the route and owns verification and
+Give the selected primary the outcome, constraints, and any important repository context. You do not
+need to select or manage a lane; the primary records the route and owns verification and
 acceptance.
 
 ## Routes
@@ -80,13 +84,13 @@ acceptance.
 | `full` | Explicit broad or high-risk exception. | One selected implementer, root verification, and a fresh Sol / High review. |
 
 Solo is the default. One auxiliary is the default maximum; `full` is the explicit
-exception. Sol emits a `SELECTIVE ROUTE` declaration with the mode and concise risk
+exception. The primary emits a `SELECTIVE ROUTE` declaration with the mode and concise risk
 rationale before the first task tool call. It can escalate only when newly observed
 risk justifies it and never silently downgrades.
 
 ## What happens automatically
 
-Sol / High keeps architecture, decomposition, route selection, parent verification,
+The selected primary keeps architecture, decomposition, route selection, parent verification,
 escalation decisions, and acceptance in the primary task. Auxiliary work substitutes
 for root work; it does not duplicate it. The root inspects the complete diff and
 reruns the requested checks. When the selected route includes a review, a fresh Sol /

@@ -36,7 +36,7 @@ def payload(**overrides: object) -> dict:
     base = {
         "hook_event_name": "UserPromptSubmit",
         "prompt": ORCHESTRATION_PROMPT,
-        "model": "gpt-5.6-sol",
+        "model": "gpt-6-astra",
     }
     base.update(overrides)
     return base
@@ -47,7 +47,7 @@ class AdvisoryContent(unittest.TestCase):
         line = hook.advisory_for(payload())
 
         assert line is not None
-        self.assertIn("gpt-5.6-sol", line)
+        self.assertIn("gpt-6-astra", line)
         self.assertIn("model field only", line)
 
     def test_the_advisory_never_claims_reasoning_effort(self) -> None:
@@ -56,10 +56,10 @@ class AdvisoryContent(unittest.TestCase):
         An advisory that implied effort had been observed would weaken the very
         gate it exists to strengthen.
         """
-        for model in ("gpt-5.6-sol", "gpt-5.6-luna"):
+        for model in ("gpt-6-astra", "gpt-5.6-sol", "gpt-5.6-luna"):
             line = hook.advisory_for(payload(model=model))
             assert line is not None
-            for effort_claim in ("/high", "high reasoning", "reasoning effort is high"):
+            for effort_claim in ("/low", "low reasoning", "reasoning effort is low", "/high", "high reasoning", "reasoning effort is high"):
                 self.assertNotIn(effort_claim, line)
 
     def test_mismatch_names_the_active_model_and_the_remedy(self) -> None:
@@ -68,6 +68,12 @@ class AdvisoryContent(unittest.TestCase):
         assert line is not None
         self.assertIn("gpt-5.6-luna", line)
         self.assertIn("/model", line)
+
+    def test_sol_remains_a_supported_primary(self) -> None:
+        line = hook.advisory_for(payload(model="gpt-5.6-sol"))
+        assert line is not None
+        self.assertIn("model check", line)
+        self.assertIn("active model is gpt-5.6-sol", line)
 
 
 class StaysSilent(unittest.TestCase):

@@ -35,7 +35,7 @@ import json
 import re
 import sys
 
-REQUIRED_MODEL = "gpt-5.6-sol"
+SUPPORTED_MODELS = ("gpt-6-astra", "gpt-5.6-sol")
 
 # Codex currently ignores UserPromptSubmit matchers, so the allowlist is enforced
 # here instead: the advisory belongs to an orchestration prompt, not to every
@@ -66,15 +66,15 @@ def advisory_for(payload: object) -> str | None:
     if not _SAFE_MODEL.match(model):
         return None
 
-    if model == REQUIRED_MODEL:
+    if model in SUPPORTED_MODELS:
         return (
-            f"Agent Advisor model check: active model is {REQUIRED_MODEL}. "
+            f"Agent Advisor model check: active model is {model}. "
             "This covers the model field only -- reasoning effort is not exposed to "
             "hooks, so complete the primary-session gate before orchestration."
         )
     return (
         f"Agent Advisor model mismatch: active model is {model}, but Agent Advisor "
-        f"requires {REQUIRED_MODEL}. Select it with /model, confirm with /status, "
+        f"supports {' or '.join(SUPPORTED_MODELS)}. Select one with /model, confirm with /status, "
         "then complete the primary-session gate."
     )
 

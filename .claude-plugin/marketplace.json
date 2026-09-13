@@ -1,0 +1,17 @@
+{
+  "name": "agent-advisor",
+  "owner": {
+    "name": "SanHsien",
+    "url": "https://github.com/SanHsien"
+  },
+  "metadata": {
+    "description": "Risk-gated selective routing plugins for Codex and Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "agent-advisor-claude",
+      "source": "./claude/plugins/agent-advisor-claude",
+      "description": "Claude Code-native selective routing with Opus architecture and risk-gated Haiku, Sonnet, or Opus review lanes"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "repo": "https://github.com/DannyMac180/sol-advisor.git",
+  "branch": "main",
+  "reviewed_through": "37b75cad535abdd46531f0227483a8842d045ab8",
+  "reviewed_date": "2026-08-23",
+  "reviewed_pr_through": 26,
+  "reviewed_issue_through": 25,
+  "decision_log": "docs/UPSTREAM.md",
+  "notes": "2026-08-23 逐筆審過上游全部 7 個 open issues 與 18 個 PRs（含 closed/merged/draft），採用 PR #24（Python 3.11+ 需求）；fork v0.6.1 以 bundled first-call inspector 驗證 user-level standing attestation 來源，解決 issue #25 的重複確認，其餘 skip/defer 的理由與重查 trigger 逐項記在 docs/UPSTREAM.md。上游 main 當時為 37b75ca，fork 只多一個 Windows/governance commit。 2026-08-23 第二輪：PR #26 四個部分逐一對照——root rollout 檢查與 latest-turn-context 兩半不適用（本 fork 的 inspector 只服務 auxiliary，中途換 model 屬證據矛盾應 fail closed）、configure-model-hook skill 不引用，advisory model hook 引用並改寫成 Python（Windows 無 jq），附 13 條契約測試。"
+}

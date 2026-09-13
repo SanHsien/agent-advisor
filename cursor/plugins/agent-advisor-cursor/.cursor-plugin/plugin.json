@@ -1,0 +1,6 @@
+{
+  "name": "agent-advisor-cursor",
+  "description": "Cursor-native selective routing: the primary agent declares solo, delegate, audit, or exceptional full delivery before work begins.",
+  "version": "1.0.0",
+  "author": "SanHsien"
+}

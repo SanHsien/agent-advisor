@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/observe_primary_model.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking the active model for Agent Advisor"
+          }
+        ]
+      }
+    ]
+  }
+}

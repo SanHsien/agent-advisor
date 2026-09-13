@@ -1,0 +1,13 @@
+{
+  "name": "agent-advisor-claude",
+  "version": "1.0.0",
+  "description": "Claude Code-native selective routing: Opus declares solo, delegate, audit, or exceptional full delivery before work begins.",
+  "author": {
+    "name": "SanHsien",
+    "url": "https://github.com/SanHsien"
+  },
+  "homepage": "https://github.com/SanHsien/agent-advisor/tree/main/claude#readme",
+  "repository": "https://github.com/SanHsien/agent-advisor",
+  "license": "MIT",
+  "keywords": ["claude-code", "orchestration", "multi-agent", "opus", "sonnet", "haiku"]
+}

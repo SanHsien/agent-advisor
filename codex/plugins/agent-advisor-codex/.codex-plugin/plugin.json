@@ -1,6 +1,6 @@
 {
   "name": "agent-advisor-codex",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agent Advisor for Codex: Astra / Low by default (or Sol / High) declares solo, delegate, audit, or exceptional full delivery before work begins.",
   "author": {"name": "Daniel McAteer", "url": "https://github.com/DannyMac180"},
   "homepage": "https://github.com/SanHsien/agent-advisor/tree/main/codex#readme",

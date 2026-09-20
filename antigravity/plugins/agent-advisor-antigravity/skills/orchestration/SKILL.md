@@ -43,6 +43,25 @@ The bundled `rules/selective-routing.md` applies this requirement to every sessi
 which the plugin is enabled, so the declaration is expected even when the user did not
 name this skill.
 
+## Provider throttling is lane unavailability
+
+A provider `429 / Too Many Requests` or equivalent explicit rate-limit response is a
+lane-availability failure, not an implementation finding and not evidence that the
+risk classification changed.
+
+- Preserve the exact checkpoint, working-tree state, role, specification, ownership,
+  and verification plan before any retry.
+- After one short bounded backoff, allow at most one confirmation retry. Do not open
+  parallel duplicate sessions or enter an immediate retry loop.
+- Repeated throttling stops the selected lane. Never silently downgrade, substitute
+  another subagent/model tier, or let the primary duplicate delegated implementation.
+- Account-level remaining usage does not prove that a specific provider/model lane is
+  available; the lane-specific rate-limit response remains authoritative.
+- When persistent work was requested and scheduling is available, use a low-frequency
+  retry or heartbeat, stay quiet while state is unchanged, and resume with the same
+  role, specification, ownership, and verification plan. Otherwise report the lane
+  unavailable and resume later.
+
 ## Route contracts
 
 - `solo`: the primary agent plans, implements, tests, and self-reviews. Invoke no subagent.

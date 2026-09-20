@@ -35,7 +35,7 @@ Assert-True ($rootMarketplace.plugins.Count -eq 1) 'root Claude marketplace must
 Assert-True ($rootMarketplace.plugins[0].source -eq './claude/plugins/agent-advisor-claude') 'root Claude marketplace source is wrong'
 Assert-True ($localMarketplace.plugins[0].source -eq './plugins/agent-advisor-claude') 'Claude-local marketplace source is wrong'
 Assert-True ($manifest.name -eq 'agent-advisor-claude') 'Claude plugin name is wrong'
-Assert-True ($manifest.version -eq '1.0.0') 'Claude plugin version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.0.1') 'Claude plugin version changed unexpectedly'
 Assert-True ($manifest.repository -eq 'https://github.com/SanHsien/agent-advisor') 'Claude plugin repository is wrong'
 Write-Host 'PASS: Claude marketplace and plugin JSON'
 
@@ -64,6 +64,7 @@ Assert-True ($reviewer.Contains('Return exactly one verdict')) 'reviewer verdict
 Write-Host 'PASS: Claude native agent inventory, model aliases, and reviewer restrictions'
 
 $skill = Get-Content -LiteralPath $skillPath -Raw
+$operations = Get-Content -LiteralPath (Join-Path $pluginRoot 'skills/orchestration/references/operations.md') -Raw
 foreach ($needle in @(
     'SELECTIVE ROUTE',
     'mode: solo | delegate | audit | full',
@@ -74,6 +75,10 @@ foreach ($needle in @(
     'git status --short'
 )) {
     Assert-True ($skill.Contains($needle)) "Claude orchestration skill omits: $needle"
+}
+foreach ($needle in @('at most one confirmation retry', 'Account-level remaining usage')) {
+    Assert-True ($skill.Contains($needle)) "Claude skill throttling contract omits: $needle"
+    Assert-True ($operations.Contains($needle)) "Claude operations throttling contract omits: $needle"
 }
 $forbiddenFiles = @(Get-ChildItem -LiteralPath $claudeRoot -Recurse -File | Where-Object { $_.Extension -eq '.toml' -or $_.Name -like 'inspect-primary-attestation*' })
 Assert-True ($forbiddenFiles.Count -eq 0) 'Codex-only TOML or attestation inspector leaked into the Claude edition'

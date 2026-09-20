@@ -28,7 +28,7 @@ foreach ($path in $required) {
 
 $manifest = Get-Content -LiteralPath (Join-Path $pluginRoot '.cursor-plugin/plugin.json') -Raw | ConvertFrom-Json
 Assert-True ($manifest.name -eq 'agent-advisor-cursor') 'Cursor plugin name is wrong'
-Assert-True ($manifest.version -eq '1.0.0') 'Cursor plugin version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.0.1') 'Cursor plugin version changed unexpectedly'
 Write-Host 'PASS: Cursor plugin manifest'
 
 $models = @{
@@ -61,6 +61,7 @@ Assert-True ($rule.Contains('SELECTIVE ROUTE')) 'activation rule does not requir
 Write-Host 'PASS: Cursor always-apply activation rule'
 
 $skill = Get-Content -LiteralPath $skillPath -Raw
+$operations = Get-Content -LiteralPath (Join-Path $pluginRoot 'skills/orchestration/references/operations.md') -Raw
 foreach ($needle in @(
     'SELECTIVE ROUTE',
     'mode: solo | delegate | audit | full',
@@ -70,6 +71,10 @@ foreach ($needle in @(
     'rules/selective-routing.mdc'
 )) {
     Assert-True ($skill.Contains($needle)) "Cursor orchestration skill omits: $needle"
+}
+foreach ($needle in @('at most one confirmation retry', 'Account-level remaining usage')) {
+    Assert-True ($skill.Contains($needle)) "Cursor skill throttling contract omits: $needle"
+    Assert-True ($operations.Contains($needle)) "Cursor operations throttling contract omits: $needle"
 }
 $leaked = @(Get-ChildItem -LiteralPath $cursorRoot -Recurse -File | Where-Object { $_.Directory.Name -ne 'scripts' } | Where-Object {
     $text = Get-Content -LiteralPath $_.FullName -Raw

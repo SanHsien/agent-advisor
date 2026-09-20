@@ -63,6 +63,7 @@ Assert-True ($rule.Contains('SELECTIVE ROUTE')) 'activation rule does not requir
 Write-Host 'PASS: Antigravity always-active rule'
 
 $skill = Get-Content -LiteralPath $skillPath -Raw
+$operations = Get-Content -LiteralPath (Join-Path $pluginRoot 'skills/orchestration/references/operations.md') -Raw
 foreach ($needle in @(
     'SELECTIVE ROUTE',
     'mode: solo | delegate | audit | full',
@@ -72,6 +73,10 @@ foreach ($needle in @(
     'rules/selective-routing.md'
 )) {
     Assert-True ($skill.Contains($needle)) "Antigravity orchestration skill omits: $needle"
+}
+foreach ($needle in @('at most one confirmation retry', 'Account-level remaining usage')) {
+    Assert-True ($skill.Contains($needle)) "Antigravity skill throttling contract omits: $needle"
+    Assert-True ($operations.Contains($needle)) "Antigravity operations throttling contract omits: $needle"
 }
 $leaked = @(Get-ChildItem -LiteralPath $agRoot -Recurse -File | Where-Object { $_.Directory.Name -ne 'scripts' } | Where-Object {
     $text = Get-Content -LiteralPath $_.FullName -Raw

@@ -29,7 +29,7 @@ Assert-True ($rootMarket.plugins[0].name -eq 'agent-advisor-codex') 'root Codex 
 Assert-True ($rootMarket.plugins[0].source.path -eq './codex/plugins/agent-advisor-codex') 'root Codex source is wrong'
 Assert-True ($localMarket.plugins[0].source.path -eq './plugins/agent-advisor-codex') 'Codex-local source is wrong'
 Assert-True ($manifest.name -eq 'agent-advisor-codex') 'manifest plugin ID is wrong'
-Assert-True ($manifest.version -eq '1.0.0') 'manifest version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.0.1') 'manifest version changed unexpectedly'
 Assert-True ($manifest.interface.displayName -eq 'Agent Advisor for Codex') 'manifest product name is wrong'
 Assert-True ($manifest.author.name -eq 'Daniel McAteer') 'original author attribution is missing'
 Write-Host 'PASS: Codex marketplace, manifest, product name, and attribution'
@@ -54,6 +54,10 @@ $skill = Get-Content -LiteralPath (Join-Path $pluginDir 'skills/orchestration/SK
 $operations = Get-Content -LiteralPath (Join-Path $pluginDir 'skills/orchestration/references/operations.md') -Raw
 foreach ($needle in @('SELECTIVE ROUTE', 'mode: solo | delegate | audit | full', 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low')) {
     Assert-True ($skill.Contains($needle)) "Codex orchestration skill omits: $needle"
+}
+foreach ($needle in @('at most one confirmation retry', 'Account-level remaining usage')) {
+    Assert-True ($skill.Contains($needle)) "Codex skill throttling contract omits: $needle"
+    Assert-True ($operations.Contains($needle)) "Codex operations throttling contract omits: $needle"
 }
 foreach ($roleId in @('agent_advisor_codex_luna_implementer', 'agent_advisor_codex_terra_implementer', 'agent_advisor_codex_sol_reviewer')) {
     Assert-True ($operations.Contains($roleId)) "Codex operations reference omits: $roleId"

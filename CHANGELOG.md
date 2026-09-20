@@ -8,6 +8,20 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-09-21（provider lane 節流恢復）
+
+### 變更
+
+- **四個 runtime 共用可驗證的 429 恢復契約（`fork`）。** Codex、Claude Code、
+  Cursor 與 Antigravity 現在都把 provider `429 / Too Many Requests` 視為被選模型
+  lane 暫時不可用，而不是程式碼失敗或風險分級改變。契約要求先保存 checkpoint
+  與 ownership，短退避後最多確認重試一次；重複節流時停止密集重試、禁止平行
+  重複 worker 與靜默換模型，只有已要求持續工作且 runtime 可排程時才做低頻率
+  重試，恢復後沿用原角色、規格、ownership 與驗證計畫。
+- **plugin 版本升至 1.0.1。** Codex、Claude Code 與 Cursor manifest 同步升版，
+  PowerShell／POSIX verifier 會檢查節流契約與版本；Antigravity manifest schema
+  沒有版本欄位，因此只更新 bundle 內容與驗證。
+
 ## 2026-09-11（route guard 誤擋修正）
 
 ### 修復

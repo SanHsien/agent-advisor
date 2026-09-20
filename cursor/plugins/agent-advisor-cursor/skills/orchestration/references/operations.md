@@ -33,6 +33,27 @@ registered when the plugin is installed and enabled. Do not preflight or spawn u
 roles. If a selected role is missing, reinstall or re-enable the plugin once; if it
 remains missing, stop that lane.
 
+## Rate-limit recovery
+
+Treat an explicit provider `429 / Too Many Requests` or equivalent rate-limit as
+unavailability of the selected lane, not as an implementation failure or a reason to
+change the declared route.
+
+1. Capture the provider error, selected role, current checkpoint, working-tree or
+   artifact state, and remaining verification before retrying.
+2. Confirm that no worker for the same ownership is still active.
+3. After one short bounded backoff, make at most one confirmation retry.
+4. If throttling repeats, stop immediate retries. Do not spawn a duplicate worker,
+   substitute another agent/model ID, or have the primary redo delegated work.
+5. If persistent work was requested and scheduling is available, retry at low
+   frequency (normally 15-30 minutes), remain quiet while state is unchanged, and use
+   a known provider reset time when one exists. Otherwise report the lane unavailable.
+6. Before resuming, inspect current state again and continue with the same role,
+   specification, ownership, checkpoint, and verification plan.
+
+Account-level remaining usage is not proof that one model lane is available. The
+lane-specific rate-limit response is authoritative until a later attempt succeeds.
+
 ## Reviewer isolation
 
 `readonly: true` in the reviewer's frontmatter is enforced by Cursor at the runtime

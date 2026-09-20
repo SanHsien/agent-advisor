@@ -50,6 +50,26 @@ If a flash result reveals genuine complexity or risk, the primary may declare an
 escalation and issue one corrected complete packet to the pro lane. A corrected flash retry
 is for a specification mistake; it is not a prerequisite for the pro lane.
 
+## Throttled lane return
+
+If a selected subagent can report before stopping on an explicit provider rate limit,
+return this compact availability report instead of presenting throttling as a code
+failure:
+
+~~~text
+LANE AVAILABILITY REPORT
+STATUS: throttled
+ROLE: <exact selected subagent/model tier>
+CHECKPOINT: <last durable checkpoint or none>
+STATE: <working-tree or artifact state>
+RETRY: initial | confirmation
+NEXT: back off and resume the same role/specification/ownership
+~~~
+
+If the subagent cannot return, the primary may derive `throttled` only from an explicit
+provider error. It must inspect durable state and confirm that no same-ownership session
+is active before scheduling or resuming the lane.
+
 ## Review packet
 
 Provide the reviewer with the user outcome, changed-file scope, important interfaces,

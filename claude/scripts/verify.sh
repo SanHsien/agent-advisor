@@ -36,7 +36,7 @@ assert root_market["name"] == "agent-advisor"
 assert root_market["plugins"][0]["source"] == "./claude/plugins/agent-advisor-claude"
 assert local_market["plugins"][0]["source"] == "./plugins/agent-advisor-claude"
 assert manifest["name"] == "agent-advisor-claude"
-assert manifest["version"] == "1.0.0"
+assert manifest["version"] == "1.0.1"
 assert manifest["repository"] == "https://github.com/SanHsien/agent-advisor"
 print("PASS: Claude marketplace and plugin JSON")
 
@@ -58,6 +58,7 @@ assert "Return exactly one verdict" in reviewer
 print("PASS: Claude native agent inventory, model aliases, and reviewer restrictions")
 
 skill = (plugin / "skills" / "orchestration" / "SKILL.md").read_text(encoding="utf-8")
+operations = (plugin / "skills" / "orchestration" / "references" / "operations.md").read_text(encoding="utf-8")
 for needle in (
     "SELECTIVE ROUTE",
     "mode: solo | delegate | audit | full",
@@ -68,6 +69,9 @@ for needle in (
     "git status --short",
 ):
     assert needle in skill, needle
+for needle in ("at most one confirmation retry", "Account-level remaining usage"):
+    assert needle in skill, needle
+    assert needle in operations, needle
 for path in claude.rglob("*"):
     if path.is_file():
         assert path.suffix != ".toml", path

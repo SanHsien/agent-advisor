@@ -115,3 +115,16 @@ frontmatter 有這個欄位，但它期待的工具名稱詞彙不在公開的 c
 驗證完成、要求的 evidence 已取得就停止，不重複 invoke 第二個 subagent 取得相同證據。
 更完整的操作合約見
 [operations.md](../plugins/agent-advisor-antigravity/skills/orchestration/references/operations.md)。
+
+## Provider 節流／429 恢復
+
+`429 / Too Many Requests` 代表被選中的 Flash、Pro implementer 或 Pro reviewer lane
+暫時不可用，不是程式碼失敗，也不會改變原本的風險分級。先保存 checkpoint、
+worktree、角色、工作規格、ownership 與剩餘驗證；短暫且有上限的退避後，最多只做
+一次確認重試。
+
+若再次被節流，停止密集重試，不另開相同 ownership 的平行 session、不改用別的
+subagent 或 model tier，也不讓 primary 重做已委派工作。已要求持續執行且可排程時，
+才以低頻率（通常 15–30 分鐘）重試；狀態未變時保持安靜，若 provider 公布 reset
+time 就以它為準。恢復前先確認沒有舊 session 仍在執行，再用原角色、原規格、原
+ownership 與原驗證計畫接續。帳號仍有總用量，不代表特定模型 lane 可用。

@@ -40,7 +40,7 @@ assert root_market["plugins"][0]["name"] == "agent-advisor-codex"
 assert root_market["plugins"][0]["source"]["path"] == "./codex/plugins/agent-advisor-codex"
 assert local_market["plugins"][0]["source"]["path"] == "./plugins/agent-advisor-codex"
 assert manifest["name"] == "agent-advisor-codex"
-assert manifest["version"] == "1.0.0"
+assert manifest["version"] == "1.0.1"
 assert manifest["interface"]["displayName"] == "Agent Advisor for Codex"
 assert manifest["author"]["name"] == "Daniel McAteer"
 
@@ -70,6 +70,10 @@ do
 done
 for role_id in agent_advisor_codex_luna_implementer agent_advisor_codex_terra_implementer agent_advisor_codex_sol_reviewer; do
   grep -Fq "$role_id" "$operations" || fail "operations reference omits: $role_id"
+done
+for needle in 'at most one confirmation retry' 'Account-level remaining usage'; do
+  grep -Fq "$needle" "$skill" || fail "skill throttling contract omits: $needle"
+  grep -Fq "$needle" "$operations" || fail "operations throttling contract omits: $needle"
 done
 pass 'Codex routing and primary-attestation contracts'
 

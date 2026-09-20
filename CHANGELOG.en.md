@@ -9,6 +9,24 @@ The Codex edition is derived from
 
 ---
 
+## 2026-09-21 (provider-lane throttling recovery)
+
+### Changed
+
+- **A machine-verifiable 429 recovery contract across all four runtimes (`fork`).**
+  Codex, Claude Code, Cursor, and Antigravity now treat provider `429 / Too Many
+  Requests` as temporary unavailability of the selected model lane, not as a code
+  failure or changed risk classification. The contract preserves checkpoints and
+  ownership, permits at most one confirmation retry after a bounded backoff, stops
+  immediate retry loops and duplicate workers, forbids silent model substitution,
+  and resumes the same role, specification, ownership, and verification plan. A
+  low-frequency scheduled retry is used only when persistent work was requested and
+  the runtime supports it.
+- **Plugin version 1.0.1.** Codex, Claude Code, and Cursor manifests now publish the
+  patch version, and both PowerShell and POSIX verifiers pin the throttling contract
+  and version. Antigravity's manifest schema has no version field, so only its bundle
+  content and verifier changed.
+
 ## 2026-09-11 (route guard false blocks)
 
 ### Fixed

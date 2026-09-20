@@ -30,7 +30,7 @@ for path in required:
 
 manifest = json.loads(required[0].read_text(encoding="utf-8"))
 assert manifest["name"] == "agent-advisor-cursor"
-assert manifest["version"] == "1.0.0"
+assert manifest["version"] == "1.0.1"
 print("PASS: Cursor plugin manifest")
 
 agents = plugin / "agents"
@@ -60,6 +60,7 @@ assert "SELECTIVE ROUTE" in rule
 print("PASS: Cursor always-apply activation rule")
 
 skill = (plugin / "skills" / "orchestration" / "SKILL.md").read_text(encoding="utf-8")
+operations = (plugin / "skills" / "orchestration" / "references" / "operations.md").read_text(encoding="utf-8")
 for needle in (
     "SELECTIVE ROUTE",
     "mode: solo | delegate | audit | full",
@@ -69,6 +70,9 @@ for needle in (
     "rules/selective-routing.mdc",
 ):
     assert needle in skill, needle
+for needle in ("at most one confirmation retry", "Account-level remaining usage"):
+    assert needle in skill, needle
+    assert needle in operations, needle
 # Platform separation: no Codex TOML, no Claude Code runtime contracts.
 # The verifiers themselves name the forbidden strings, so they are not scanned.
 for path in cursor.rglob("*"):

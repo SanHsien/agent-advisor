@@ -66,6 +66,7 @@ assert "SELECTIVE ROUTE" in rule
 print("PASS: Antigravity always-active rule")
 
 skill = (plugin / "skills" / "orchestration" / "SKILL.md").read_text(encoding="utf-8")
+operations = (plugin / "skills" / "orchestration" / "references" / "operations.md").read_text(encoding="utf-8")
 for needle in (
     "SELECTIVE ROUTE",
     "mode: solo | delegate | audit | full",
@@ -75,6 +76,9 @@ for needle in (
     "rules/selective-routing.md",
 ):
     assert needle in skill, needle
+for needle in ("at most one confirmation retry", "Account-level remaining usage"):
+    assert needle in skill, needle
+    assert needle in operations, needle
 for path in ag.rglob("*"):
     if path.is_file() and path.parent.name != "scripts":
         assert path.suffix != ".toml", path

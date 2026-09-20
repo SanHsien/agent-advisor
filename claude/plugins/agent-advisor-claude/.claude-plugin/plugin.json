@@ -1,6 +1,6 @@
 {
   "name": "agent-advisor-claude",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code-native selective routing: Opus declares solo, delegate, audit, or exceptional full delivery before work begins.",
   "author": {
     "name": "SanHsien",

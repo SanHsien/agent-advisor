@@ -104,6 +104,26 @@ escalate only with newly observed, recorded risk; it never silently downgrades.
 Solo and delegate have no fresh reviewer or review-driven correction unless a newly
 observed, risk-evidenced route escalation is declared; never silently add one.
 
+## Throttled lane return
+
+If a selected worker can report before stopping on an explicit provider rate limit,
+return this compact availability report instead of presenting throttling as a code
+failure:
+
+~~~text
+LANE AVAILABILITY REPORT
+STATUS: throttled
+ROLE: <exact selected role/model/effort>
+CHECKPOINT: <last durable checkpoint or none>
+STATE: <working-tree or artifact state>
+RETRY: initial | confirmation
+NEXT: back off and resume the same role/specification/ownership
+~~~
+
+If the worker cannot return, the parent may derive `throttled` only from an explicit
+provider error. It must inspect durable state and confirm that no same-ownership worker
+is active before scheduling or resuming the lane.
+
 ## Luna / Max - bounded delegate/full implementation lane
 
 Use this lane only when a declared delegate or full route selects it for bounded,

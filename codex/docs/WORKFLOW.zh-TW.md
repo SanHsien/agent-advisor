@@ -394,3 +394,15 @@ WSL POSIX `VERIFY PASSED`、文件連結通過，以及 upstream ledger 與 live
 
 只記錄可公開重現的 SHA、CI URL、命令與結果；不要把 raw session JSON、秘密、
 token 或暫存備份路徑寫進 repo 文件。
+
+## Provider 節流／429 恢復
+
+`429 / Too Many Requests` 代表被選中的 Luna、Terra 或 Sol lane 暫時不可用，
+不是程式碼失敗，也不會改變原本的風險分級。先保存 checkpoint、worktree、角色、
+工作規格、ownership 與剩餘驗證；短暫且有上限的退避後，最多只做一次確認重試。
+
+若再次被節流，停止密集重試，不另開相同 ownership 的平行 agent、不讓 primary
+重做已委派工作，也不得偷偷換 role／model／effort。使用者已要求持續執行且 runtime
+可排程時，才以低頻率（通常 15–30 分鐘）重試；狀態未變時保持安靜，若 provider
+公布 reset time 就以它為準。恢復前先確認沒有舊 worker 仍在執行，再以原角色、原規格、
+原 ownership 與原驗證計畫接續。帳號仍有總用量，不代表特定模型 lane 可用。

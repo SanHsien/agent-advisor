@@ -50,3 +50,18 @@ Use Traditional Chinese for user-facing collaboration unless the user asks other
   的三個水位；判斷寫在 [docs/UPSTREAM.md](docs/UPSTREAM.md)，已決定過的項目不會被重新問。
 - `dependabot.yml`：**只看 `github-actions`**。這個 repo 沒有套件 manifest，
   因此**也沒有每月依賴新鮮度檢查**——沒有宣告可以拿來跟現行版比對。
+
+## Claude-specific additions carried from the former CLAUDE.md
+
+- Upstream attribution names Daniel McAteer specifically; preserve that name alongside the
+  MIT license, not just a generic "upstream" credit.
+- `claude/templates/` holds material the user copies into their own `~/.claude/`. Nothing
+  there runs from the repository, so keep the paths generic (`<you>`, not a real user name)
+  and keep the wording in sync with `claude/docs/ACTIVATION.zh-TW.md`.
+- On top of the tool-set / `readonly` / `commandExecutionPolicy` isolation already noted
+  above: Claude plugin agents are Markdown with Claude family aliases, and Cursor agents
+  additionally pin model IDs.
+- The `SanHsien/agent-advisor`-only targeting above also covers repository settings, not
+  just PRs, pushes, and releases.
+- Run `pwsh -NoProfile -File tools/dev_check.ps1` before reporting completion — this is the
+  same Windows gate `ci.yml` runs, per the automated-checks section above.

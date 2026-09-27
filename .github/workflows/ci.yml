@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Windows authoritative gate
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - shell: pwsh
+        run: ./tools/dev_check.ps1 -BaseRef '${{ github.event.pull_request.base.sha || github.event.before }}'
+
+  ubuntu:
+    name: POSIX authoritative verifier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: sh codex/plugins/agent-advisor-codex/scripts/verify.sh
+      - run: sh claude/scripts/verify.sh
+      - run: sh cursor/scripts/verify.sh
+      - run: sh antigravity/scripts/verify.sh
+      - name: Unit tests
+        run: python -m unittest discover -s tests -p "test_*.py"
+      - name: Markdown relative links
+        run: python tools/check_links.py
+      - shell: bash
+        run: |
+          base_ref='${{ github.event.pull_request.base.sha || github.event.before }}'
+          if [[ "$base_ref" =~ ^0+$ ]] || ! git rev-parse --verify "$base_ref^{commit}" >/dev/null 2>&1; then
+            echo "Base ref is unavailable or all-zero; checking HEAD commit instead."
+            git show --check --format= HEAD
+          else
+            git diff --check "$base_ref..HEAD"
+          fi

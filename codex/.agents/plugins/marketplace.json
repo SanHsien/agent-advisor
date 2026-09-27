@@ -1,0 +1,20 @@
+{
+  "name": "agent-advisor-codex",
+  "interface": {
+    "displayName": "Agent Advisor for Codex"
+  },
+  "plugins": [
+    {
+      "name": "agent-advisor-codex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-advisor-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

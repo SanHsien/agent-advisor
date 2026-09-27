@@ -1,0 +1,17 @@
+name: Feature request
+description: Propose an observable improvement.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome and constraints
+    validations:
+      required: true

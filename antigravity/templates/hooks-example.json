@@ -1,0 +1,34 @@
+{
+  "_comment": "Copy the blocks you need into ~/.gemini/config/hooks.json (global) or .agents/hooks.json (workspace). Replace <you> with your user name and write full absolute paths. Antigravity's hooks.json is a map of NAMED hook groups, unlike Claude Code's single hooks object.",
+
+  "_comment_no_quotes": "Do NOT wrap the script path in quotes. Antigravity splits a hook command into argv itself instead of handing it to a shell, so the quote characters stay in the filename and Python fails with [Errno 22] Invalid argument. Claude Code does run hook commands through a shell, where the quoted form is correct -- so this is one line you must not copy between the two editions. Because there is no shell to strip quotes, a path containing spaces cannot be expressed here: keep hook scripts on a space-free path.",
+
+  "_comment_windows": "Use python, not a bare `bash`: on Windows a hook command starting with `bash` resolves to C:\\Windows\\System32\\bash.exe (WSL), whose home directory differs, so ~/.gemini/... does not exist there and the hook silently never runs.",
+
+  "example-pretooluse-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python C:\\Users\\<you>\\.gemini\\config\\hooks\\example_guard.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+
+  "example-stop-gate": {
+    "enabled": true,
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python C:\\Users\\<you>\\.gemini\\config\\hooks\\example_gate.py",
+        "timeout": 60
+      }
+    ]
+  }
+}

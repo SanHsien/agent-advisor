@@ -1,0 +1,17 @@
+{
+  "name": "agent-advisor-claude",
+  "owner": {
+    "name": "SanHsien",
+    "url": "https://github.com/SanHsien"
+  },
+  "metadata": {
+    "description": "Agent Advisor for Claude Code marketplace"
+  },
+  "plugins": [
+    {
+      "name": "agent-advisor-claude",
+      "source": "./plugins/agent-advisor-claude",
+      "description": "Claude Code-native risk-gated selective routing"
+    }
+  ]
+}

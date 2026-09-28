@@ -8,6 +8,16 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-09-27（實測後改用 Sol 預設）
+
+### 變更
+
+- **Codex primary 預設改為 `gpt-6-sol/medium`（`fork`）。** 實際使用顯示
+  Luna / Medium 的能力不足，因此 Sol / Medium 成為日常預設；Luna / Medium 保留為
+  低成本選項，Astra / Low 仍只用於少數複雜工作。三組合法配對與輔助角色皆未改變。
+- **Codex plugin 版本升至 1.0.3。** 文件、standing attestation 範例與 verifier
+  同步更新；Claude Code、Cursor、Antigravity 與其他 runtime 不變。
+
 ## 2026-09-27（Plus 用量導向的 primary 預設）
 
 ### 變更

@@ -40,7 +40,7 @@ gh repo set-default SanHsien/agent-advisor，不要加不存在的 --repo 旗標
 ### PowerShell（主要路徑）
 
 需要已啟用 plugin 的 Codex CLI 或 ChatGPT desktop app，以及 primary session 的
-GPT-6 Luna / Medium（預設）、GPT-6 Sol / Medium 或 GPT-6 Astra / Low。只有選到 delegate 或 full 時才需要 Luna / Max 或
+GPT-6 Sol / Medium（預設）、GPT-6 Luna / Medium 或 GPT-6 Astra / Low。只有選到 delegate 或 full 時才需要 Luna / Max 或
 Terra / High 的權限。
 
 ~~~
@@ -133,11 +133,11 @@ Test-Path -LiteralPath $globalOverride
 `AGENTS.md` 放入一行精準的持久聲明：
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium
 ~~~
 
-若使用較強模型且 runtime 欄位不可觀測，可將上列唯一 marker 改為
-`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium` 或
+若改用其他合法組合且 runtime 欄位不可觀測，可將上列唯一 marker 改為
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium` 或
 `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`，不要同時放兩筆。
 完整可觀測的三種合法組合都可直接通過，不受預設 marker 限制；部分欄位缺失時，
 聲明只能補足與已觀測欄位相容的值，不得跨模型混用 effort。
@@ -155,7 +155,7 @@ call；它必須只讀確認實際 user-level/global `AGENTS.md` 恰有一筆 ma
 在 fresh task 的第一個 task tool call 前，對實質開發工作使用
 $agent-advisor-codex:orchestration。實質開發包含建立、修改、除錯、重構、測試、
 review、發布與部署程式碼、設定、腳本或 repo 文件。依 observed metadata 優先、
-持久聲明只補缺失欄位的順序建立 primary Luna / Medium（預設）、Sol / Medium 或 Astra / Low 證據，再宣告一次可機器讀取
+持久聲明只補缺失欄位的順序建立 primary Sol / Medium（預設）、Luna / Medium 或 Astra / Low 證據，再宣告一次可機器讀取
 的 route：
 
 ~~~

@@ -21,7 +21,7 @@ Solo is the default; one auxiliary is the default maximum. Full is an explicit b
 or high-risk exception. A later route declaration may only escalate after newly
 observed risk justifies it and supplies that evidence; never silently downgrade.
 
-Establish Luna / Medium (default), Sol / Medium, or Astra / Low primary evidence using the skill's precedence: observed runtime
+Establish Sol / Medium (default), Luna / Medium, or Astra / Low primary evidence using the skill's precedence: observed runtime
 metadata wins, and any observed conflict stops work. A marker in active instructions
 is only a candidate until the bundled first-call inspector proves actual user-level
 file provenance; after that it may fill only unobservable primary fields. A project

@@ -40,7 +40,7 @@ assert root_market["plugins"][0]["name"] == "agent-advisor-codex"
 assert root_market["plugins"][0]["source"]["path"] == "./codex/plugins/agent-advisor-codex"
 assert local_market["plugins"][0]["source"]["path"] == "./plugins/agent-advisor-codex"
 assert manifest["name"] == "agent-advisor-codex"
-assert manifest["version"] == "1.0.2"
+assert manifest["version"] == "1.0.3"
 assert manifest["interface"]["displayName"] == "Agent Advisor for Codex"
 assert manifest["author"]["name"] == "Daniel McAteer"
 
@@ -64,7 +64,7 @@ operations=$plugin_dir/skills/orchestration/references/operations.md
 for needle in \
   'SELECTIVE ROUTE' \
   'mode: solo | delegate | audit | full' \
-  'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium'
+  'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium'
 do
   grep -Fq "$needle" "$skill" || fail "skill omits: $needle"
 done
@@ -85,16 +85,16 @@ trap cleanup EXIT HUP INT TERM
 
 attestation_home=$tmp_dir/home
 mkdir -p -- "$attestation_home"
-printf '%s\n' 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium' > "$attestation_home/AGENTS.md"
+printf '%s\n' 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium' > "$attestation_home/AGENTS.md"
 output=$(CODEX_HOME="$attestation_home" sh "$inspector")
 printf '%s\n' "$output" | grep -Fq 'PRIMARY_ATTESTATION PASSED' || fail 'valid primary attestation was refused'
 printf '%s\n' "$output" | grep -Fq 'provenance=user-level-file' || fail 'inspector omitted verified provenance'
-printf '%s\n' "$output" | grep -Fxq 'model=gpt-6-luna' || fail 'inspector reported the wrong primary model'
+printf '%s\n' "$output" | grep -Fxq 'model=gpt-6-sol' || fail 'inspector reported the wrong primary model'
 printf '%s\n' "$output" | grep -Fxq 'effort=medium' || fail 'inspector reported the wrong primary effort'
-printf '%s\n' 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium' > "$attestation_home/AGENTS.md"
+printf '%s\n' 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium' > "$attestation_home/AGENTS.md"
 output=$(CODEX_HOME="$attestation_home" sh "$inspector")
-printf '%s\n' "$output" | grep -Fxq 'model=gpt-6-sol' || fail 'Sol alternative was not reported'
-printf '%s\n' "$output" | grep -Fxq 'effort=medium' || fail 'Sol alternative effort was not reported'
+printf '%s\n' "$output" | grep -Fxq 'model=gpt-6-luna' || fail 'Luna alternative was not reported'
+printf '%s\n' "$output" | grep -Fxq 'effort=medium' || fail 'Luna alternative effort was not reported'
 printf '%s\n' 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low' > "$attestation_home/AGENTS.md"
 output=$(CODEX_HOME="$attestation_home" sh "$inspector")
 printf '%s\n' "$output" | grep -Fxq 'model=gpt-6-astra' || fail 'Astra alternative was not reported'

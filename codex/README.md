@@ -5,7 +5,7 @@
 > [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-advisor). It retains
 > the original author attribution and MIT license.
 
-**Luna / Medium is the default primary; Sol / Medium and Astra / Low are supported escalations. It declares a risk-gated route before task tools, keeps
+**Sol / Medium is the default primary; Luna / Medium and Astra / Low are supported alternatives. It declares a risk-gated route before task tools, keeps
 solo as the default, and uses a single auxiliary only when that improves delivery.**
 
 Agent Advisor for Codex is the Codex-native edition of Agent Advisor for capability-routed
@@ -19,7 +19,7 @@ Windows-first fork、安裝、四種 route、委派工作包、驗證與維護�
 ## Quick start
 
 You need a current Codex CLI or ChatGPT desktop app with plugins enabled, GPT-6
-Luna / Medium (default), GPT-6 Sol / Medium, or GPT-6 Astra / Low for the primary session, native custom-agent support, and jq. GPT-5.6
+Sol / Medium (default), GPT-6 Luna / Medium, or GPT-6 Astra / Low for the primary session, native custom-agent support, and jq. GPT-5.6
 Luna / Max or Terra / High access is needed only when the selected route delegates.
 Maintainer POSIX verification also requires Python 3.11+ because `verify.sh` uses
 the standard-library `tomllib` module, as documented in upstream
@@ -33,11 +33,11 @@ To enable that fallback, place this exact line once in the regular user-level
 `~/.codex/AGENTS.md` and do not create a user-level `AGENTS.override.md`:
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium
 ~~~
 
-To use a stronger fallback when runtime metadata is missing, replace that one marker
-with `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium` or
+To use another supported fallback when runtime metadata is missing, replace that one marker
+with `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium` or
 `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`; do not add a second marker.
 Fully observed supported runtime selections take priority over the default.
 

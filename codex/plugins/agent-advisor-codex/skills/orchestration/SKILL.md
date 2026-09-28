@@ -17,16 +17,16 @@ preflight, runtime-evidence, isolation, and maintainer procedures.
 
 ## Confirm the primary session
 
-Default to `gpt-6-luna/medium`; `gpt-6-sol/medium` and `gpt-6-astra/low` are
-supported primary escalation selections. These are exact pairs, not freely
+Default to `gpt-6-sol/medium`; `gpt-6-luna/medium` and `gpt-6-astra/low` are
+supported primary alternative selections. These are exact pairs, not freely
 interchangeable models and efforts.
 
 1. Observed runtime metadata is authoritative. Any supported pair passes,
    even when it differs from the standing default. Unsupported observed pairs stop
    work; a standing attestation cannot override them.
 2. For unobservable fields, accept one candidate line in active instructions:
-   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium` (default),
-   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium`, or
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium` (default),
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium`, or
    `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`.
    Declare the route before task tools, then run the bundled
    `inspect-primary-attestation` as the first and only preflight call. It must verify

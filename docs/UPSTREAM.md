@@ -148,8 +148,9 @@ Historical upstream decisions retain their original model references.
 
 ## 2026-09-27 fork primary policy
 
-The default Codex primary is `gpt-6-luna/medium`; `gpt-6-sol/medium` is the
-everyday escalation and `gpt-6-astra/low` is reserved for exceptional complex work.
+The default Codex primary is `gpt-6-sol/medium`; `gpt-6-luna/medium` remains available
+for lower-cost work and `gpt-6-astra/low` is reserved for exceptional complex work.
 The standing attestation, inspectors, advisory hook, and public documentation accept
-these three exact pairs. This supersedes the 2026-09-12 fork policy above. Auxiliary
+these three exact pairs. This supersedes the earlier 2026-09-27 Luna-default policy and
+the 2026-09-12 fork policy above. Auxiliary
 Luna/Max, Terra/High, and Sol/High reviewer roles are unchanged.

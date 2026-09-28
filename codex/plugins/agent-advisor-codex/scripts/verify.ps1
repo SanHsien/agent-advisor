@@ -29,7 +29,7 @@ Assert-True ($rootMarket.plugins[0].name -eq 'agent-advisor-codex') 'root Codex 
 Assert-True ($rootMarket.plugins[0].source.path -eq './codex/plugins/agent-advisor-codex') 'root Codex source is wrong'
 Assert-True ($localMarket.plugins[0].source.path -eq './plugins/agent-advisor-codex') 'Codex-local source is wrong'
 Assert-True ($manifest.name -eq 'agent-advisor-codex') 'manifest plugin ID is wrong'
-Assert-True ($manifest.version -eq '1.0.2') 'manifest version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.0.3') 'manifest version changed unexpectedly'
 Assert-True ($manifest.interface.displayName -eq 'Agent Advisor for Codex') 'manifest product name is wrong'
 Assert-True ($manifest.author.name -eq 'Daniel McAteer') 'original author attribution is missing'
 Write-Host 'PASS: Codex marketplace, manifest, product name, and attribution'
@@ -52,7 +52,7 @@ Write-Host 'PASS: Codex exact role IDs, models, efforts, and reviewer sandbox re
 
 $skill = Get-Content -LiteralPath (Join-Path $pluginDir 'skills/orchestration/SKILL.md') -Raw
 $operations = Get-Content -LiteralPath (Join-Path $pluginDir 'skills/orchestration/references/operations.md') -Raw
-foreach ($needle in @('SELECTIVE ROUTE', 'mode: solo | delegate | audit | full', 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium')) {
+foreach ($needle in @('SELECTIVE ROUTE', 'mode: solo | delegate | audit | full', 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium')) {
     Assert-True ($skill.Contains($needle)) "Codex orchestration skill omits: $needle"
 }
 foreach ($needle in @('at most one confirmation retry', 'Account-level remaining usage')) {
@@ -71,16 +71,16 @@ try {
     $fakeHome = Join-Path $fixtureRoot 'home'
     [IO.Directory]::CreateDirectory($fakeHome) | Out-Null
     $env:CODEX_HOME = $fakeHome
-    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium'
+    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium'
     $output = & $inspector
     Assert-True ($output -contains 'PRIMARY_ATTESTATION PASSED') 'valid primary attestation was refused'
     Assert-True ($output -contains 'provenance=user-level-file') 'inspector omitted verified provenance'
-    Assert-True ($output -contains 'model=gpt-6-luna') 'inspector reported the wrong primary model'
+    Assert-True ($output -contains 'model=gpt-6-sol') 'inspector reported the wrong primary model'
     Assert-True ($output -contains 'effort=medium') 'inspector reported the wrong primary effort'
-    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium'
+    Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium'
     $output = & $inspector
-    Assert-True ($output -contains 'model=gpt-6-sol') 'Sol alternative was not reported'
-    Assert-True ($output -contains 'effort=medium') 'Sol alternative effort was not reported'
+    Assert-True ($output -contains 'model=gpt-6-luna') 'Luna alternative was not reported'
+    Assert-True ($output -contains 'effort=medium') 'Luna alternative effort was not reported'
     Set-Content -LiteralPath (Join-Path $fakeHome 'AGENTS.md') -Value 'AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low'
     $output = & $inspector
     Assert-True ($output -contains 'model=gpt-6-astra') 'Astra alternative was not reported'

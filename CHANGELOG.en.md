@@ -9,6 +9,18 @@ The Codex edition is derived from
 
 ---
 
+## 2026-09-27 (Sol default after hands-on evaluation)
+
+### Changed
+
+- **The default Codex primary is now `gpt-6-sol/medium` (`fork`).** Hands-on use found
+  Luna / Medium insufficient, so Sol / Medium is now the everyday default. Luna / Medium
+  remains available for lower-cost work, while Astra / Low remains reserved for exceptional
+  complex work. The three supported pairs and all auxiliary roles are unchanged.
+- **Codex plugin version 1.0.3.** Documentation, standing-attestation examples, and
+  verifiers now match the new default. Claude Code, Cursor, Antigravity, and other
+  runtimes are unchanged.
+
 ## 2026-09-27 (Plus-aware primary default)
 
 ### Changed

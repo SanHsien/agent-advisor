@@ -13,7 +13,7 @@ runtimes. Pick the edition that matches the tool running your development sessio
 | Edition | Native roles | Plugin | Guide |
 | --- | --- | --- | --- |
 | Codex | Sol / Medium default primary, Luna / Medium for lower-cost work, and Astra / Low for exceptional complex work; optional Luna, Terra, and Sol reviewer lanes | `agent-advisor-codex` | [Agent Advisor for Codex](codex/README.md) |
-| Claude Code | Opus primary; optional Haiku, Sonnet, and Opus reviewer lanes | `agent-advisor-claude` | [Agent Advisor for Claude Code](claude/README.md) |
+| Claude Code | Opus / medium primary; Sonnet / medium default implementer, Sonnet / high for harder work, and Haiku for mechanical batches only; optional Opus reviewer lane | `agent-advisor-claude` | [Agent Advisor for Claude Code](claude/README.md) |
 | Cursor | Explicit high-capability primary; optional Composer, Sonnet, and Opus reviewer lanes | `agent-advisor-cursor` | [Agent Advisor for Cursor](cursor/README.md) |
 | Antigravity | Pro-tier primary; optional flash, pro, and pro reviewer lanes | `agent-advisor-antigravity` | [Agent Advisor for Antigravity](antigravity/README.md) |
 

@@ -6,16 +6,27 @@ routing design of Daniel McAteer's upstream project to Claude Code's native plug
 and Markdown subagents; it does not run Codex or translate Codex configuration at
 runtime.
 
-The primary Opus session owns architecture, route selection, verification, and final
-acceptance. It stays `solo` by default and uses one auxiliary only when the task risk
+The primary Opus session (medium effort) owns architecture, route selection,
+verification, and final acceptance. It stays `solo` by default and uses one auxiliary only when the task risk
 justifies it:
 
 | Route | Native Claude Code delivery |
 | --- | --- |
 | `solo` | Opus plans, implements, tests, and self-reviews. |
-| `delegate` | Haiku handles bounded work or Sonnet handles judgment-heavy/high-risk work; Opus verifies. |
+| `delegate` | Sonnet / medium implements well-specified work, Sonnet / high takes debugging, many-file, or high-risk work, and Haiku only takes mechanical batches; Opus verifies. |
 | `audit` | Opus implements and verifies; a fresh Opus subagent reviews. |
-| `full` | One Haiku or Sonnet implementer, Opus verification, then a fresh Opus review; exceptional only. |
+| `full` | One Sonnet or Haiku implementer, Opus verification, then a fresh Opus review; exceptional only. |
+
+Implementer lanes, from default to escalation:
+
+| Lane | Model / effort | Use for |
+| --- | --- | --- |
+| `advisor-sonnet-implementer` | `sonnet` / `medium` | Default: well-specified implementation, docs, slides, spreadsheets. |
+| `advisor-sonnet-deep-implementer` | `sonnet` / `high` | Debugging with an unclear root cause, changes across many files, high-risk or wide-blast-radius work. |
+| `advisor-haiku-implementer` | `haiku` | Mechanical batches only: renames, formatting, grep summaries, applying an already-proven template. |
+
+The escalation ladder is Haiku, then Sonnet implementer, then Sonnet deep implementer;
+past that the primary decides, and a lane never silently switches model family.
 
 ## Quick start
 
@@ -53,7 +64,8 @@ ROUTE before starting work" the standing behaviour of every session, paste
 — that file is loaded into every session, so no hook is required.
 
 [`docs/ACTIVATION.zh-TW.md`](docs/ACTIVATION.zh-TW.md) covers the full setup: the Opus
-model and `effortLevel` prerequisite, an optional `SessionStart` hook fallback, manual
+model and `effortLevel` prerequisite (Opus 5.5 / medium, plus the
+`CLAUDE_CODE_SUBAGENT_MODEL` default for subagents that name no model), an optional `SessionStart` hook fallback, manual
 installation for entrypoints where the `/plugin` panel cannot open, and which sessions a
 change actually reaches. It also documents three traps that make a correct setup look
 broken — a running session writing `effortLevel` back, a launcher `--model` flag

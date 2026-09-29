@@ -26,7 +26,7 @@ Code 顯示需要 reload，依提示執行 `/reload-plugins`，然後以 Opus �
 預設行為，把 [`claude/templates/claude-md-snippet.md`](../templates/claude-md-snippet.md)
 貼進 `~/.claude/CLAUDE.md`；該檔每個 session 都會自動載入，不需要 hook。
 
-前置條件（Opus model 與 `effortLevel`）、hook 備援、生效範圍，以及三個會讓正確設定看起來
+前置條件（Opus model、`effortLevel` 與 subagent 預設 model）、hook 備援、生效範圍，以及三個會讓正確設定看起來
 壞掉的陷阱，見 [ACTIVATION.zh-TW.md](ACTIVATION.zh-TW.md)。
 
 ## 使用
@@ -49,11 +49,16 @@ review 的明確高風險例外。
 
 ## Claude 原生角色
 
-| 角色 | Model alias | 用途 |
+| 角色 | Model alias／effort | 用途 |
 | --- | --- | --- |
-| `agent-advisor-claude:advisor-haiku-implementer` | `haiku` | 邊界清楚、規格完整的例行實作 |
-| `agent-advisor-claude:advisor-sonnet-implementer` | `sonnet` | 高複雜、高風險或寬影響範圍實作 |
+| `agent-advisor-claude:advisor-sonnet-implementer` | `sonnet`／`medium` | 預設委派 lane：規格完整的實作、文件、簡報、試算表 |
+| `agent-advisor-claude:advisor-sonnet-deep-implementer` | `sonnet`／`high` | 根因不明的除錯、跨多檔變更、高風險或寬影響範圍實作 |
+| `agent-advisor-claude:advisor-haiku-implementer` | `haiku` | 只做機械批次：改名、格式化、grep 摘要、套用已驗證的模板（不設 effort） |
 | `agent-advisor-claude:advisor-opus-reviewer` | `opus` | `audit`／`full` 的 fresh review |
+
+升級階梯是 Haiku → Sonnet implementer → Sonnet deep implementer；再往上由 primary 決定，
+不會悄悄換模型家族。沒有 `effort` 欄位的 agent 繼承 primary session 的 effort，Claude Code
+沒有「全域 subagent effort」設定，所以 Sonnet 兩條 lane 在各自的 frontmatter 釘死。
 
 Claude Code 的組織 allowlist 可能替換 agent frontmatter 要求的 model family。
 若 UI 或 agent 啟動訊息顯示替換，受影響 lane 必須停止，不能把不同模型當成

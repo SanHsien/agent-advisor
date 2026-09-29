@@ -1,6 +1,6 @@
 ---
 name: orchestration
-description: "Claude Code-native risk-gated selective routing: default solo delivery, targeted Haiku or Sonnet delegation, and fresh Opus review only when justified."
+description: "Claude Code-native risk-gated selective routing: default solo delivery, targeted Sonnet, deep Sonnet, or Haiku delegation, and fresh Opus review only when justified."
 ---
 
 # Agent Advisor for Claude Code Orchestration
@@ -57,10 +57,13 @@ risk classification changed.
 ## Route contracts
 
 - `solo`: primary Opus plans, implements, tests, and self-reviews. Spawn no auxiliary.
-- `delegate`: select `agent-advisor-claude:advisor-haiku-implementer` for bounded, fully
-  specified work or `agent-advisor-claude:advisor-sonnet-implementer` for judgment-heavy,
-  high-risk, context-heavy, or wide-blast-radius work. The primary verifies and does
-  not add a fresh reviewer.
+- `delegate`: select `agent-advisor-claude:advisor-sonnet-implementer` (Sonnet / medium)
+  by default for well-specified implementation, docs, slides, or spreadsheets;
+  `agent-advisor-claude:advisor-sonnet-deep-implementer` (Sonnet / high) for debugging
+  with an unclear root cause, changes across many files, or high-risk or
+  wide-blast-radius work; `agent-advisor-claude:advisor-haiku-implementer` only for
+  mechanical batches (renames, formatting, grep summaries, applying an already-proven
+  template). The primary verifies and does not add a fresh reviewer.
 - `audit`: primary implements and verifies, then one fresh
   `agent-advisor-claude:advisor-opus-reviewer` inspects the accumulated diff.
 - `full`: exceptional only. Use one selected implementer, primary verification, and

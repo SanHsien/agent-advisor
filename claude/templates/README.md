@@ -7,7 +7,7 @@ each file is meant to be copied into the user's `~/.claude/` directory.
 | File | Copy to | Purpose |
 | --- | --- | --- |
 | [`claude-md-snippet.md`](claude-md-snippet.md) | paste into `~/.claude/CLAUDE.md` | **Primary method.** Makes the SELECTIVE ROUTE declaration the default for every session. |
-| [`settings-example.json`](settings-example.json) | merge into `~/.claude/settings.json` | Opus model + `effortLevel`, plus the optional hook wiring. |
+| [`settings-example.json`](settings-example.json) | merge into `~/.claude/settings.json` | Opus model + `effortLevel`, `CLAUDE_CODE_SUBAGENT_MODEL` for subagents that name no model, plus the optional hook wiring. |
 | [`session-start-activation.py`](session-start-activation.py) | `~/.claude/hooks/` | Optional fallback that injects the directive through an independent channel. |
 | [`route-guard.py`](route-guard.py) | `~/.claude/hooks/` | **Enforcement.** Blocks Edit/Write until a route is declared in the current turn. |
 

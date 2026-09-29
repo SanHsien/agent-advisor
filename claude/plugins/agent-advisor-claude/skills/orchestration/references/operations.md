@@ -8,9 +8,18 @@ It never launches a nested CLI process as an agent.
 | Agent | Family alias | Route |
 | --- | --- | --- |
 | Primary session | `opus` | all routes |
-| `agent-advisor-claude:advisor-haiku-implementer` | `haiku` | bounded `delegate` or `full` |
-| `agent-advisor-claude:advisor-sonnet-implementer` | `sonnet` | complex/high-risk `delegate` or `full` |
+| `agent-advisor-claude:advisor-sonnet-implementer` | `sonnet`, effort `medium` | default `delegate` or `full` |
+| `agent-advisor-claude:advisor-sonnet-deep-implementer` | `sonnet`, effort `high` | complex/high-risk `delegate` or `full` |
+| `agent-advisor-claude:advisor-haiku-implementer` | `haiku` | mechanical-batch `delegate` or `full` |
 | `agent-advisor-claude:advisor-opus-reviewer` | `opus` | `audit` or `full` |
+
+Agent frontmatter `effort` sets the reasoning effort of that agent; an agent without an
+`effort` field (Haiku, the reviewer) inherits the primary session's effort, and Claude
+Code has no global subagent-effort setting. Model resolution for a subagent is: Agent
+tool `model` parameter, then agent frontmatter `model`, then `CLAUDE_CODE_SUBAGENT_MODEL`,
+then the primary model. The plugin agents all name a `model`, so the environment variable
+only affects agents that do not (for example the built-in general-purpose and Explore
+agents).
 
 Start the primary session with `claude --model opus`. Model aliases deliberately avoid
 pinning a dated model ID. Claude Code resolves aliases through the active provider and

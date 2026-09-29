@@ -8,6 +8,24 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-09-29（Claude Code 模型標準：Opus / Sonnet / Haiku 分工）
+
+### 變更
+
+- **Claude Code 委派 lane 改為三個實作者。** `advisor-sonnet-implementer` 成為預設委派 lane
+  （`sonnet`／`effort: medium`：規格完整的實作、文件、簡報、試算表）；新增
+  `advisor-sonnet-deep-implementer`（`sonnet`／`effort: high`：根因不明的除錯、跨多檔變更、
+  高風險或寬影響範圍工作，承接原本 Sonnet implementer 的角色）；`advisor-haiku-implementer`
+  縮小為只做機械批次（改名、格式化、grep 摘要、套用已驗證模板）。升級階梯為 Haiku → Sonnet
+  implementer → Sonnet deep implementer，再往上由 primary 決定，不會悄悄換模型家族。四個路由、
+  「預設最多一個輔助」、preflight、節流與 reviewer 規則不變。
+- **Settings 範例改為 Opus 5.5 / medium 並加入 subagent 預設 model。** `model` 改為
+  `claude-opus-5-5`、`effortLevel` 改為 `medium`，新增 `env.CLAUDE_CODE_SUBAGENT_MODEL`
+  （`claude-sonnet-5-5`），只影響沒有指定 model 的 subagent；plugin agent 仍用各自的 `model`。
+  沒有 `effort` 欄位的 subagent 繼承 primary 的 effort，Claude Code 沒有全域 subagent effort 設定。
+- **Claude plugin 版本升至 1.0.2。** 文件、ACTIVATION 指南、範本與兩支 verifier（agent 清單、
+  model 對照、effort 檢查）同步更新。Codex、Cursor、Antigravity 不變。
+
 ## 2026-09-27（實測後改用 Sol 預設）
 
 ### 變更

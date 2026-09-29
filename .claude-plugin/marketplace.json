@@ -11,7 +11,7 @@
     {
       "name": "agent-advisor-claude",
       "source": "./claude/plugins/agent-advisor-claude",
-      "description": "Claude Code-native selective routing with Opus architecture and risk-gated Haiku, Sonnet, or Opus review lanes"
+      "description": "Claude Code-native selective routing with Opus architecture and risk-gated Sonnet, deep Sonnet, Haiku, or Opus review lanes"
     }
   ]
 }

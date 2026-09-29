@@ -18,8 +18,11 @@ skill 一樣是按需喚起的：Claude 判斷任務相關才讀，或使用者�
 
 ~~~json
 {
-  "model": "claude-opus-5",
-  "effortLevel": "high"
+  "model": "claude-opus-5-5",
+  "effortLevel": "medium",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5-5"
+  }
 }
 ~~~
 
@@ -33,15 +36,28 @@ skill 一樣是按需喚起的：Claude 判斷任務相關才讀，或使用者�
 | 互動指令 | `/effort <level>`（會寫回 settings.json） |
 | 環境變數 | `CLAUDE_CODE_EFFORT_LEVEL` |
 
-用完整 model id（`claude-opus-5`）比用 alias（`opus`）明確：alias 會被 launcher 旗標蓋掉，
+用完整 model id（`claude-opus-5-5`）比用 alias（`opus`）明確：alias 會被 launcher 旗標蓋掉，
 見陷阱 2。
+
+### Subagent 的 model 與 effort
+
+`env.CLAUDE_CODE_SUBAGENT_MODEL` 只管「沒有指定 model 的 subagent」（例如內建的 general-purpose、
+Explore）。plugin 內的 agent 各自在 frontmatter 寫死 `model`，不受它影響。解析順序：
+
+~~~text
+Agent 工具的 model 參數 > agent frontmatter 的 model > CLAUDE_CODE_SUBAGENT_MODEL > primary model
+~~~
+
+Effort 沒有對應的全域設定：沒有 `effort` 欄位的 subagent 繼承 primary session 的 effort。
+所以 `advisor-sonnet-implementer` 釘 `medium`、`advisor-sonnet-deep-implementer` 釘 `high`，
+Haiku 與 reviewer 不設，跟著 primary 走。
 
 ### 陷阱 1：執行中的 session 會把 effortLevel 蓋回去
 
 從外部改 `effortLevel` 之後，**正在跑的 session 偵測到檔案變動，會把它自己當下的 effort
 寫回設定檔**。實測寫入 `high` 後立刻被改回 `medium`。
 
-對策：改完立刻複查；或乾脆在新 session 裡打一次 `/effort high`，讓 CLI 自己寫，就不會被自己蓋掉。
+對策：改完立刻複查；或乾脆在新 session 裡打一次 `/effort medium`，讓 CLI 自己寫，就不會被自己蓋掉。
 
 ### 陷阱 2：launcher 的 `--model` 旗標蓋過 settings.json
 

@@ -35,21 +35,23 @@ Assert-True ($rootMarketplace.plugins.Count -eq 1) 'root Claude marketplace must
 Assert-True ($rootMarketplace.plugins[0].source -eq './claude/plugins/agent-advisor-claude') 'root Claude marketplace source is wrong'
 Assert-True ($localMarketplace.plugins[0].source -eq './plugins/agent-advisor-claude') 'Claude-local marketplace source is wrong'
 Assert-True ($manifest.name -eq 'agent-advisor-claude') 'Claude plugin name is wrong'
-Assert-True ($manifest.version -eq '1.0.1') 'Claude plugin version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.0.2') 'Claude plugin version changed unexpectedly'
 Assert-True ($manifest.repository -eq 'https://github.com/SanHsien/agent-advisor') 'Claude plugin repository is wrong'
 Write-Host 'PASS: Claude marketplace and plugin JSON'
 
 $expectedAgents = @(
     'advisor-haiku-implementer.md',
     'advisor-opus-reviewer.md',
+    'advisor-sonnet-deep-implementer.md',
     'advisor-sonnet-implementer.md'
 )
 $actualAgents = @(Get-ChildItem -LiteralPath $agentsDir -File -Filter '*.md' | Sort-Object Name | Select-Object -ExpandProperty Name)
-Assert-True (($actualAgents -join '|') -eq ($expectedAgents -join '|')) 'Claude agent inventory differs from the exact three-role contract'
+Assert-True (($actualAgents -join '|') -eq ($expectedAgents -join '|')) 'Claude agent inventory differs from the exact four-role contract'
 
 $models = @{
     'advisor-haiku-implementer.md' = 'haiku'
     'advisor-sonnet-implementer.md' = 'sonnet'
+    'advisor-sonnet-deep-implementer.md' = 'sonnet'
     'advisor-opus-reviewer.md' = 'opus'
 }
 foreach ($entry in $models.GetEnumerator()) {
@@ -57,6 +59,16 @@ foreach ($entry in $models.GetEnumerator()) {
     Assert-True ($text -match "(?m)^model:\s+$($entry.Value)\s*$") "$($entry.Key) does not pin $($entry.Value)"
     Assert-True ($text -match '(?m)^name:\s+[a-z0-9-]+\s*$') "$($entry.Key) has an invalid name"
 }
+$efforts = @{
+    'advisor-sonnet-implementer.md' = 'medium'
+    'advisor-sonnet-deep-implementer.md' = 'high'
+}
+foreach ($entry in $efforts.GetEnumerator()) {
+    $text = Get-Content -LiteralPath (Join-Path $agentsDir $entry.Key) -Raw
+    Assert-True ($text -match "(?m)^effort:\s+$($entry.Value)\s*$") "$($entry.Key) does not pin effort $($entry.Value)"
+}
+$haikuText = Get-Content -LiteralPath (Join-Path $agentsDir 'advisor-haiku-implementer.md') -Raw
+Assert-True ($haikuText -notmatch '(?m)^effort:') 'haiku implementer must not set effort'
 $reviewer = Get-Content -LiteralPath (Join-Path $agentsDir 'advisor-opus-reviewer.md') -Raw
 Assert-True ($reviewer -match '(?m)^tools:\s+Read, Glob, Grep, Bash\s*$') 'reviewer tool allowlist drifted'
 Assert-True ($reviewer -match '(?m)^disallowedTools:.*Edit.*Write') 'reviewer does not explicitly deny file-edit tools'
@@ -70,6 +82,7 @@ foreach ($needle in @(
     'mode: solo | delegate | audit | full',
     'agent-advisor-claude:advisor-haiku-implementer',
     'agent-advisor-claude:advisor-sonnet-implementer',
+    'agent-advisor-claude:advisor-sonnet-deep-implementer',
     'agent-advisor-claude:advisor-opus-reviewer',
     'substitution warning',
     'git status --short'
@@ -102,6 +115,7 @@ foreach ($path in $activationAssets) {
 $settingsExample = Get-Content -LiteralPath $examplePath -Raw | ConvertFrom-Json
 Assert-True ($settingsExample.model -like 'claude-opus-*') 'settings example must default to the Opus family'
 Assert-True (@('low', 'medium', 'high', 'xhigh', 'max') -contains $settingsExample.effortLevel) 'settings example uses an unsupported effortLevel'
+Assert-True ($settingsExample.env.CLAUDE_CODE_SUBAGENT_MODEL -like 'claude-sonnet-*') 'settings example must set CLAUDE_CODE_SUBAGENT_MODEL to a Sonnet model'
 $hookCommand = $settingsExample.hooks.SessionStart[0].hooks[0].command
 Assert-True ($hookCommand.StartsWith('python ')) 'hook command must invoke python, not a bare bash that resolves to WSL on Windows'
 Assert-True ($hookCommand.Contains('session-start-activation.py')) 'hook command does not point at the shipped hook'

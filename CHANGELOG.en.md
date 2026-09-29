@@ -9,6 +9,29 @@ The Codex edition is derived from
 
 ---
 
+## 2026-09-29 (Claude Code model standard: Opus / Sonnet / Haiku split)
+
+### Changed
+
+- **Claude Code delegation now has three implementer lanes.** `advisor-sonnet-implementer`
+  becomes the default delegate lane (`sonnet` / `effort: medium`: well-specified
+  implementation, docs, slides, spreadsheets). The new `advisor-sonnet-deep-implementer`
+  (`sonnet` / `effort: high`: debugging with an unclear root cause, changes across many
+  files, high-risk or wide-blast-radius work) takes over the role the Sonnet implementer had
+  before. `advisor-haiku-implementer` narrows to mechanical batches only (renames, formatting,
+  grep summaries, applying an already-proven template). The escalation ladder is Haiku,
+  then Sonnet implementer, then Sonnet deep implementer, after which the primary decides and
+  never silently switches model family. The four routes, one auxiliary by default, preflight,
+  throttling, and reviewer rules are unchanged.
+- **The settings example is now Opus 5.5 / medium with a subagent default model.** `model`
+  is `claude-opus-5-5`, `effortLevel` is `medium`, and `env.CLAUDE_CODE_SUBAGENT_MODEL`
+  (`claude-sonnet-5-5`) is new; it only affects subagents that name no model, while plugin
+  agents keep their own `model`. A subagent without an `effort` field inherits the primary
+  session's effort, and Claude Code has no global subagent-effort setting.
+- **Claude plugin version 1.0.2.** Documentation, the activation guide, templates, and both
+  verifiers (agent inventory, model map, effort checks) now match. Codex, Cursor, and
+  Antigravity are unchanged.
+
 ## 2026-09-27 (Sol default after hands-on evaluation)
 
 ### Changed

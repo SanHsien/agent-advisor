@@ -12,7 +12,7 @@ Agent Advisor 把同一套風險分流交付流程，包成四個原生 agent ru
 | 版本 | 原生角色 | Plugin | 教學 |
 | --- | --- | --- | --- |
 | Codex | Sol / Medium 預設 primary，低成本工作可切 Luna / Medium，少數難題切 Astra / Low；選用 Luna、Terra、Sol reviewer lane | `agent-advisor-codex` | [Agent Advisor for Codex](codex/README.md) |
-| Claude Code | Opus 為 primary；選用 Haiku、Sonnet、Opus reviewer lane | `agent-advisor-claude` | [Agent Advisor for Claude Code](claude/README.md) |
+| Claude Code | Opus / medium 為 primary；預設 Sonnet / medium 實作，困難工作切 Sonnet / high，Haiku 只做機械批次；選用 Opus reviewer lane | `agent-advisor-claude` | [Agent Advisor for Claude Code](claude/README.md) |
 | Cursor | 明確指定的高能力模型為 primary；選用 Composer、Sonnet、Opus reviewer lane | `agent-advisor-cursor` | [Agent Advisor for Cursor](cursor/README.md) |
 | Antigravity | pro 級為 primary；選用 flash、pro、pro reviewer lane | `agent-advisor-antigravity` | [Agent Advisor for Antigravity](antigravity/README.md) |
 

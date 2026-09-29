@@ -36,7 +36,7 @@ assert root_market["name"] == "agent-advisor"
 assert root_market["plugins"][0]["source"] == "./claude/plugins/agent-advisor-claude"
 assert local_market["plugins"][0]["source"] == "./plugins/agent-advisor-claude"
 assert manifest["name"] == "agent-advisor-claude"
-assert manifest["version"] == "1.0.1"
+assert manifest["version"] == "1.0.2"
 assert manifest["repository"] == "https://github.com/SanHsien/agent-advisor"
 print("PASS: Claude marketplace and plugin JSON")
 
@@ -44,6 +44,7 @@ agents = plugin / "agents"
 expected = {
     "advisor-haiku-implementer.md": "haiku",
     "advisor-sonnet-implementer.md": "sonnet",
+    "advisor-sonnet-deep-implementer.md": "sonnet",
     "advisor-opus-reviewer.md": "opus",
 }
 assert {p.name for p in agents.glob("*.md")} == set(expected)
@@ -51,6 +52,15 @@ for name, model in expected.items():
     text = (agents / name).read_text(encoding="utf-8")
     assert re.search(rf"^model:\s+{model}\s*$", text, re.M), name
     assert re.search(r"^name:\s+[a-z0-9-]+\s*$", text, re.M), name
+efforts = {
+    "advisor-sonnet-implementer.md": "medium",
+    "advisor-sonnet-deep-implementer.md": "high",
+}
+for name, effort in efforts.items():
+    text = (agents / name).read_text(encoding="utf-8")
+    assert re.search(rf"^effort:\s+{effort}\s*$", text, re.M), name
+haiku = (agents / "advisor-haiku-implementer.md").read_text(encoding="utf-8")
+assert not re.search(r"^effort:", haiku, re.M), "haiku implementer must not set effort"
 reviewer = (agents / "advisor-opus-reviewer.md").read_text(encoding="utf-8")
 assert re.search(r"^tools:\s+Read, Glob, Grep, Bash\s*$", reviewer, re.M)
 assert re.search(r"^disallowedTools:.*Edit.*Write", reviewer, re.M)
@@ -64,6 +74,7 @@ for needle in (
     "mode: solo | delegate | audit | full",
     "agent-advisor-claude:advisor-haiku-implementer",
     "agent-advisor-claude:advisor-sonnet-implementer",
+    "agent-advisor-claude:advisor-sonnet-deep-implementer",
     "agent-advisor-claude:advisor-opus-reviewer",
     "substitution warning",
     "git status --short",
@@ -89,6 +100,7 @@ for path in (activation, templates / "README.md", snippet, example, hook):
 settings = json.loads(example.read_text(encoding="utf-8"))
 assert settings["model"].startswith("claude-opus-"), settings["model"]
 assert settings["effortLevel"] in {"low", "medium", "high", "xhigh", "max"}
+assert settings["env"]["CLAUDE_CODE_SUBAGENT_MODEL"].startswith("claude-sonnet-"), settings["env"]
 hook_command = settings["hooks"]["SessionStart"][0]["hooks"][0]["command"]
 assert hook_command.startswith("python "), hook_command
 assert hook.name in hook_command, hook_command

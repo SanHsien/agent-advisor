@@ -59,6 +59,19 @@ publish。
 | [#23 General Codex router](https://github.com/DannyMac180/sol-advisor/pull/23) | **skip** | 新增 schema-v2 routing entrypoint、usage inspection 與 mutable profiles，改變目前四 route / 三 exact roles 的產品邊界；且是未 rollout 的 draft，不是相容 bugfix。 |
 | [#24 Document Python 3.11+](https://github.com/DannyMac180/sol-advisor/pull/24) | **adopt** | PR base 正是 current upstream `37b75c...`，GitHub 顯示 clean/mergeable，主張可由 `verify.sh` 的 `import tomllib` 直接驗證。已在 README、DEVELOPMENT 與繁中 workflow 明列 Python 3.11+，並保留 #24/#1 attribution。 |
 
+## 2026-09-30 review (through PR #32 / issue #31)
+
+Upstream `main` unchanged at `37b75cad...` (0 new commits). 4 new PRs and 2 new issues, all still open upstream.
+
+| Item | Decision | Reason |
+| --- | --- | --- |
+| [PR #27](https://github.com/DannyMac180/sol-advisor/pull/27) reject missing routing metadata | **adoption pending: no local verification** | Defect is real here: `codex/plugins/agent-advisor-codex/scripts/inspect-agent-runtime.sh` (lines 118-137) only checks unique-count for sandbox/permission/cwd. The 6-line jq fix plus fixtures in `verify.sh` need `jq`, which is absent on the Windows gate host, so it cannot be verified locally. Trigger: jq available or upstream merges it. |
+| [PR #28](https://github.com/DannyMac180/sol-advisor/pull/28) `--primary` runtime inspection | **adoption pending: large, overlaps fork attestation** | +243 lines across inspector, verify and skill contracts; overlaps the fork's v0.6.1 standing attestation (issue #25). Revisit if upstream merges; port design, not diff. |
+| [PR #30](https://github.com/DannyMac180/sol-advisor/pull/30) installer digest backend | **adoption pending: unverifiable locally** | Fixes non-login-shell `shasum` resolution in `install-agents.sh`; needs the POSIX verifier with both backends. Revisit on upstream merge or a reproduced `unreadable` on the fork installer. |
+| [PR #32](https://github.com/DannyMac180/sol-advisor/pull/32) Neon Courier Roblox game | **not-applicable** | Unrelated game template. |
+| [Issue #29](https://github.com/DannyMac180/sol-advisor/issues/29) "N.V" | **not-applicable** | Spam, no technical content. |
+| [Issue #31](https://github.com/DannyMac180/sol-advisor/issues/31) link to astra-advisor | **not-applicable** | Promo link to an upstream-only repo; the fork is Codex/Claude-specific. |
+
 ## Adopted in this fork review
 
 - 採用 [PR #24](https://github.com/DannyMac180/sol-advisor/pull/24)／

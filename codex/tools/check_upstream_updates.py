@@ -148,7 +148,7 @@ def render_markdown(baseline: dict, commits: list[dict], prs, issues, error: str
     ]
     if error:
         lines += ["## Check failed", "", "```text", error, "```", ""]
-        return "\n".join(lines) + "\n"
+        return "\n".join(lines).rstrip("\n") + "\n"
 
     lines += ["## Commits", ""]
     if not commits:
@@ -166,7 +166,8 @@ def render_markdown(baseline: dict, commits: list[dict], prs, issues, error: str
 
     lines += render_ticket_section("Upstream pull requests", int(baseline.get("reviewed_pr_through", 0) or 0), prs, "pr")
     lines += render_ticket_section("Upstream issues", int(baseline.get("reviewed_issue_through", 0) or 0), issues, "issue")
-    return "\n".join(lines) + "\n"
+    # Sections end with a blank line; a committed report must not end with one (git diff --check).
+    return "\n".join(lines).rstrip("\n") + "\n"
 
 
 def main(argv: list[str] | None = None) -> int:

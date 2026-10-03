@@ -13,9 +13,9 @@ justifies it:
 | Route | Native Cursor delivery |
 | --- | --- |
 | `solo` | The primary agent plans, implements, tests, and self-reviews. |
-| `delegate` | Composer handles bounded work or Sonnet handles judgment-heavy/high-risk work; the primary verifies. |
+| `delegate` | Sonnet (medium) handles well-specified work by default, Sonnet (high) handles judgment-heavy/high-risk work, and Composer handles mechanical batches only; the primary verifies. |
 | `audit` | The primary implements and verifies; a fresh Opus subagent reviews. |
-| `full` | One Composer or Sonnet implementer, primary verification, then a fresh Opus review; exceptional only. |
+| `full` | One Sonnet, deep Sonnet, or Composer implementer, primary verification, then a fresh Opus review; exceptional only. |
 
 ## Quick start
 
@@ -75,6 +75,14 @@ sh cursor/scripts/verify.sh
   on prompt discipline alone the way the Claude Code edition must.
 - Cursor has no stable model family aliases. Each lane pins a model ID from
   `cursor-agent models`, which fails closed when a model is unavailable rather than
-  silently substituting a different one.
+  silently substituting a different one. The IDs were last re-checked on 2026-10-02.
+- Three implementer lanes carry the shared standard: `advisor-sonnet-implementer`
+  (`claude-sonnet-5-5-medium`) is the default, `advisor-sonnet-deep-implementer`
+  (`claude-sonnet-5-5-high`) takes debugging with an unclear root cause, changes across
+  many files, and high-risk or wide-blast-radius work, and `advisor-composer-implementer`
+  (`composer-2.5`) is limited to mechanical batches. The escalation ladder is Composer,
+  then Sonnet, then Sonnet deep; past that the primary decides and never silently
+  switches model. Medium versus high effort is expressed by the model ID suffix, since
+  agent frontmatter has no effort field.
 - Activation ships inside the plugin as an always-apply rule; no user-level context file
   is edited.

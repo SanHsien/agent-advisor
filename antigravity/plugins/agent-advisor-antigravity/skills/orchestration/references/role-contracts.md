@@ -42,13 +42,19 @@ GAPS: <unfinished work, ambiguity, or none>
 
 ## Lane selection
 
-- Flash implementer: bounded, fully specified, low-ambiguity work.
-- Pro implementer: judgment-heavy, high-risk, context-heavy, or broad changes.
+- Flash implementer (`flash`): the default delegate lane for well-specified
+  implementation, docs, slides, and spreadsheets, and for mechanical batches such as
+  renames, formatting, grep summaries, or applying an already-proven template.
+- Pro implementer (`pro`): the deep lane for debugging with an unclear root cause,
+  changes across many files, or judgment-heavy, high-risk, context-heavy, or
+  wide-blast-radius work.
 - Pro reviewer: fresh review only after primary verification in `audit` or `full`.
 
-If a flash result reveals genuine complexity or risk, the primary may declare an
-escalation and issue one corrected complete packet to the pro lane. A corrected flash retry
-is for a specification mistake; it is not a prerequisite for the pro lane.
+Escalation ladder: Flash implementer, then Pro implementer. If a flash result reveals
+genuine complexity or risk, the primary may declare an escalation and issue one corrected
+complete packet to the pro lane. A corrected flash retry is for a specification mistake;
+it is not a prerequisite for the pro lane. Past the pro implementer the primary decides
+how to proceed, and never silently switches model tier.
 
 ## Throttled lane return
 

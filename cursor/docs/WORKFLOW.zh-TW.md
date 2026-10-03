@@ -50,12 +50,17 @@ risk: <本任務的精簡風險理由>
 
 | 角色 | Model | 用途 |
 | --- | --- | --- |
-| `advisor-composer-implementer` | `composer-2.5` | 邊界清楚、規格完整的例行實作 |
-| `advisor-sonnet-implementer` | `claude-sonnet-5-thinking-high` | 高複雜、高風險或寬影響範圍實作 |
-| `advisor-opus-reviewer` | `claude-opus-5-thinking-high` | `audit`／`full` 的 fresh review |
+| `advisor-sonnet-implementer` | `claude-sonnet-5-5-medium` | 預設委派 lane：規格完整的實作、文件、簡報、試算表 |
+| `advisor-sonnet-deep-implementer` | `claude-sonnet-5-5-high` | 根因不明的除錯、跨多檔變更、高風險或寬影響範圍實作 |
+| `advisor-composer-implementer` | `composer-2.5` | 只做機械批次：改名、格式化、grep 摘要、套用已驗證模板 |
+| `advisor-opus-reviewer` | `claude-opus-5-5-high` | `audit`／`full` 的 fresh review |
+
+升級階梯為 Composer → Sonnet implementer → Sonnet deep implementer，再往上由 primary
+決定，不會悄悄換模型。Medium／high 的差別由 model ID 後綴表達（agent frontmatter 沒有
+effort 欄位）。
 
 Cursor 沒有穩定的 model family alias，所以每個 lane 直接釘 model ID。改動前先用
-`cursor-agent models` 對一次現行清單。釘死的 ID 是**故意 fail closed**：目前方案跑不了
+`cursor-agent models` 對一次現行清單（上表 ID 於 2026-10-02 重新核對過）。釘死的 ID 是**故意 fail closed**：目前方案跑不了
 那個模型時該 lane 停掉，而不是讓 Cursor 換一個模型繼續跑。
 
 ## 驗證與停止條件

@@ -16,5 +16,9 @@ Single questions, status lookups, and chat need no declaration.
 specification makes one materially useful. A later declaration may escalate after
 newly observed risk; it may never silently downgrade.
 
+When delegating, the default lane is `advisor-flash-implementer`; `advisor-pro-implementer`
+takes high-risk, unclear-root-cause, or wide-blast-radius work. The ladder is Flash, then
+Pro; past that the primary decides and never silently switches model tier.
+
 The primary agent owns intent, architecture, route choice, verification, and final
 acceptance — delegation never transfers those.

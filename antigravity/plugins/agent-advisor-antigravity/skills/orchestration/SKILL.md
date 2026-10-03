@@ -3,7 +3,7 @@ name: orchestration
 description: >-
   Antigravity-native risk-gated selective routing. Use when starting any non-trivial
   implementation, refactor, or debugging task to choose between default solo delivery,
-  targeted flash or pro delegation, and a fresh pro review only when justified.
+  targeted flash (default) or pro (deep) delegation, and a fresh pro review only when justified.
 ---
 
 # Agent Advisor for Antigravity Orchestration
@@ -65,9 +65,12 @@ risk classification changed.
 ## Route contracts
 
 - `solo`: the primary agent plans, implements, tests, and self-reviews. Invoke no subagent.
-- `delegate`: invoke `advisor-flash-implementer` for bounded, fully specified work or
-  `advisor-pro-implementer` for judgment-heavy, high-risk, context-heavy, or
-  wide-blast-radius work. The primary verifies and does not add a fresh reviewer.
+- `delegate`: invoke `advisor-flash-implementer` by default for well-specified
+  implementation, docs, slides, spreadsheets, and mechanical batches (renames, formatting,
+  grep summaries, applying an already-proven template); invoke `advisor-pro-implementer`
+  for debugging with an unclear root cause, changes across many files, or judgment-heavy,
+  high-risk, context-heavy, or wide-blast-radius work. The primary verifies and does not
+  add a fresh reviewer.
 - `audit`: primary implements and verifies, then one fresh `advisor-pro-reviewer`
   inspects the accumulated diff.
 - `full`: exceptional only. Use one selected implementer, primary verification, and

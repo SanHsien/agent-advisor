@@ -14,8 +14,8 @@ runtimes. Pick the edition that matches the tool running your development sessio
 | --- | --- | --- | --- |
 | Codex | Sol / Medium default primary, Luna / Medium for lower-cost work, and Astra / Low for exceptional complex work; optional Luna, Terra, and Sol reviewer lanes | `agent-advisor-codex` | [Agent Advisor for Codex](codex/README.md) |
 | Claude Code | Opus / medium primary; Sonnet / medium default implementer, Sonnet / high for harder work, and Haiku for mechanical batches only; optional Opus reviewer lane | `agent-advisor-claude` | [Agent Advisor for Claude Code](claude/README.md) |
-| Cursor | Explicit high-capability primary; optional Composer, Sonnet, and Opus reviewer lanes | `agent-advisor-cursor` | [Agent Advisor for Cursor](cursor/README.md) |
-| Antigravity | Pro-tier primary; optional flash, pro, and pro reviewer lanes | `agent-advisor-antigravity` | [Agent Advisor for Antigravity](antigravity/README.md) |
+| Cursor | Explicit high-capability primary; Sonnet / medium default implementer, Sonnet / high for harder work, and Composer for mechanical batches only; optional Opus reviewer lane | `agent-advisor-cursor` | [Agent Advisor for Cursor](cursor/README.md) |
+| Antigravity | Pro-tier primary; flash default implementer (mechanical batches included) and pro for harder work, since there is no per-subagent effort field; optional pro reviewer lane | `agent-advisor-antigravity` | [Agent Advisor for Antigravity](antigravity/README.md) |
 
 Every edition preserves four routes: `solo`, `delegate`, `audit`, and exceptional
 `full`. The primary agent owns architecture, route selection, verification, and final

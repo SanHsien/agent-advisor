@@ -9,6 +9,33 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-02 (Cursor and Antigravity aligned to the model standard)
+
+### Changed
+
+- **Cursor delegation now has three implementer lanes.** `advisor-sonnet-implementer`
+  becomes the default delegate lane (`claude-sonnet-5-5-medium`: well-specified
+  implementation, docs, slides, spreadsheets). The new `advisor-sonnet-deep-implementer`
+  (`claude-sonnet-5-5-high`: debugging with an unclear root cause, changes across many
+  files, high-risk or wide-blast-radius work) takes over the role the Sonnet implementer had
+  before. `advisor-composer-implementer` (`composer-2.5`, unchanged) narrows to mechanical
+  batches only. `advisor-opus-reviewer` moves to `claude-opus-5-5-high` (was
+  `claude-opus-5-thinking-high`); its role and `readonly: true` are unchanged. The
+  escalation ladder is Composer, then Sonnet implementer, then Sonnet deep implementer,
+  after which the primary decides and never silently switches model. The model IDs were
+  re-checked with `cursor-agent models` on 2026-10-02. Cursor plugin version is now 1.0.2
+  and the verifiers match.
+- **Antigravity keeps two implementer lanes.** The subagent `model` field documents only
+  the tiers `inherit`, `flash`, and `pro`, and there is no per-subagent effort field
+  (effort lives in model-ID suffixes and the CLI `--effort` flag), so no agent and no field
+  is added; the same standard is expressed by tier instead. `advisor-flash-implementer`
+  becomes the default delegate lane (well-specified implementation and mechanical batches)
+  and `advisor-pro-implementer` is the deep lane. The escalation ladder is Flash, then Pro
+  implementer, after which the primary decides. The reviewer is unchanged. `plugin.json`
+  has never carried a version field, so there is no version to bump.
+- The four routes, one auxiliary by default, preflight, throttling, pinned-ID fail-closed,
+  and reviewer rules are unchanged. Claude Code and Codex are unchanged.
+
 ## 2026-09-29 (Claude Code model standard: Opus / Sonnet / Haiku split)
 
 ### Changed

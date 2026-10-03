@@ -1,7 +1,7 @@
 ---
 name: advisor-opus-reviewer
 description: Performs Agent Advisor for Cursor's fresh final review after the primary agent has implemented and verified the change. Never implements fixes.
-model: claude-opus-5-thinking-high
+model: claude-opus-5-5-high
 readonly: true
 ---
 

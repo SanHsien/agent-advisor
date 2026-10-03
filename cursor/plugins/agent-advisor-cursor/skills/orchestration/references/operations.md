@@ -8,12 +8,16 @@ It never launches a nested CLI process as an agent.
 | Agent | Model | Route |
 | --- | --- | --- |
 | Primary session | explicitly selected high-capability reasoning model | all routes |
-| `advisor-composer-implementer` | `composer-2.5` | bounded `delegate` or `full` |
-| `advisor-sonnet-implementer` | `claude-sonnet-5-thinking-high` | complex/high-risk `delegate` or `full` |
-| `advisor-opus-reviewer` | `claude-opus-5-thinking-high` | `audit` or `full` |
+| `advisor-sonnet-implementer` | `claude-sonnet-5-5-medium` | default `delegate` or `full` |
+| `advisor-sonnet-deep-implementer` | `claude-sonnet-5-5-high` | complex/high-risk `delegate` or `full` |
+| `advisor-composer-implementer` | `composer-2.5` | mechanical-batch `delegate` or `full` |
+| `advisor-opus-reviewer` | `claude-opus-5-5-high` | `audit` or `full` |
 
-Cursor has no stable family aliases, so each lane pins a model ID. The IDs above are a
-snapshot; re-check them against the current catalog before editing a lane:
+Cursor has no stable family aliases, so each lane pins a model ID. The medium and high
+effort split between the two Sonnet lanes is carried by the model ID suffix, not by a
+frontmatter field. The IDs above are a snapshot, last re-checked against
+`cursor-agent models` on 2026-10-02; re-check them against the current catalog before
+editing a lane:
 
 ~~~sh
 cursor-agent models

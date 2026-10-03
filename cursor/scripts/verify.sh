@@ -30,14 +30,15 @@ for path in required:
 
 manifest = json.loads(required[0].read_text(encoding="utf-8"))
 assert manifest["name"] == "agent-advisor-cursor"
-assert manifest["version"] == "1.0.1"
+assert manifest["version"] == "1.0.2"
 print("PASS: Cursor plugin manifest")
 
 agents = plugin / "agents"
 expected = {
     "advisor-composer-implementer.md": "composer-2.5",
-    "advisor-sonnet-implementer.md": "claude-sonnet-5-thinking-high",
-    "advisor-opus-reviewer.md": "claude-opus-5-thinking-high",
+    "advisor-sonnet-implementer.md": "claude-sonnet-5-5-medium",
+    "advisor-sonnet-deep-implementer.md": "claude-sonnet-5-5-high",
+    "advisor-opus-reviewer.md": "claude-opus-5-5-high",
 }
 assert {p.name for p in agents.glob("*.md")} == set(expected)
 for name, model in expected.items():
@@ -49,7 +50,11 @@ for name, model in expected.items():
 reviewer = (agents / "advisor-opus-reviewer.md").read_text(encoding="utf-8")
 assert re.search(r"^readonly:\s+true\s*$", reviewer, re.M)
 assert "Return exactly one verdict" in reviewer
-for name in ("advisor-composer-implementer.md", "advisor-sonnet-implementer.md"):
+for name in (
+    "advisor-composer-implementer.md",
+    "advisor-sonnet-implementer.md",
+    "advisor-sonnet-deep-implementer.md",
+):
     assert re.search(r"^readonly:\s+false\s*$", (agents / name).read_text(encoding="utf-8"), re.M), name
 print("PASS: Cursor agent inventory, pinned models, and reviewer readonly flag")
 
@@ -66,6 +71,7 @@ for needle in (
     "mode: solo | delegate | audit | full",
     "advisor-composer-implementer",
     "advisor-sonnet-implementer",
+    "advisor-sonnet-deep-implementer",
     "advisor-opus-reviewer",
     "rules/selective-routing.mdc",
 ):

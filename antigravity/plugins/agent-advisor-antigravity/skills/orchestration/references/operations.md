@@ -8,8 +8,8 @@ and an always-active rule. It never launches a nested CLI process as an agent.
 | Agent | Model tier | Route |
 | --- | --- | --- |
 | Primary session | pro tier at high effort | all routes |
-| `advisor-flash-implementer` | `flash` | bounded `delegate` or `full` |
-| `advisor-pro-implementer` | `pro` | complex/high-risk `delegate` or `full` |
+| `advisor-flash-implementer` | `flash` | default `delegate` or `full` (well-specified and mechanical work) |
+| `advisor-pro-implementer` | `pro` | deep lane: complex/high-risk `delegate` or `full` |
 | `advisor-pro-reviewer` | `pro` | `audit` or `full` |
 
 Antigravity's subagent `model` field takes a tier — `inherit`, `flash`, or `pro` — not a
@@ -19,6 +19,11 @@ lanes stable across model releases. Check what a tier currently resolves to with
 ~~~sh
 agy models
 ~~~
+
+This edition has two implementer lanes rather than the three of the Claude Code and Cursor editions
+because the subagent frontmatter documents no per-subagent effort field; the medium/high
+split of the shared standard is expressed here by tier (`flash` as the default lane,
+`pro` as the deep lane).
 
 Reasoning effort is separate from the tier. Model IDs carry an effort suffix and the CLI
 also accepts `--effort low|medium|high`; confirm the effective value instead of assuming

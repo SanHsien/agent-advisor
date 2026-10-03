@@ -53,12 +53,16 @@ risk: <本任務的精簡風險理由>
 
 | 角色 | Model tier | 用途 |
 | --- | --- | --- |
-| `advisor-flash-implementer` | `flash` | 邊界清楚、規格完整的例行實作 |
-| `advisor-pro-implementer` | `pro` | 高複雜、高風險或寬影響範圍實作 |
+| `advisor-flash-implementer` | `flash` | 預設委派 lane：規格完整的實作、文件、簡報、試算表，以及機械批次（改名、格式化、grep 摘要、套用已驗證模板） |
+| `advisor-pro-implementer` | `pro` | 深度 lane：根因不明的除錯、跨多檔變更、高風險或寬影響範圍實作 |
 | `advisor-pro-reviewer` | `pro` | `audit`／`full` 的 fresh review |
 
 `model` 收的是 **tier**（`inherit` / `flash` / `pro`），不是帶日期的 model ID——所以模型改版
 時 lane 不會跟著壞，這點比 Cursor 版釘死 ID 穩。tier 目前解析到什麼可以用 `agy models` 看。
+
+本版只有兩個實作 lane，不像 Claude Code 與 Cursor 版有三個：subagent frontmatter 沒有文件化的 per-subagent
+effort 欄位，所以那兩版的 medium／high 分工在這裡用 tier 表達（`flash` 為預設、`pro` 為深度）。
+升級階梯為 Flash → Pro implementer，再往上由 primary 決定，不會悄悄換 tier。
 
 **effort 跟 tier 是兩件事**：model ID 自帶 effort 後綴，CLI 另有 `--effort low|medium|high`。
 不要假設預設值，確認實際生效的那個。

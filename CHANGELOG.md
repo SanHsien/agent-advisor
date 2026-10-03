@@ -8,6 +8,28 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-02（Cursor、Antigravity 對齊模型標準）
+
+### 變更
+
+- **Cursor 委派 lane 改為三個實作者。** `advisor-sonnet-implementer` 成為預設委派 lane
+  （`claude-sonnet-5-5-medium`：規格完整的實作、文件、簡報、試算表）；新增
+  `advisor-sonnet-deep-implementer`（`claude-sonnet-5-5-high`：根因不明的除錯、跨多檔變更、
+  高風險或寬影響範圍工作，承接原本 Sonnet implementer 的角色）；`advisor-composer-implementer`
+  （`composer-2.5` 不變）縮小為只做機械批次。`advisor-opus-reviewer` 改用
+  `claude-opus-5-5-high`（原為 `claude-opus-5-thinking-high`），角色與 `readonly: true` 不變。
+  升級階梯為 Composer → Sonnet implementer → Sonnet deep implementer，再往上由 primary 決定，
+  不會悄悄換模型。model ID 於 2026-10-02 用 `cursor-agent models` 重新核對。Cursor plugin
+  版本升至 1.0.2，verifier 同步更新。
+- **Antigravity 保持兩個實作 lane。** subagent 的 `model` 欄位只文件化 `inherit`、`flash`、
+  `pro` 三個 tier，也沒有 per-subagent 的 effort 欄位（effort 在 model ID 後綴與 CLI
+  `--effort`），所以不新增 agent、不新增欄位，改以 tier 表達同一個標準：
+  `advisor-flash-implementer` 成為預設委派 lane（規格完整的實作與機械批次），
+  `advisor-pro-implementer` 為深度 lane。升級階梯為 Flash → Pro implementer，再往上由
+  primary 決定。reviewer 不變。`plugin.json` 本來就沒有版本欄位，因此沒有版本可升。
+- 四個路由、「預設最多一個輔助」、preflight、節流、pinned ID fail closed 與 reviewer 規則不變。
+  Claude Code 與 Codex 不變。
+
 ## 2026-09-29（Claude Code 模型標準：Opus / Sonnet / Haiku 分工）
 
 ### 變更

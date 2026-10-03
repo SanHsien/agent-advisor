@@ -13,9 +13,9 @@ justifies it:
 | Route | Native Antigravity delivery |
 | --- | --- |
 | `solo` | The primary agent plans, implements, tests, and self-reviews. |
-| `delegate` | The flash lane handles bounded work or the pro lane handles judgment-heavy/high-risk work; the primary verifies. |
+| `delegate` | The flash lane is the default for well-specified and mechanical work; the pro lane handles judgment-heavy/high-risk work; the primary verifies. |
 | `audit` | The primary implements and verifies; a fresh pro subagent reviews. |
-| `full` | One flash or pro implementer, primary verification, then a fresh pro review; exceptional only. |
+| `full` | One flash (default) or pro (deep) implementer, primary verification, then a fresh pro review; exceptional only. |
 
 ## Quick start
 
@@ -77,6 +77,12 @@ See [the Traditional Chinese workflow](docs/WORKFLOW.zh-TW.md).
   Lanes stay stable across model releases, unlike the Cursor edition's pinned IDs.
 - Reasoning effort is separate from the tier: model IDs carry an effort suffix and the
   CLI accepts `--effort low|medium|high`.
+- There are two implementer lanes, not three: subagent frontmatter documents no
+  per-subagent effort field, so the medium/high split of the Claude Code and Cursor editions is expressed
+  by tier. `advisor-flash-implementer` is the default lane (well-specified and
+  mechanical work) and `advisor-pro-implementer` is the deep lane. The escalation ladder
+  is Flash, then Pro implementer; past that the primary decides and never silently
+  switches tier.
 - The reviewer ships no `tools` allowlist. The frontmatter field exists, but the
   tool-name vocabulary it expects is not part of the published customization
   documentation, and a guessed identifier would silently widen or empty the lane's

@@ -42,13 +42,21 @@ GAPS: <unfinished work, ambiguity, or none>
 
 ## Lane selection
 
-- Composer implementer: bounded, fully specified, low-ambiguity work.
-- Sonnet implementer: judgment-heavy, high-risk, context-heavy, or broad changes.
+- Sonnet implementer (`claude-sonnet-5-5-medium`): the default delegate lane for
+  well-specified implementation, docs, slides, and spreadsheets.
+- Sonnet deep implementer (`claude-sonnet-5-5-high`): debugging with an unclear root
+  cause, changes across many files, or judgment-heavy, high-risk, context-heavy, or
+  wide-blast-radius work.
+- Composer implementer: mechanical batches only, such as renames, formatting, grep
+  summaries, or applying an already-proven template.
 - Opus reviewer: fresh review only after primary verification in `audit` or `full`.
 
-If a Composer result reveals genuine complexity or risk, the primary may declare an
-escalation and issue one corrected complete packet to Sonnet. A corrected Composer retry
-is for a specification mistake; it is not a prerequisite for Sonnet.
+Escalation ladder: Composer, then Sonnet implementer, then Sonnet deep implementer. If a
+lane's result reveals genuine complexity or risk, the primary may declare an escalation
+and issue one corrected complete packet to the next lane up. A corrected retry in the
+same lane is for a specification mistake; it is not a prerequisite for escalating. Past
+the deep implementer the primary decides how to proceed, and never silently switches
+model.
 
 ## Throttled lane return
 

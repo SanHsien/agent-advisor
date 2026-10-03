@@ -28,17 +28,18 @@ foreach ($path in $required) {
 
 $manifest = Get-Content -LiteralPath (Join-Path $pluginRoot '.cursor-plugin/plugin.json') -Raw | ConvertFrom-Json
 Assert-True ($manifest.name -eq 'agent-advisor-cursor') 'Cursor plugin name is wrong'
-Assert-True ($manifest.version -eq '1.0.1') 'Cursor plugin version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.0.2') 'Cursor plugin version changed unexpectedly'
 Write-Host 'PASS: Cursor plugin manifest'
 
 $models = @{
     'advisor-composer-implementer.md' = 'composer-2.5'
-    'advisor-sonnet-implementer.md' = 'claude-sonnet-5-thinking-high'
-    'advisor-opus-reviewer.md' = 'claude-opus-5-thinking-high'
+    'advisor-sonnet-implementer.md' = 'claude-sonnet-5-5-medium'
+    'advisor-sonnet-deep-implementer.md' = 'claude-sonnet-5-5-high'
+    'advisor-opus-reviewer.md' = 'claude-opus-5-5-high'
 }
 $expectedAgents = @($models.Keys | Sort-Object)
 $actualAgents = @(Get-ChildItem -LiteralPath $agentsDir -File -Filter '*.md' | Sort-Object Name | Select-Object -ExpandProperty Name)
-Assert-True (($actualAgents -join '|') -eq ($expectedAgents -join '|')) 'Cursor agent inventory differs from the exact three-role contract'
+Assert-True (($actualAgents -join '|') -eq ($expectedAgents -join '|')) 'Cursor agent inventory differs from the exact four-role contract'
 foreach ($entry in $models.GetEnumerator()) {
     $text = Get-Content -LiteralPath (Join-Path $agentsDir $entry.Key) -Raw
     Assert-True ($text -match "(?m)^model:\s+$([regex]::Escape($entry.Value))\s*$") "$($entry.Key) does not pin $($entry.Value)"
@@ -48,7 +49,7 @@ foreach ($entry in $models.GetEnumerator()) {
 $reviewer = Get-Content -LiteralPath (Join-Path $agentsDir 'advisor-opus-reviewer.md') -Raw
 Assert-True ($reviewer -match '(?m)^readonly:\s+true\s*$') 'reviewer must be readonly: Cursor has no tool allowlist to fall back on'
 Assert-True ($reviewer.Contains('Return exactly one verdict')) 'reviewer verdict contract is missing'
-foreach ($name in @('advisor-composer-implementer.md', 'advisor-sonnet-implementer.md')) {
+foreach ($name in @('advisor-composer-implementer.md', 'advisor-sonnet-implementer.md', 'advisor-sonnet-deep-implementer.md')) {
     $text = Get-Content -LiteralPath (Join-Path $agentsDir $name) -Raw
     Assert-True ($text -match '(?m)^readonly:\s+false\s*$') "$name must declare readonly: false explicitly"
 }
@@ -67,6 +68,7 @@ foreach ($needle in @(
     'mode: solo | delegate | audit | full',
     'advisor-composer-implementer',
     'advisor-sonnet-implementer',
+    'advisor-sonnet-deep-implementer',
     'advisor-opus-reviewer',
     'rules/selective-routing.mdc'
 )) {

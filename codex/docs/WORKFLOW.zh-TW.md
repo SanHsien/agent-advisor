@@ -40,7 +40,7 @@ gh repo set-default SanHsien/agent-advisor，不要加不存在的 --repo 旗標
 ### PowerShell（主要路徑）
 
 需要已啟用 plugin 的 Codex CLI 或 ChatGPT desktop app，以及 primary session 的
-GPT-6 Sol / Medium（預設）、GPT-6 Luna / Medium 或 GPT-6 Astra / Low。只有選到 delegate 或 full 時才需要 Luna / Max 或
+GPT-6.1 Sol / Medium（預設）、GPT-6 Luna / Medium 或 GPT-6 Astra / Low。只有選到 delegate 或 full 時才需要 Luna / Max 或
 Terra / High 的權限。
 
 ~~~
@@ -133,7 +133,7 @@ Test-Path -LiteralPath $globalOverride
 `AGENTS.md` 放入一行精準的持久聲明：
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium
 ~~~
 
 若改用其他合法組合且 runtime 欄位不可觀測，可將上列唯一 marker 改為
@@ -148,7 +148,7 @@ project `AGENTS.md` 也能仿造文字。先宣告 route，再把 skill 內建
 call；它必須只讀確認實際 user-level/global `AGENTS.md` 恰有一筆 marker、是一般
 檔案、大小合理，且沒有 user-level `AGENTS.override.md`。通過前不得使用其他工具
 或派 agent。觀測到的 metadata 永遠優先：若明確顯示不是
-`gpt-6-luna/medium`、`gpt-6-sol/medium` 或 `gpt-6-astra/low` 任一完整組合，必須停止；若只缺 model、effort 或兩者，通過來源驗證的聲明
+`gpt-6-luna/medium`、`gpt-6.1-sol/medium` 或 `gpt-6-astra/low` 任一完整組合，必須停止；若只缺 model、effort 或兩者，通過來源驗證的聲明
 只補足缺失欄位，並標記為 operator-attested with verified user-level provenance，
 不得在新 task 或 compaction 後再詢問。
 
@@ -274,7 +274,7 @@ Return exact commands and actual evidence. A completion claim without evidence i
 ~~~
 
 父代理的 acceptance 不是 worker 的口頭聲明：父代理要檢查完整 working-tree
-diff、確認只改 owned files、重新執行驗證，並保留實際輸出。建議要求 worker
+diff、確認只改 owned files，依成本合約查核可沿用證據或執行必要驗證，並保留實際輸出。建議要求 worker
 用以下格式回報：
 
 ~~~
@@ -407,3 +407,9 @@ token 或暫存備份路徑寫進 repo 文件。
 可排程時，才以低頻率（通常 15–30 分鐘）重試；狀態未變時保持安靜，若 provider
 公布 reset time 就以它為準。恢復前先確認沒有舊 worker 仍在執行，再以原角色、原規格、
 原 ownership 與原驗證計畫接續。帳號仍有總用量，不代表特定模型 lane 可用。
+
+## 成本紀律
+
+四條路由與預設一個輔助角色不變；派工與驗證前讀該版 skill 的 `references/cost-policy.md`。
+只有命令、輸入、完整工作樹及環境一致的真實證據才可沿用；repo 強制的父代理重跑／交付 gate 仍執行。
+不固定加顧問、不把模型單價當完成成本、不宣稱安裝等於 runtime 或省費實測。

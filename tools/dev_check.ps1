@@ -17,6 +17,7 @@ Invoke-Gate 'Codex PowerShell verifier' { & pwsh -NoProfile -File (Join-Path $re
 Invoke-Gate 'Claude PowerShell verifier' { & pwsh -NoProfile -File (Join-Path $repoRoot 'claude/scripts/verify.ps1') }
 Invoke-Gate 'Cursor PowerShell verifier' { & pwsh -NoProfile -File (Join-Path $repoRoot 'cursor/scripts/verify.ps1') }
 Invoke-Gate 'Antigravity PowerShell verifier' { & pwsh -NoProfile -File (Join-Path $repoRoot 'antigravity/scripts/verify.ps1') }
+Invoke-Gate 'Hermes contract verifier' { & pwsh -NoProfile -File (Join-Path $repoRoot 'hermes/scripts/verify.ps1') }
 $python = @('python', 'python3') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 if ($python) {
     # No -t: with an absolute start directory unittest treats it as the top level, so

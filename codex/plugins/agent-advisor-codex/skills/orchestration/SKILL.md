@@ -17,15 +17,15 @@ preflight, runtime-evidence, isolation, and maintainer procedures.
 
 ## Confirm the primary session
 
-Default to `gpt-6-sol/medium`; `gpt-6-luna/medium` and `gpt-6-astra/low` are
-supported primary alternative selections. These are exact pairs, not freely
+Default to `gpt-6.1-sol/medium`; `gpt-6-luna/medium` and `gpt-6-astra/low` are
+supported primary alternative selections. `gpt-6-sol/medium` remains an explicit legacy-compatible pair. These are exact pairs, not freely
 interchangeable models and efforts.
 
 1. Observed runtime metadata is authoritative. Any supported pair passes,
    even when it differs from the standing default. Unsupported observed pairs stop
    work; a standing attestation cannot override them.
 2. For unobservable fields, accept one candidate line in active instructions:
-   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium` (default),
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium` (default),
    `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium`, or
    `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`.
    Declare the route before task tools, then run the bundled
@@ -115,7 +115,7 @@ Keep these responsibilities in the primary session:
 - Resolve requirements and material ambiguity.
 - Choose architecture, interfaces, decomposition, and selective route.
 - Write the complete five-part worker specification for any selected implementer.
-- Inspect the actual diff and rerun verification.
+- Inspect the actual diff and confirm verification under the cost-policy evidence contract.
 - Decide whether newly observed risk warrants escalation.
 - Judge the reviewer verdict when the route includes review and accept the deliverable.
 
@@ -148,3 +148,9 @@ implements its own fixes. `solo` and `delegate` do not receive a fresh reviewer.
 Any implementation correction invalidates the prior verdict. Apply the observed sandbox
 and permission profile rules in the operations reference; never claim enforced
 read-only isolation when it was not observed.
+
+## Cost-aware execution
+
+Before delegation or verification, read [成本與驗收紀律](references/cost-policy.md).
+Preserve the four routes, selected roles, and default one-auxiliary limit.
+Use traceable unchanged-state evidence when permitted; rerun only when evidence is missing, invalidated, or the repository requires it.

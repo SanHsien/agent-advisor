@@ -13,7 +13,8 @@ Use Traditional Chinese for user-facing collaboration unless the user asks other
 - Keep runtime implementations separated: Codex under `codex/`, Claude Code under
   `claude/`, Cursor under `cursor/`, Antigravity under `antigravity/`, with only the
   Codex and Claude Code discovery catalogs at repository root. Cursor and Antigravity
-  install from their plugin directory and must not add root files.
+  install from their plugin directory and must not add root files. Hermes lives under
+  `hermes/` and installs a native skill, not another runtime's role configuration.
 - Each edition expresses lane isolation with what its runtime actually enforces, and
   says so in its own docs. Never copy another edition's mechanism as decoration: Claude
   Code uses a restricted tool set, Cursor uses `readonly`, Antigravity uses

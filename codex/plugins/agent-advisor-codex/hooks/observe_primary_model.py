@@ -35,7 +35,7 @@ import json
 import re
 import sys
 
-SUPPORTED_MODELS = ("gpt-6-luna", "gpt-6-sol", "gpt-6-astra")
+SUPPORTED_MODELS = ("gpt-6-luna", "gpt-6.1-sol", "gpt-6-sol", "gpt-6-astra")
 
 # Codex currently ignores UserPromptSubmit matchers, so the allowlist is enforced
 # here instead: the advisory belongs to an orchestration prompt, not to every

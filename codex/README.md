@@ -5,7 +5,7 @@
 > [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-advisor). It retains
 > the original author attribution and MIT license.
 
-**Sol / Medium is the default primary; Luna / Medium and Astra / Low are supported alternatives. It declares a risk-gated route before task tools, keeps
+**GPT-6.1 Sol / Medium is the default primary; Luna / Medium and Astra / Low are supported alternatives. It declares a risk-gated route before task tools, keeps
 solo as the default, and uses a single auxiliary only when that improves delivery.**
 
 Agent Advisor for Codex is the Codex-native edition of Agent Advisor for capability-routed
@@ -19,7 +19,7 @@ Windows-first fork、安裝、四種 route、委派工作包、驗證與維護�
 ## Quick start
 
 You need a current Codex CLI or ChatGPT desktop app with plugins enabled, GPT-6
-Sol / Medium (default), GPT-6 Luna / Medium, or GPT-6 Astra / Low for the primary session, native custom-agent support, and jq. GPT-5.6
+GPT-6.1 Sol / Medium (default), GPT-6 Luna / Medium, or GPT-6 Astra / Low for the primary session, native custom-agent support, and jq. GPT-5.6
 Luna / Max or Terra / High access is needed only when the selected route delegates.
 Maintainer POSIX verification also requires Python 3.11+ because `verify.sh` uses
 the standard-library `tomllib` module, as documented in upstream
@@ -33,7 +33,7 @@ To enable that fallback, place this exact line once in the regular user-level
 `~/.codex/AGENTS.md` and do not create a user-level `AGENTS.override.md`:
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-sol/medium
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium
 ~~~
 
 To use another supported fallback when runtime metadata is missing, replace that one marker
@@ -94,7 +94,7 @@ risk justifies it and never silently downgrades.
 The selected primary keeps architecture, decomposition, route selection, parent verification,
 escalation decisions, and acceptance in the primary task. Auxiliary work substitutes
 for root work; it does not duplicate it. The root inspects the complete diff and
-reruns the requested checks. When the selected route includes a review, a fresh Sol /
+confirms the requested checks against traceable evidence, rerunning when required or invalidated. When the selected route includes a review, a fresh Sol /
 High reviewer returns ship, fix-first, or rethink; any fix requires a new review.
 
 ## Updating
@@ -120,3 +120,7 @@ codex plugin add agent-advisor-codex@agent-advisor
 For Windows-first development, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). Fork
 maintenance and upstream review policy are in [the shared fork guide](../docs/FORK.md)
 and [upstream ledger](../docs/UPSTREAM.md).
+
+## Cost-aware execution
+
+Keep solo as the default and the existing role contracts. Before delegation or verification, read the bundled cost-policy reference: pass only necessary context, do not duplicate implementation, and reuse unchanged-state verification evidence only when the repository permits it. No fixed savings claim or automatic advisor calls.

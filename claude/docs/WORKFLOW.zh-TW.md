@@ -86,3 +86,15 @@ substitution，也不讓 primary 重做已委派工作。已要求持續執行�
 （通常 15–30 分鐘）重試；狀態未變時保持安靜，若 provider 公布 reset time 就以它
 為準。恢復前先確認沒有舊 worker 仍在執行，再用原角色、原規格、原 ownership 與
 原驗證計畫接續。帳號仍有總用量，不代表特定模型 lane 可用。
+
+## 成本紀律
+
+四條路由與預設一個輔助角色不變；派工與驗證前讀該版 skill 的 `references/cost-policy.md`。
+只有命令、輸入、完整工作樹及環境一致的真實證據才可沿用；repo 強制的父代理重跑／交付 gate 仍執行。
+不固定加顧問、不把模型單價當完成成本、不宣稱安裝等於 runtime 或省費實測。
+
+## Claude 3P profile
+
+原生 Opus 預設保持不變；3P 明確選定高能力 primary，查核 provider 的實際解析模型與 effort。
+不要把原生 Opus 條件套到非 Claude 的 3P primary；Sonnet／Haiku／Opus 輔助角色合約仍需分別通過。
+原生顧問不自動開啟。不同 CLAUDE_CONFIG_DIR 要各自安裝；Desktop 3P 必須查明 local-agent runtime 的實際載入位置。

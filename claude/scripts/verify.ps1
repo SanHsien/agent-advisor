@@ -35,7 +35,7 @@ Assert-True ($rootMarketplace.plugins.Count -eq 1) 'root Claude marketplace must
 Assert-True ($rootMarketplace.plugins[0].source -eq './claude/plugins/agent-advisor-claude') 'root Claude marketplace source is wrong'
 Assert-True ($localMarketplace.plugins[0].source -eq './plugins/agent-advisor-claude') 'Claude-local marketplace source is wrong'
 Assert-True ($manifest.name -eq 'agent-advisor-claude') 'Claude plugin name is wrong'
-Assert-True ($manifest.version -eq '1.0.2') 'Claude plugin version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.1.0') 'Claude plugin version changed unexpectedly'
 Assert-True ($manifest.repository -eq 'https://github.com/SanHsien/agent-advisor') 'Claude plugin repository is wrong'
 Write-Host 'PASS: Claude marketplace and plugin JSON'
 

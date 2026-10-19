@@ -28,7 +28,7 @@ foreach ($path in $required) {
 
 $manifest = Get-Content -LiteralPath (Join-Path $pluginRoot '.cursor-plugin/plugin.json') -Raw | ConvertFrom-Json
 Assert-True ($manifest.name -eq 'agent-advisor-cursor') 'Cursor plugin name is wrong'
-Assert-True ($manifest.version -eq '1.0.2') 'Cursor plugin version changed unexpectedly'
+Assert-True ($manifest.version -eq '1.1.0') 'Cursor plugin version changed unexpectedly'
 Write-Host 'PASS: Cursor plugin manifest'
 
 $models = @{

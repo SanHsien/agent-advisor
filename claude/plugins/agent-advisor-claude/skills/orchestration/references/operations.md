@@ -21,7 +21,10 @@ then the primary model. The plugin agents all name a `model`, so the environment
 only affects agents that do not (for example the built-in general-purpose and Explore
 agents).
 
-Start the primary session with `claude --model opus`. Model aliases deliberately avoid
+For `claude-native`, start the primary session with `claude --model opus`.
+For `claude-3p`, follow [the 3P profile contract](claude-3p.md); the configured
+primary and resolved backend are separate evidence. Do not change the gateway or
+assume Anthropic server-side tools work there. Model aliases deliberately avoid
 pinning a dated model ID. Claude Code resolves aliases through the active provider and
 organization allowlist; a visible substitution warning is a routing failure, not an
 acceptable fallback.

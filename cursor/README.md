@@ -86,3 +86,7 @@ sh cursor/scripts/verify.sh
   agent frontmatter has no effort field.
 - Activation ships inside the plugin as an always-apply rule; no user-level context file
   is edited.
+
+## Cost-aware execution
+
+Keep solo as the default and the existing role contracts. Before delegation or verification, read the bundled cost-policy reference: pass only necessary context, do not duplicate implementation, and reuse unchanged-state verification evidence only when the repository permits it. No fixed savings claim or automatic advisor calls.

@@ -92,7 +92,13 @@ CONSTRAINTS, VERIFICATION, RETURN, and the structured IMPLEMENTATION REPORT defi
 [role-contracts.md](references/role-contracts.md). State exact owned files, preserve
 concurrent edits, and never widen scope silently.
 
-Treat worker reports as claims. The primary inspects the complete diff and reruns all
-requested checks. For `audit` or `full`, the reviewer returns `ship`, `fix-first`, or
+Treat worker reports as claims. The primary inspects the complete diff and confirms all
+requested checks under the cost-policy evidence contract. For `audit` or `full`, the reviewer returns `ship`, `fix-first`, or
 `rethink` and never implements fixes. Any correction invalidates the prior verdict and
 requires verification plus a new fresh review.
+
+## Cost-aware execution
+
+Before delegation or verification, read [成本與驗收紀律](references/cost-policy.md).
+Preserve the four routes, selected roles, and default one-auxiliary limit.
+Use traceable unchanged-state evidence when permitted; rerun only when evidence is missing, invalidated, or the repository requires it.

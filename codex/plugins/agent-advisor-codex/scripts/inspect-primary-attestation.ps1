@@ -43,7 +43,7 @@ if ($count -ne 1) {
     Stop-Inspection "expected exactly one attestation marker, found $count"
 }
 $pair = $markers[0].Substring($prefix.Length)
-if ($markers[0] -cne ($prefix + $pair) -or $pair -cnotin @('gpt-6-luna/medium', 'gpt-6-sol/medium', 'gpt-6-astra/low')) {
+if ($markers[0] -cne ($prefix + $pair) -or $pair -cnotin @('gpt-6-luna/medium', 'gpt-6.1-sol/medium', 'gpt-6-sol/medium', 'gpt-6-astra/low')) {
     Stop-Inspection 'unsupported primary model/effort pair'
 }
 $model, $effort = $pair.Split('/')

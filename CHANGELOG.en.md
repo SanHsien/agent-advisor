@@ -9,6 +9,11 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-10 — Cost contracts and Hermes
+
+Default Codex primary is GPT-6.1 Sol/medium. The four plugins are 1.1.0; a native Hermes edition joins them. Preserve role pairs and routes, trim worker briefs, reuse traceable unchanged-state checks when permitted, and record honest cost evidence. Claude native and 3P profiles have separate capability checks; advisor calls and parallel workers remain optional.
+
+
 ## 2026-10-02 (Cursor and Antigravity aligned to the model standard)
 
 ### Changed

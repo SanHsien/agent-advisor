@@ -36,3 +36,9 @@ Single questions, status lookups, and chat need no declaration. If the plugin is
   找不到 skill 的錯。
 - **和既有的委派規則分工講清楚。** 如果你的 CLAUDE.md 已經有「非瑣碎任務派子 agent」之類的規則，
   加一句劃清界線：路由決定「要不要派工」，既有規則決定「派工怎麼寫」。兩者不衝突。
+
+## Claude 3P profile
+
+原生 Opus 預設保持不變；3P 明確選定高能力 primary，查核 provider 的實際解析模型與 effort。
+不要把原生 Opus 條件套到非 Claude 的 3P primary；Sonnet／Haiku／Opus 輔助角色合約仍需分別通過。
+原生顧問不自動開啟。不同 CLAUDE_CONFIG_DIR 要各自安裝；Desktop 3P 必須查明 local-agent runtime 的實際載入位置。

@@ -2,7 +2,7 @@
 """Check every relative link in the repository's Markdown.
 
 This repo is mostly documentation, and it is documentation that points at itself:
-four edition directories, each with its own README, docs, plugin skill and
+five edition directories, each with its own README, docs, plugin skill and
 reference files, all cross-linking to the root and to each other. Moving or
 renaming a file breaks those links silently -- nothing fails, the link just stops
 resolving, and the next reader finds a 404 instead of the contract they were sent
@@ -38,13 +38,13 @@ SKIP_NAMES = {
 
 
 def iter_documents() -> list[Path]:
-    """Every tracked Markdown file.
+    """Every tracked or non-ignored new Markdown file.
 
     `git ls-files` rather than a glob: it inherits `.gitignore`, so a local
-    scratch file or an untracked report can never turn the gate red.
+    ignored scratch file stays outside the gate; new source docs are checked.
     """
     result = subprocess.run(
-        ["git", "-C", str(ROOT), "ls-files", "*.md"],
+        ["git", "-C", str(ROOT), "ls-files", "--cached", "--others", "--exclude-standard", "*.md"],
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -94,7 +94,7 @@ def check_document(path: Path) -> list[str]:
 def main() -> int:
     documents = iter_documents()
     if not documents:
-        print("FAIL: no tracked Markdown files were found")
+        print("FAIL: no Markdown source files were found")
         return 1
 
     failures = 0

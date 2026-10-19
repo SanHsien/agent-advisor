@@ -15,11 +15,19 @@ runtime rules. Before any delegation, also read
 
 ## Confirm the primary session
 
-Run the primary Claude Code session on the `opus` model family. Observed session
-metadata and Claude Code model-substitution warnings are authoritative. If the
-observed primary model is not Opus, stop substantive work. If the model family is
-unobservable, ask the user once instead of inferring it from settings, plugin files,
-or environment defaults.
+Declare the runtime profile: `claude-native` or `claude-3p`.
+For `claude-native`, run the primary Claude Code session on the `opus` model family.
+For `claude-3p`, use an explicitly selected high-capability reasoning model through
+the existing gateway. Confirm the resolved provider/model and effective effort from
+available runtime evidence; `auto`, a UI label, a profile file, and a Claude alias do
+not prove the backend model. If unobservable, obtain current-task operator attestation
+and label it accordingly. Do not infer runtime evidence from settings.
+Observed session metadata and substitution warnings are authoritative. Stop the
+affected lane on conflicting evidence. Preflight plugin-scoped auxiliaries separately:
+the existing Sonnet/Haiku/Opus family contracts still apply in 3P mode; a gateway mapping
+to another family is not an acceptable substitution. Use no unavailable auxiliary.
+Do not enable the server-side Anthropic advisor on an unverified 3P gateway.
+Read [Claude 3P boundaries](references/claude-3p.md) in that profile.
 
 ## Declare the route before task tools
 
@@ -56,7 +64,7 @@ risk classification changed.
 
 ## Route contracts
 
-- `solo`: primary Opus plans, implements, tests, and self-reviews. Spawn no auxiliary.
+- `solo`: the confirmed primary plans, implements, tests, and self-reviews. Spawn no auxiliary.
 - `delegate`: select `agent-advisor-claude:advisor-sonnet-implementer` (Sonnet / medium)
   by default for well-specified implementation, docs, slides, or spreadsheets;
   `agent-advisor-claude:advisor-sonnet-deep-implementer` (Sonnet / high) for debugging
@@ -91,7 +99,13 @@ CONSTRAINTS, VERIFICATION, RETURN, and the structured IMPLEMENTATION REPORT defi
 [role-contracts.md](references/role-contracts.md). State exact owned files, preserve
 concurrent edits, and never widen scope silently.
 
-Treat worker reports as claims. The primary inspects the complete diff and reruns all
-requested checks. For `audit` or `full`, the reviewer returns `ship`, `fix-first`, or
+Treat worker reports as claims. The primary inspects the complete diff and confirms all
+requested checks under the cost-policy evidence contract. For `audit` or `full`, the reviewer returns `ship`, `fix-first`, or
 `rethink` and never implements fixes. Any correction invalidates the prior verdict and
 requires verification plus a new fresh review.
+
+## Cost-aware execution
+
+Before delegation or verification, read [成本與驗收紀律](references/cost-policy.md).
+Preserve the four routes, selected roles, and default one-auxiliary limit.
+Use traceable unchanged-state evidence when permitted; rerun only when evidence is missing, invalidated, or the repository requires it.

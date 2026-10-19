@@ -1,5 +1,6 @@
 {
   "$schema": "https://antigravity.google/schemas/v1/plugin.json",
   "name": "agent-advisor-antigravity",
-  "description": "Antigravity-native selective routing: the primary agent declares solo, delegate, audit, or exceptional full delivery before work begins."
+  "description": "Antigravity-native selective routing: the primary agent declares solo, delegate, audit, or exceptional full delivery before work begins.",
+  "version": "1.1.0"
 }

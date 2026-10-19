@@ -166,3 +166,9 @@ Windows 上 hook 一律用 Python，不要寫裸 `bash`：`bash` 在 Windows 會
 
 所以「舊 session 也要生效」的正確做法不是想辦法熱更新，而是 `claude --continue`：
 對話歷史留著，行程是新的，設定與 plugin 都會重新載入。
+
+## Claude 3P profile
+
+原生 Opus 預設保持不變；3P 明確選定高能力 primary，查核 provider 的實際解析模型與 effort。
+不要把原生 Opus 條件套到非 Claude 的 3P primary；Sonnet／Haiku／Opus 輔助角色合約仍需分別通過。
+原生顧問不自動開啟。不同 CLAUDE_CONFIG_DIR 要各自安裝；Desktop 3P 必須查明 local-agent runtime 的實際載入位置。

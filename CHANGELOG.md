@@ -8,6 +8,11 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-10（成本合約與 Hermes）
+
+Codex 預設更新為 GPT-6.1 Sol／medium；四個 plugin 更新為 1.1.0，新增 Hermes 原生版。五版保留既有路由與角色，加入短工作包、可核對的驗證證據沿用與成本記錄；Claude 原生／3P profile 分別查核，不固定啟用顧問或平行派工。
+
+
 ## 2026-10-02（Cursor、Antigravity 對齊模型標準）
 
 ### 變更

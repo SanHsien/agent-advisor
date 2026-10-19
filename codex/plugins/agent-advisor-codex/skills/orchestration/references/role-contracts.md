@@ -83,7 +83,7 @@ JUDGMENT CALLS: <decisions the specification left open, or none>
 GAPS: <unfinished work, ambiguity, or none>
 ~~~
 
-The primary session must inspect the diff and rerun verification itself.
+The primary session must inspect the diff and confirm verification itself under the cost-policy evidence contract.
 
 ## Exact mode contracts
 

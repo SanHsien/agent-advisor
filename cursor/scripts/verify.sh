@@ -30,7 +30,7 @@ for path in required:
 
 manifest = json.loads(required[0].read_text(encoding="utf-8"))
 assert manifest["name"] == "agent-advisor-cursor"
-assert manifest["version"] == "1.0.2"
+assert manifest["version"] == "1.1.0"
 print("PASS: Cursor plugin manifest")
 
 agents = plugin / "agents"

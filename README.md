@@ -6,15 +6,16 @@
 > Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-advisor)，
 > 保留原作者署名與 MIT 授權。
 
-Agent Advisor 把同一套風險分流交付流程，包成四個原生 agent runtime 各自的 plugin。
+Agent Advisor 把同一套風險分流交付流程，包成五個原生 agent runtime 各自的 plugin。
 選你這次開發 session 實際在跑的那一版：
 
 | 版本 | 原生角色 | Plugin | 教學 |
 | --- | --- | --- | --- |
-| Codex | Sol / Medium 預設 primary，低成本工作可切 Luna / Medium，少數難題切 Astra / Low；選用 Luna、Terra、Sol reviewer lane | `agent-advisor-codex` | [Agent Advisor for Codex](codex/README.md) |
+| Codex | GPT-6.1 Sol / Medium 預設 primary，低成本工作可切 Luna / Medium，少數難題切 Astra / Low；選用 Luna、Terra、Sol reviewer lane | `agent-advisor-codex` | [Agent Advisor for Codex](codex/README.md) |
 | Claude Code | Opus / medium 為 primary；預設 Sonnet / medium 實作，困難工作切 Sonnet / high，Haiku 只做機械批次；選用 Opus reviewer lane | `agent-advisor-claude` | [Agent Advisor for Claude Code](claude/README.md) |
 | Cursor | 明確指定的高能力模型為 primary；預設 Sonnet / medium 實作，困難工作切 Sonnet / high，Composer 只做機械批次；選用 Opus reviewer lane | `agent-advisor-cursor` | [Agent Advisor for Cursor](cursor/README.md) |
 | Antigravity | pro 級為 primary；預設 flash 實作（含機械批次），困難工作切 pro；選用 pro reviewer lane | `agent-advisor-antigravity` | [Agent Advisor for Antigravity](antigravity/README.md) |
+| Hermes | 明確選定的 primary；原生 delegate_task，角色與 provider 分別驗證 | 原生 skill | [Hermes](hermes/README.md) |
 
 每一版都保留四條路由：`solo`、`delegate`、`audit`，以及例外的 `full`。
 Primary agent 自己扛架構、路由選擇、驗證與最終驗收。**委派是選擇性的，不是儀式。**
@@ -85,6 +86,7 @@ codex/        Codex marketplace 來源、plugin、原生角色設定、verifier
 claude/       Claude Code marketplace 來源、plugin、Markdown subagents、啟用模板、verifier
 cursor/       Cursor plugin、subagents、always-apply 規則、verifier
 antigravity/  Antigravity plugin、subagents、always-active 規則、備援模板、verifier
+hermes/       Hermes 原生 skill、成本合約、安裝器與 package verifier
 docs/         共用的 fork 與上游維護紀錄
 tests/        倉庫層單元測試
 tools/        跨平台倉庫 gate
@@ -125,3 +127,9 @@ python -m unittest discover -s tests -p "test_*.py"
 | 交付流程 | [paulsha-cortex](https://github.com/SanHsien/paulsha-cortex) | 多 Agent lifecycle：Candidate → Verify → Independent Review → Delivery → CompletionRecord |
 
 相鄰但不同層：[agent-governance-toolkit](https://github.com/SanHsien/agent-governance-toolkit) 治理的是上線後自主運行的 agent——政策強制、零信任身分、沙箱執行與可稽核記錄——不是寫程式的 coding agent。[opencodex](https://github.com/SanHsien/opencodex) 是供應商代理，決定這些 agent 背後能跑哪些 LLM，本身不約束 agent 行為。
+
+## 成本紀律與 Hermes / Cost discipline and Hermes
+
+五版維持原生執行與四條風險路由；新增短工作包、可核對的驗證證據沿用與誠實成本記錄。
+不固定呼叫顧問、不改成全面平行派工。Claude 原生與 3P 另有明確能力邊界。
+見 [改善決策](docs/COST-STRATEGY.zh-TW.md) 與 [Hermes 安裝](hermes/README.md)。

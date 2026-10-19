@@ -124,3 +124,7 @@ python antigravity/scripts/fix_hook_quoting.py --apply    # backs up, rewrites, 
 Prefer that over a one-line regex over the raw text. Every path in this file is dense
 with escaped backslashes; a pattern that misses leaves the hook config unparseable, which
 is harder to diagnose than the `Errno 22` it was meant to fix.
+
+## Cost-aware execution
+
+Keep solo as the default and the existing role contracts. Before delegation or verification, read the bundled cost-policy reference: pass only necessary context, do not duplicate implementation, and reuse unchanged-state verification evidence only when the repository permits it. No fixed savings claim or automatic advisor calls.

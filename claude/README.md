@@ -107,3 +107,13 @@ guide](docs/ACTIVATION.zh-TW.md), and the plugin's
 - The Codex-only primary-attestation inspector is intentionally absent. Claude
   Advisor relies on observed session/model information and fails closed when a
   required model family cannot be established.
+
+## Cost-aware execution
+
+Keep solo as the default and the existing role contracts. Before delegation or verification, read the bundled cost-policy reference: pass only necessary context, do not duplicate implementation, and reuse unchanged-state verification evidence only when the repository permits it. No fixed savings claim or automatic advisor calls.
+
+## Claude 3P profile
+
+原生 Opus 預設保持不變；3P 明確選定高能力 primary，查核 provider 的實際解析模型與 effort。
+不要把原生 Opus 條件套到非 Claude 的 3P primary；Sonnet／Haiku／Opus 輔助角色合約仍需分別通過。
+原生顧問不自動開啟。不同 CLAUDE_CONFIG_DIR 要各自安裝；Desktop 3P 必須查明 local-agent runtime 的實際載入位置。

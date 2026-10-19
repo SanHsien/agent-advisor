@@ -36,7 +36,7 @@ assert root_market["name"] == "agent-advisor"
 assert root_market["plugins"][0]["source"] == "./claude/plugins/agent-advisor-claude"
 assert local_market["plugins"][0]["source"] == "./plugins/agent-advisor-claude"
 assert manifest["name"] == "agent-advisor-claude"
-assert manifest["version"] == "1.0.2"
+assert manifest["version"] == "1.1.0"
 assert manifest["repository"] == "https://github.com/SanHsien/agent-advisor"
 print("PASS: Claude marketplace and plugin JSON")
 

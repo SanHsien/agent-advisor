@@ -30,6 +30,7 @@ marker=$(awk '{ sub(/\r$/, ""); if ($0 ~ /^AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATI
 case "$marker" in
   "${prefix}gpt-6-luna/medium") model=gpt-6-luna; effort=medium ;;
   "${prefix}gpt-6-sol/medium") model=gpt-6-sol; effort=medium ;;
+  "${prefix}gpt-6.1-sol/medium") model=gpt-6.1-sol; effort=medium ;;
   "${prefix}gpt-6-astra/low") model=gpt-6-astra; effort=low ;;
   *) fail 'unsupported primary model/effort pair' ;;
 esac

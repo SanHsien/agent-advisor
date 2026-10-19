@@ -80,6 +80,11 @@ risk classification changed.
 Auxiliary work substitutes for primary implementation; it must not duplicate it.
 One auxiliary is the default maximum. `full` is the explicit exception.
 
+A `delegate` worker may also be another CLI (Antigravity `agy` through agy-staff, or a
+task mailed through agent-relay to Codex, agy, or another Claude Code). It counts as
+the one auxiliary, needs a timeout and an isolated worktree, and its report is a
+claim the primary verifies. Read [跨 CLI 工人](references/cross-cli.md).
+
 ## Preflight and runtime evidence
 
 Preflight only agents selected by the route. Confirm the exact plugin-scoped agent is

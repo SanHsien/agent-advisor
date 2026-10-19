@@ -149,3 +149,7 @@ evidence when permitted, and distinguish estimated costs from observed usage.
 Advisor calls and parallel workers are not mandatory defaults. Claude native and
 3P sessions have separate capability boundaries. See the
 [decision record](docs/COST-STRATEGY.zh-TW.md) and [Hermes edition](hermes/README.md).
+
+## Multi-agent pipeline
+
+This repo is part of the [agent-relay](https://github.com/SanHsien/agent-relay) multi-agent dispatch and verification pipeline (role: dispatch routing and contracts, plus the independent reviewer track). Integration with agent-relay is planned (Phase 2, 3). The protocol spec and the index of all related repos live in agent-relay.

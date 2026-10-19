@@ -133,3 +133,7 @@ python -m unittest discover -s tests -p "test_*.py"
 五版維持原生執行與四條風險路由；新增短工作包、可核對的驗證證據沿用與誠實成本記錄。
 不固定呼叫顧問、不改成全面平行派工。Claude 原生與 3P 另有明確能力邊界。
 見 [改善決策](docs/COST-STRATEGY.zh-TW.md) 與 [Hermes 安裝](hermes/README.md)。
+
+## 多 Agent 流水線
+
+本 repo 是 [agent-relay](https://github.com/SanHsien/agent-relay) 多 Agent 派工與驗收流水線的一環（角色：派工路由與合約、獨立審查員軌道）。與 agent-relay 的整合規劃中（Phase 2、3）。協定規格與所有相關 repo 的總目錄見 agent-relay。

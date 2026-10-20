@@ -33,3 +33,11 @@ agent-relay 派工會在收件端開 git worktree（分支 `relay/<id>`），指
 1. `git -C <worktree> log --oneline <base>..HEAD` 與 `git diff --stat <base>` 看實際變更。
 2. 自己重跑 brief 裡的驗證指令。
 3. 決定合併、退回重派，或升級到 `audit` 路由。
+
+## 回流升級（失敗時交給更強的模型）
+
+便宜的跨 CLI 工人沒通過驗收時，不要讓主 session 自己從頭重做，也不要叫同一個工人再試一次：把**真實失敗證據**（驗收指令的輸出結尾、`git diff`）整理好，交給更強的模型在同一個 worktree 診斷並修正，再用同一套驗收重驗。只升級一次；改到範圍外、刪測試、改測試設定這類行為問題不升級，交給人看。
+
+- 經 agent-relay 派工：收件端設 `dispatch.escalation`，relay 會自動做（agent-relay SPEC 第 12 節）。
+- 手動做：照 [agent-relay 的回流除錯範本](https://github.com/SanHsien/agent-relay/blob/main/docs/templates/escalation-prompt.md) 寫 prompt，交給 `delegate` 的 deep implementer 或主 session；這仍算那一個 auxiliary。
+- 升級後的結果照樣只是聲明：主 session 自己重跑驗證，`audit`／`full` 路由再交 fresh reviewer。

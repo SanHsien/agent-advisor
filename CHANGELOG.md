@@ -8,6 +8,15 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-24（Claude route-guard：減少誤擋）
+
+依近 30 天實測（7221 次改檔、291 次攔截）放寬兩種誤擋：
+- **auto memory 豁免**：`~/.claude/projects/*/memory/` 的寫入不再要求宣告（佔攔截 64 次）。記憶維護不會派工，宣告只多一來回。
+- **延續回合放行**：前 3 輪內宣告過、且這一輪使用者訊息不超過 40 字（「繼續」「Try again」「是」），視為同一件事的延續。被擋的 126 個回合中有 69 個屬此類。長訊息或隔太久仍要重新宣告。
+- 補上背景任務通知不算回合邊界（本機版 2026-09-19 已有，模板漏同步）。
+
+已知取捨：極短的新任務指令（例如「換個任務」）會沿用前面的宣告。測試 27 案，新增案例對舊版會紅。
+
 ## 2026-10-23（Antigravity hook 文件：PreToolUse 必須回 decision）
 
 只改文件。Antigravity 的 `PreToolUse` 規定 `decision` 必填，放行時回空的 `{}` 會被當成否決（`tool call denied by pre-tool hook: `），所有被守的指令都會被擋。實際在 harness-guard 發生過，已改為放行回 `{"decision": "ask"}`。陷阱說明補進 `antigravity/README.md`、`antigravity/templates/README.md`、`antigravity/docs/WORKFLOW.zh-TW.md`。

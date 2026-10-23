@@ -9,6 +9,15 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-24 — Claude route-guard: fewer false blocks
+
+Two false-block patterns found in 30 days of real use (7,221 edits, 291 denials) are now allowed:
+- **Auto memory is exempt**: writes under `~/.claude/projects/*/memory/` no longer need a route (64 denials). Memory upkeep is never delegated, so a declaration only cost a round trip.
+- **Continuation turns pass**: if a route was declared in the previous 3 turns and the new user message is at most 40 characters ("continue", "Try again", "yes"), the turn counts as the same task. 69 of 126 denied turns were like this. Long messages or older declarations still need a fresh route.
+- Background-task notifications no longer count as turn boundaries (already in the local hook since 2026-09-19; the template had missed it).
+
+Known trade-off: a very short new instruction ("switch tasks") rides on the previous declaration. 27 tests; the new cases fail against the old hook.
+
 ## 2026-10-23 — Antigravity hook docs: PreToolUse must return a decision
 
 Docs only. Antigravity requires `decision` in a `PreToolUse` answer; an empty `{}` is read as a deny (`tool call denied by pre-tool hook: `) and blocks every guarded command. This happened in harness-guard and was fixed by allowing with `{"decision": "ask"}`. The trap is now documented in `antigravity/README.md`, `antigravity/templates/README.md` and `antigravity/docs/WORKFLOW.zh-TW.md`.

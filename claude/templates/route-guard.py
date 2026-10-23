@@ -59,8 +59,29 @@ TOOL_DECLARATION = re.compile(
     r"SELECTIVE\s+ROUTE\s*[:\uff1a]\s*(?:solo|delegate|audit|full)\b", re.IGNORECASE
 )
 TOOL_DECLARATION_FIELDS = ("description",)
+# A background-task notification arrives as a type "user" record, but the
+# operator did not say anything, so it must not close the declaration window.
+# Counting one as a turn boundary denies edits for a task that was declared,
+# and a spawned subagent (which declares in its own transcript) can never
+# satisfy the gate once a notification lands in the parent's.
+NOTIFICATION = re.compile(
+    r"<task-notification>|SYSTEM NOTIFICATION - NOT USER INPUT"
+    r"|<agent-message from=|\[Subagent hand-back\]",
+    re.IGNORECASE,
+)
 # Scratch and temp files are working material, not deliverables.
 EXEMPT_PATH_PARTS = ("scratchpad", "\\temp\\", "/temp/", "\\tmp\\", "/tmp/")
+# Auto-memory upkeep is housekeeping that is never delegated, so a route adds
+# nothing. Measured over 30 days: 64 of 291 denials were memory writes.
+EXEMPT_PATH_PATTERNS = (
+    re.compile(r"[\\/]\.claude[\\/]projects[\\/][^\\/]+[\\/]memory[\\/]", re.IGNORECASE),
+)
+# A short message ("continue", "Try again", "yes") right after a declared turn
+# continues that task. Measured over 30 days: 69 of 126 denied turns had a
+# route declared within the previous three turns. Both limits keep a fresh,
+# real task from riding on an old route.
+CARRY_TURNS = 3
+SHORT_FOLLOW_UP_CHARS = 40
 MAX_TRANSCRIPT_BYTES = 512_000
 
 REASON = """Declare a SELECTIVE ROUTE before editing files.
@@ -106,6 +127,23 @@ def target_path(payload: dict) -> str:
     return ""
 
 
+def content_text(content) -> str:
+    """Flatten a message's content to searchable text; never raise."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for block in content:
+            if isinstance(block, dict):
+                text = block.get("text")
+                if isinstance(text, str):
+                    parts.append(text)
+            elif isinstance(block, str):
+                parts.append(block)
+        return " ".join(parts)
+    return ""
+
+
 def declared_since_last_user_message(path: str) -> bool:
     """True when a route was declared after the latest user instruction.
 
@@ -131,7 +169,7 @@ def declared_since_last_user_message(path: str) -> bool:
     if not records:
         return True
 
-    last_user = -1
+    boundaries = []
     for i, obj in enumerate(records):
         if obj.get("type") != "user":
             continue
@@ -140,11 +178,30 @@ def declared_since_last_user_message(path: str) -> bool:
             isinstance(b, dict) and b.get("type") == "tool_result" for b in content
         ):
             continue
-        last_user = i
-    if last_user < 0:
+        if NOTIFICATION.search(content_text(content)):
+            continue
+        boundaries.append(i)
+    if not boundaries:
         return True
 
-    for obj in records[last_user + 1:]:
+    last_user = boundaries[-1]
+    if declared_in(records[last_user + 1:]):
+        return True
+
+    # Continuation: a short follow-up right after a declared turn.
+    message = content_text((records[last_user].get("message") or {}).get("content")).strip()
+    if len(message) > SHORT_FOLLOW_UP_CHARS:
+        return False
+    recent = boundaries[-1 - CARRY_TURNS:]
+    for start, end in zip(recent, recent[1:]):
+        if declared_in(records[start + 1:end]):
+            return True
+    return False
+
+
+def declared_in(records: list) -> bool:
+    """True when an assistant record in this slice declared a route."""
+    for obj in records:
         if obj.get("type") != "assistant":
             continue
         for blk in (obj.get("message") or {}).get("content", []):
@@ -190,6 +247,8 @@ def main() -> int:
 
     path = target_path(payload).replace("/", os.sep).lower()
     if any(part.replace("/", os.sep).lower() in path for part in EXEMPT_PATH_PARTS):
+        return 0
+    if any(p.search(path) for p in EXEMPT_PATH_PATTERNS):
         return 0
 
     transcript = payload.get("transcript_path")

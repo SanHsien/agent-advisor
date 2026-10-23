@@ -80,7 +80,7 @@ class RouteGuardTests(unittest.TestCase):
         # Otherwise one declaration at session start licenses every later edit.
         self.write(user("first task"),
                    assistant("SELECTIVE ROUTE: solo"),
-                   user("a different task"),
+                   user("a different task: refactor the dispatch module into pluggable backends"),
                    assistant("Starting."))
         self.assertEqual(self.run_hook().returncode, 2)
 
@@ -119,11 +119,63 @@ class RouteGuardTests(unittest.TestCase):
     def test_a_tool_declaration_before_the_latest_user_message_does_not_count(self):
         self.write(user("first task"),
                    assistant_tool(command="ls", description="SELECTIVE ROUTE: solo"),
-                   user("a different task"),
+                   user("a different task: migrate the CI pipeline to a matrix build"),
                    assistant_tool(command="ls", description="list files"))
         self.assertEqual(self.run_hook().returncode, 2)
 
+    # --- turn boundaries -------------------------------------------------
+
+    def test_a_background_notification_is_not_a_new_turn(self):
+        self.write(user("fix the parser and add tests for every edge case found"),
+                   assistant("SELECTIVE ROUTE: solo"),
+                   user("<task-notification><status>completed</status></task-notification>"))
+        self.assertEqual(self.run_hook().returncode, 0)
+
+    def test_short_follow_up_after_a_declared_turn_is_allowed(self):
+        self.write(user("fix the parser"),
+                   assistant_tool(command="ls", description="SELECTIVE ROUTE: solo (one module)"),
+                   user("continue"),
+                   assistant("OK."))
+        self.assertEqual(self.run_hook().returncode, 0)
+
+    def test_try_again_after_a_declared_turn_is_allowed(self):
+        self.write(user("fix the parser"), assistant("SELECTIVE ROUTE: solo"), user("Try again"))
+        self.assertEqual(self.run_hook().returncode, 0)
+
+    def test_a_long_new_instruction_still_needs_its_own_declaration(self):
+        self.write(user("first task"),
+                   assistant("SELECTIVE ROUTE: solo"),
+                   user("now something unrelated: move the test suite from unittest to pytest and wire up CI"))
+        self.assertEqual(self.run_hook().returncode, 2)
+
+    def test_a_declaration_older_than_the_carry_window_does_not_count(self):
+        self.write(user("task"), assistant("SELECTIVE ROUTE: solo"),
+                   user("ok"), assistant("ok"),
+                   user("yes"), assistant("ok"),
+                   user("sure"), assistant("ok"),
+                   user("continue"))
+        self.assertEqual(self.run_hook().returncode, 2)
+
+    def test_short_follow_up_without_any_earlier_declaration_is_blocked(self):
+        self.write(user("change it"), assistant("OK"), user("continue"))
+        self.assertEqual(self.run_hook().returncode, 2)
+
     # --- scope -----------------------------------------------------------
+
+    def test_auto_memory_writes_are_exempt(self):
+        self.write(user("remember this preference and explain the full reasoning behind it"),
+                   assistant("no declaration"))
+        for path in ("C:/Users/x/.claude/projects/C--Users-x/memory/feedback-x.md",
+                     "/home/x/.claude/projects/-home-x-repo/memory/MEMORY.md"):
+            self.assertEqual(self.run_hook(path=path).returncode, 0, path)
+
+    def test_other_claude_files_are_not_exempt(self):
+        self.write(user("update the dispatch rules and the routing table that points to them"),
+                   assistant("no declaration"))
+        for path in ("C:/Users/x/.claude/CLAUDE.md",
+                     "C:/Users/x/.claude/projects/C--Users-x/notes.md",
+                     "C:/repo/memory/store.py"):
+            self.assertEqual(self.run_hook(path=path).returncode, 2, path)
 
     def test_every_guarded_tool_is_covered(self):
         self.write(user("do it"), assistant("no declaration"))

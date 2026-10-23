@@ -113,6 +113,13 @@ tools it would use to fix it are exactly the ones the broken hook is blocking.
 With no shell to strip quotes there is also no way to express a path containing spaces,
 so keep hook scripts on a space-free path.
 
+**A `PreToolUse` hook must always answer with a `decision`.** The official contract makes
+`decision` required. A hook that lets a call through by printing an empty `{}` is read as a
+deny with an empty reason (`tool call denied by pre-tool hook: `), so every guarded call is
+blocked -- even `python -c "print('hello')"`. Answer `{"decision": "ask"}` to defer to
+Antigravity's normal permission flow (it respects "Always Allow"); `"allow"` would
+auto-approve and skip the prompt. `PostToolUse` is the event that expects `{}`.
+
 Correctly shaped blocks: [`templates/hooks-example.json`](templates/hooks-example.json).
 To repair a file that already has the quoted form:
 

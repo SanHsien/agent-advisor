@@ -92,6 +92,11 @@ Agent 會卡在「要修設定，但修設定需要的工具正好被壞掉的 h
 互抄**的設定。另外，既然沒有 shell 幫忙剝引號，這裡也就無法表達含空白的路徑——hook 腳本
 請放在沒有空白的路徑上。
 
+**`PreToolUse` hook 一定要回 `decision`。** 官方規定 `decision` 是必填。放行時只印空的 `{}`，
+會被當成否決、原因空白（`tool call denied by pre-tool hook: `），所有被守的呼叫都會被擋，連
+`python -c "print('hello')"` 也一樣。放行請回 `{"decision": "ask"}`，交給 Antigravity 原本的權限流程
+（會尊重「一律允許」）；回 `"allow"` 會自動核准、跳過授權彈窗。回 `{}` 的是 `PostToolUse`。
+
 完整範例見 [`templates/hooks-example.json`](../templates/hooks-example.json)。
 
 已經寫壞的檔用附的修復腳本處理。它預設是 dry-run，只印出會改什麼：

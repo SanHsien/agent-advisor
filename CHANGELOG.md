@@ -8,6 +8,10 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-23（Antigravity hook 文件：PreToolUse 必須回 decision）
+
+只改文件。Antigravity 的 `PreToolUse` 規定 `decision` 必填，放行時回空的 `{}` 會被當成否決（`tool call denied by pre-tool hook: `），所有被守的指令都會被擋。實際在 harness-guard 發生過，已改為放行回 `{"decision": "ask"}`。陷阱說明補進 `antigravity/README.md`、`antigravity/templates/README.md`、`antigravity/docs/WORKFLOW.zh-TW.md`。
+
 ## 2026-10-10（成本合約與 Hermes）
 
 Codex 預設更新為 GPT-6.1 Sol／medium；四個 plugin 更新為 1.1.0，新增 Hermes 原生版。五版保留既有路由與角色，加入短工作包、可核對的驗證證據沿用與成本記錄；Claude 原生／3P profile 分別查核，不固定啟用顧問或平行派工。

@@ -32,6 +32,13 @@ the one line you must not copy between the two editions. With no shell to strip 
 there is also no way to express a path containing spaces, so keep hook scripts on a
 space-free path.
 
+**A `PreToolUse` hook must always answer with a `decision`.** The official contract makes
+`decision` required. A hook that lets a call through by printing an empty `{}` is read as a
+deny with an empty reason (`tool call denied by pre-tool hook: `), so every guarded call is
+blocked -- even `python -c "print('hello')"`. Answer `{"decision": "ask"}` to defer to
+Antigravity's normal permission flow (it respects "Always Allow"); `"allow"` would
+auto-approve and skip the prompt. `PostToolUse` is the event that expects `{}`.
+
 `AGENTS.md` and `GEMINI.md` are directory-scoped: Antigravity walks up from the current
 working directory to the repository root and loads every one it finds. They do not
 support frontmatter and are always active for their scope.

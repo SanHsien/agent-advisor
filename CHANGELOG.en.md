@@ -9,6 +9,10 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-23 — Antigravity hook docs: PreToolUse must return a decision
+
+Docs only. Antigravity requires `decision` in a `PreToolUse` answer; an empty `{}` is read as a deny (`tool call denied by pre-tool hook: `) and blocks every guarded command. This happened in harness-guard and was fixed by allowing with `{"decision": "ask"}`. The trap is now documented in `antigravity/README.md`, `antigravity/templates/README.md` and `antigravity/docs/WORKFLOW.zh-TW.md`.
+
 ## 2026-10-10 — Cost contracts and Hermes
 
 Default Codex primary is GPT-6.1 Sol/medium. The four plugins are 1.1.0; a native Hermes edition joins them. Preserve role pairs and routes, trim worker briefs, reuse traceable unchanged-state checks when permitted, and record honest cost evidence. Claude native and 3P profiles have separate capability checks; advisor calls and parallel workers remain optional.

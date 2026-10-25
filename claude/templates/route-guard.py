@@ -32,13 +32,27 @@ arguments. Reading prose alone turns a real declaration into a false block.
 Windows note: register it as ``python "<absolute path>"``. A hook command
 starting with a bare ``bash`` resolves to WSL, where the home directory differs
 and the script does not exist, so the hook silently never runs.
+
+Antigravity: the same file also guards Antigravity when its ``hooks.json``
+registers it with ``--agent antigravity`` (see
+``antigravity/templates/hooks-example.json``). Antigravity's PreToolUse payload
+carries only ``toolCall`` and ``conversationId``; the transcript lives at
+``~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript.jsonl`` and
+is written on Antigravity's own schedule. So the hook judges only once the
+guarded call is already visible in the current turn, and it denies at most once
+per conversation turn (state in the temp directory), so a lagging transcript
+cannot turn the reminder into an endless loop. Every allow answers
+``{"decision": "ask"}``, because Antigravity reads an answer without a decision
+as a deny.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 for _stream in (sys.stdout, sys.stderr):
@@ -48,6 +62,16 @@ for _stream in (sys.stdout, sys.stderr):
         pass
 
 GUARDED_TOOLS = {"edit", "write", "multiedit", "notebookedit"}
+# Antigravity file-writing tools, measured from its own transcripts (desktop and
+# CLI name them differently).
+ANTIGRAVITY_GUARDED_TOOLS = {
+    "write_to_file", "replace_file_content", "multi_replace_file_content", "edit_file", "write_file",
+}
+# Antigravity keeps one transcript per conversation; its PreToolUse payload
+# carries only conversationId (Stop also carries transcriptPath).
+ANTIGRAVITY_BRAIN = Path.home() / ".gemini" / "antigravity" / "brain"
+ANTIGRAVITY_DECLARATION_ARGS = ("toolSummary", "toolAction", "Description")
+USER_REQUEST = re.compile(r"<USER_REQUEST>(.*?)</USER_REQUEST>", re.DOTALL)
 DECLARATION = re.compile(r"SELECTIVE\s+ROUTE", re.IGNORECASE)
 # A tool call's own arguments are always written to the transcript; the
 # assistant's prose is not (one measured session: 818 assistant records, only
@@ -73,8 +97,11 @@ NOTIFICATION = re.compile(
 EXEMPT_PATH_PARTS = ("scratchpad", "\\temp\\", "/temp/", "\\tmp\\", "/tmp/")
 # Auto-memory upkeep is housekeeping that is never delegated, so a route adds
 # nothing. Measured over 30 days: 64 of 291 denials were memory writes.
+# Antigravity's brain/ (its own plans and task lists) and knowledge/ (its
+# memory) are the same kind of material.
 EXEMPT_PATH_PATTERNS = (
     re.compile(r"[\\/]\.claude[\\/]projects[\\/][^\\/]+[\\/]memory[\\/]", re.IGNORECASE),
+    re.compile(r"[\\/]\.gemini[\\/]antigravity[\\/](?:brain|knowledge)[\\/]", re.IGNORECASE),
 )
 # A short message ("continue", "Try again", "yes") right after a declared turn
 # continues that task. Measured over 30 days: 69 of 126 denied turns had a
@@ -113,14 +140,17 @@ def tool_name(payload: dict) -> str:
     return str(name).strip().lower()
 
 
-def target_path(payload: dict) -> str:
-    src = payload.get("tool_input") or payload.get("toolInput") or {}
-    if not isinstance(src, dict):
+def tool_args(payload: dict) -> dict:
+    src = payload.get("tool_input") or payload.get("toolInput")
+    if not isinstance(src, dict) or not src:
         call = payload.get("toolCall") or {}
-        src = call.get("arguments") or call.get("input") or {}
-    if not isinstance(src, dict):
-        return ""
-    for key in ("file_path", "filePath", "path", "notebook_path"):
+        src = call.get("args") or call.get("arguments") or call.get("input") or {}
+    return src if isinstance(src, dict) else {}
+
+
+def target_path(payload: dict) -> str:
+    src = tool_args(payload)
+    for key in ("file_path", "filePath", "path", "notebook_path", "TargetFile", "Path", "AbsolutePath"):
         value = src.get(key)
         if isinstance(value, str) and value:
             return value
@@ -222,6 +252,118 @@ def declared_in(records: list) -> bool:
     return False
 
 
+ANTIGRAVITY_REASON = """Declare a SELECTIVE ROUTE before editing files (agent-advisor selective-routing rule).
+
+This turn has no route declaration yet. Write one line in your reply first, for example:
+
+  SELECTIVE ROUTE: solo (one sentence of reasoning)
+
+Pick one of: solo / delegate / audit / exceptional full. Then retry this edit."""
+
+
+def is_antigravity(payload: dict) -> bool:
+    return isinstance(payload.get("toolCall"), dict) or "conversationId" in payload
+
+
+def bare(value) -> str:
+    """Normalise a path for comparison; transcripts quote and double-escape it."""
+    return str(value or "").strip().strip('"').replace("\\\\", "\\").replace("/", "\\").lower()
+
+
+def antigravity_transcript(payload: dict) -> str:
+    path = payload.get("transcriptPath")
+    if isinstance(path, str) and path:
+        return path
+    conv = payload.get("conversationId")
+    if isinstance(conv, str) and re.fullmatch(r"[0-9a-fA-F-]{8,64}", conv):
+        return str(ANTIGRAVITY_BRAIN / conv / ".system_generated" / "logs" / "transcript.jsonl")
+    return ""
+
+
+def antigravity_declared(path: str, name: str, target: str) -> bool:
+    """Antigravity flavour of declared_since_last_user_message.
+
+    Antigravity writes the transcript on its own schedule, so the hook only
+    judges once the very call it is guarding is visible in the current turn.
+    If it is not there yet, the transcript is lagging and the answer is
+    unknown -- allow, as everywhere else in this hook.
+    """
+    try:
+        lines = Path(path).read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return True
+    steps = []
+    for line in lines[-4000:]:
+        line = line.strip()
+        if line.startswith("{"):
+            try:
+                steps.append(json.loads(line))
+            except ValueError:
+                continue
+    boundaries = [i for i, s in enumerate(steps) if s.get("type") == "USER_INPUT"]
+    if not boundaries:
+        return True
+    last_user = boundaries[-1]
+
+    current = steps[last_user + 1:]
+    if not any(
+        isinstance(call, dict) and str(call.get("name", "")).lower() == name
+        and any(bare(v) == target for v in (call.get("args") or {}).values())
+        for s in current for call in (s.get("tool_calls") or [])
+    ):
+        return True  # transcript has not caught up with this call yet
+
+    if antigravity_declared_in(current):
+        return True
+    request = steps[last_user].get("content") or ""
+    match = USER_REQUEST.search(request)
+    message = (match.group(1) if match else request).strip()
+    if len(message) > SHORT_FOLLOW_UP_CHARS:
+        return False
+    recent = boundaries[-1 - CARRY_TURNS:]
+    return any(antigravity_declared_in(steps[a + 1:b]) for a, b in zip(recent, recent[1:]))
+
+
+def antigravity_declared_in(steps: list) -> bool:
+    for s in steps:
+        if s.get("type") != "PLANNER_RESPONSE":
+            continue
+        text = s.get("content")
+        if isinstance(text, str) and DECLARATION.search(text):
+            return True
+        for call in s.get("tool_calls") or []:
+            args = call.get("args") if isinstance(call, dict) else None
+            if isinstance(args, dict) and any(
+                isinstance(args.get(k), str) and TOOL_DECLARATION.search(args[k])
+                for k in ANTIGRAVITY_DECLARATION_ARGS
+            ):
+                return True
+    return False
+
+
+def first_reminder_this_turn(transcript: str) -> bool:
+    """Deny at most once per Antigravity turn.
+
+    When the transcript lags a step behind, a retry that follows a fresh
+    declaration still looks undeclared, and denying it would loop forever with
+    no way out. One reminder per turn keeps the nudge and rules out the loop.
+    Returns True when this is the turn's first denial (and records it).
+    """
+    try:
+        lines = Path(transcript).read_text(encoding="utf-8", errors="replace").splitlines()
+        turn = sum(1 for line in lines if '"USER_INPUT"' in line)
+        state_dir = Path(os.environ.get("ROUTE_GUARD_STATE_DIR") or (Path(tempfile.gettempdir()) / "route_guard"))
+        state_dir.mkdir(parents=True, exist_ok=True)
+        key = hashlib.sha256(str(Path(transcript).resolve()).lower().encode("utf-8")).hexdigest()[:24]
+        state = state_dir / (key + ".turn")
+        if state.exists() and state.read_text(encoding="utf-8").strip() == str(turn):
+            return False
+        state.write_text(str(turn), encoding="utf-8")
+        return True
+    except OSError:
+        return False  # cannot remember the denial, so do not risk a loop
+
+
 def deny(payload: dict, msg: str) -> int:
     if payload.get("cursor_version"):
         sys.stdout.write(json.dumps(
@@ -236,27 +378,46 @@ def deny(payload: dict, msg: str) -> int:
     return 2
 
 
+def judge(payload: dict) -> bool:
+    """True = allow."""
+    antigravity = is_antigravity(payload)
+    name = tool_name(payload)
+    if name not in (ANTIGRAVITY_GUARDED_TOOLS if antigravity else GUARDED_TOOLS):
+        return True
+
+    path = target_path(payload).strip().strip('"').replace("/", os.sep).lower()
+    if any(part.replace("/", os.sep).lower() in path for part in EXEMPT_PATH_PARTS):
+        return True
+    if any(p.search(path) for p in EXEMPT_PATH_PATTERNS):
+        return True
+
+    if antigravity:
+        transcript = antigravity_transcript(payload)
+        if not transcript or antigravity_declared(transcript, name, bare(target_path(payload))):
+            return True
+        return not first_reminder_this_turn(transcript)
+    transcript = payload.get("transcript_path")
+    if not transcript:
+        return True  # nothing to judge from
+    return declared_since_last_user_message(transcript)
+
+
 def main() -> int:
+    # Antigravity reads a PreToolUse answer without a decision as a deny, so its
+    # registration passes --agent antigravity and every allow says "ask".
+    antigravity_cli = "antigravity" in sys.argv[1:]
     try:
         payload = read_payload()
     except (json.JSONDecodeError, ValueError, UnicodeDecodeError):
-        return 0
-
-    if tool_name(payload) not in GUARDED_TOOLS:
-        return 0
-
-    path = target_path(payload).replace("/", os.sep).lower()
-    if any(part.replace("/", os.sep).lower() in path for part in EXEMPT_PATH_PARTS):
-        return 0
-    if any(p.search(path) for p in EXEMPT_PATH_PATTERNS):
-        return 0
-
-    transcript = payload.get("transcript_path")
-    if not transcript:
-        return 0
-    if declared_since_last_user_message(transcript):
-        return 0
-    return deny(payload, REASON)
+        payload = None
+    if isinstance(payload, dict) and not judge(payload):
+        if antigravity_cli or is_antigravity(payload):
+            sys.stdout.write(json.dumps({"decision": "deny", "reason": ANTIGRAVITY_REASON}, ensure_ascii=False))
+            return 0
+        return deny(payload, REASON)
+    if antigravity_cli or (isinstance(payload, dict) and is_antigravity(payload)):
+        sys.stdout.write(json.dumps({"decision": "ask"}))
+    return 0
 
 
 if __name__ == "__main__":

@@ -8,6 +8,12 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-25（route-guard 支援 Antigravity）
+
+`claude/templates/route-guard.py` 同一支檔案也能守 Antigravity：`hooks.json` 登記時帶 `--agent antigravity`，放行一律回 `{"decision": "ask"}`。Antigravity 的 PreToolUse 只給 `toolCall` 與 `conversationId`，hook 依對話 ID 找 `~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript.jsonl` 判斷這一輪有沒有宣告。兩道保險：transcript 還看不到這次改檔呼叫就放行；每個對話每一輪最多擋一次，transcript 落後也不會擋成死循環。`brain/`、`knowledge/` 豁免。範例群組補進 `antigravity/templates/hooks-example.json`。
+
+實機驗證（2026-10-24 12:00 到 10-25 03:00，10 個有改檔的對話、20 輪）：擋下 5 次，同一輪重複擋 0 次，5 次都在同一輪補上宣告後改檔成功；13 輪模型主動先宣告；2 輪沒宣告也沒擋，都是前幾輪宣告過的短句延續（依設計放行）。測試 63 案。
+
 ## 2026-10-24（Claude route-guard：減少誤擋）
 
 依近 30 天實測（7221 次改檔、291 次攔截）放寬兩種誤擋：

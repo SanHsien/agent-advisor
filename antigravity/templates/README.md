@@ -9,6 +9,7 @@ with an installed plugin.
 | --- | --- | --- |
 | [`AGENTS.md.snippet.md`](AGENTS.md.snippet.md) | paste into the workspace `AGENTS.md` or `GEMINI.md` | Makes route declaration standing behaviour for that directory tree. |
 | [`hooks-example.json`](hooks-example.json) | merge into `~/.gemini/config/hooks.json` or `.agents/hooks.json` | Correctly shaped hook commands. Unrelated to activation — included because the shape is easy to get wrong. |
+| [`../../claude/templates/route-guard.py`](../../claude/templates/route-guard.py) | `~/.gemini/config/hooks/route_guard.py`, registered as the `route-guard` group in `hooks-example.json` | Enforces the route declaration: an undeclared file edit is denied once per turn with a reminder. Same file as the Claude Code hook; `--agent antigravity` switches it to Antigravity's payload and `decision` answers. |
 
 ## The hook quoting trap
 

@@ -5,6 +5,7 @@ decision carried by the exit code. Exit 2 blocks the edit, exit 0 allows it.
 """
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -191,6 +192,102 @@ class RouteGuardTests(unittest.TestCase):
         self.write(user("do it"), assistant("no declaration"))
         proc = self.run_hook(path="C:/Users/x/AppData/Local/Temp/scratchpad/probe.py")
         self.assertEqual(proc.returncode, 0)
+
+    # --- Antigravity (--agent antigravity) ----------------------------------
+
+    AG_CONV = "0f0f0f0f-1111-2222-3333-444444444444"
+    AG_TASK = "fix the config file, then update its docs and add tests"
+
+    def ag_write(self, *steps):
+        # Laid out where the hook looks: <home>/.gemini/antigravity/brain/<conversationId>/...
+        logs = Path(self.tmp) / ".gemini" / "antigravity" / "brain" / self.AG_CONV / ".system_generated" / "logs"
+        logs.mkdir(parents=True, exist_ok=True)
+        self.ag_transcript = logs / "transcript.jsonl"
+        self.ag_transcript.write_text(
+            "\n".join(json.dumps(s, ensure_ascii=False) for s in steps), encoding="utf-8")
+
+    def ag_run(self, tool="write_to_file", target="C:\\repo\\a.py", via="conversationId",
+               argv=("--agent", "antigravity")):
+        payload = {"toolCall": {"name": tool, "args": {"TargetFile": target, "CodeContent": "x"}}}
+        if via == "conversationId":
+            payload["conversationId"] = self.AG_CONV
+        else:
+            payload["transcriptPath"] = str(self.ag_transcript)
+        env = dict(os.environ, USERPROFILE=self.tmp, HOME=self.tmp,
+                   ROUTE_GUARD_STATE_DIR=str(Path(self.tmp) / "state"))
+        proc = subprocess.run([sys.executable, str(HOOK), *argv], input=json.dumps(payload).encode(),
+                              capture_output=True, timeout=60, env=env)
+        out = json.loads(proc.stdout.decode("utf-8") or "{}")
+        return proc.returncode, out.get("decision")
+
+    @staticmethod
+    def ag_user(text):
+        return {"type": "USER_INPUT", "source": "USER_EXPLICIT",
+                "content": "<USER_REQUEST>\n%s\n</USER_REQUEST>\n<ADDITIONAL_METADATA>x</ADDITIONAL_METADATA>" % text}
+
+    @staticmethod
+    def ag_model(text="", tool=None, target="C:\\repo\\a.py", **extra_args):
+        step = {"type": "PLANNER_RESPONSE", "source": "MODEL", "content": text}
+        if tool:
+            # The transcript quotes TargetFile; the live payload does not.
+            step["tool_calls"] = [{"name": tool, "args": dict({"TargetFile": '"%s"' % target}, **extra_args)}]
+        return step
+
+    def test_antigravity_edit_without_declaration_is_denied(self):
+        self.ag_write(self.ag_user(self.AG_TASK), self.ag_model("OK", tool="write_to_file"))
+        self.assertEqual(self.ag_run(), (0, "deny"))
+
+    def test_antigravity_declared_in_text_is_allowed_with_ask(self):
+        self.ag_write(self.ag_user(self.AG_TASK),
+                      self.ag_model("SELECTIVE ROUTE: solo (one file)"),
+                      self.ag_model("", tool="write_to_file"))
+        self.assertEqual(self.ag_run(), (0, "ask"))
+
+    def test_antigravity_declared_in_tool_summary_is_allowed(self):
+        self.ag_write(self.ag_user(self.AG_TASK),
+                      self.ag_model("", tool="write_to_file", toolSummary="SELECTIVE ROUTE: solo (one file)"))
+        self.assertEqual(self.ag_run(), (0, "ask"))
+
+    def test_antigravity_lagging_transcript_allows(self):
+        # The guarded call is not in the transcript yet: cannot judge, so allow.
+        self.ag_write(self.ag_user(self.AG_TASK), self.ag_model("OK"))
+        self.assertEqual(self.ag_run(), (0, "ask"))
+
+    def test_antigravity_short_follow_up_carries_the_route(self):
+        self.ag_write(self.ag_user(self.AG_TASK),
+                      self.ag_model("SELECTIVE ROUTE: solo"),
+                      self.ag_user("continue"),
+                      self.ag_model("", tool="write_to_file"))
+        self.assertEqual(self.ag_run(), (0, "ask"))
+
+    def test_antigravity_transcript_path_in_payload_is_used(self):
+        self.ag_write(self.ag_user(self.AG_TASK), self.ag_model("OK", tool="write_to_file"))
+        self.assertEqual(self.ag_run(via="transcriptPath"), (0, "deny"))
+
+    def test_antigravity_brain_and_unguarded_tools_pass(self):
+        self.ag_write(self.ag_user(self.AG_TASK), self.ag_model("OK", tool="write_to_file"))
+        self.assertEqual(self.ag_run(target="C:\\Users\\x\\.gemini\\antigravity\\brain\\abc\\task.md"), (0, "ask"))
+        self.assertEqual(self.ag_run(tool="run_command"), (0, "ask"))
+
+    def test_antigravity_denies_once_per_turn_then_allows(self):
+        # A lagging transcript must not turn a reminder into an endless loop.
+        self.ag_write(self.ag_user(self.AG_TASK), self.ag_model("OK", tool="write_to_file"))
+        self.assertEqual(self.ag_run(), (0, "deny"))
+        self.assertEqual(self.ag_run(), (0, "ask"))
+
+    def test_antigravity_next_turn_gets_its_own_reminder(self):
+        self.ag_write(self.ag_user(self.AG_TASK), self.ag_model("OK", tool="write_to_file"))
+        self.assertEqual(self.ag_run(), (0, "deny"))
+        self.ag_write(self.ag_user(self.AG_TASK),
+                      self.ag_model("OK", tool="write_to_file"),
+                      self.ag_user("also rewrite the README install section and add the Windows caveats"),
+                      self.ag_model("OK", tool="write_to_file"))
+        self.assertEqual(self.ag_run(), (0, "deny"))
+
+    def test_antigravity_garbage_payload_still_answers_ask(self):
+        proc = subprocess.run([sys.executable, str(HOOK), "--agent", "antigravity"], input=b"{not json",
+                              capture_output=True, timeout=60)
+        self.assertEqual((proc.returncode, json.loads(proc.stdout)["decision"]), (0, "ask"))
 
     # --- fail-open: this hook blocks the tools needed to repair it --------
 

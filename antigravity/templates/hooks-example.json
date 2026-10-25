@@ -21,6 +21,24 @@
     ]
   },
 
+  "_comment_route_guard": "route-guard reuses claude/templates/route-guard.py unchanged. Copy it to ~/.gemini/config/hooks/route_guard.py; --agent antigravity makes every allow answer {\"decision\": \"ask\"}.",
+
+  "route-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content|edit_file|write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python C:\\Users\\<you>\\.gemini\\config\\hooks\\route_guard.py --agent antigravity",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+
   "example-stop-gate": {
     "enabled": true,
     "Stop": [

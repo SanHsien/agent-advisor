@@ -9,6 +9,12 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-25 — route-guard supports Antigravity
+
+The same `claude/templates/route-guard.py` now guards Antigravity: register it in `hooks.json` with `--agent antigravity`, and every allow answers `{"decision": "ask"}`. Antigravity's PreToolUse payload carries only `toolCall` and `conversationId`, so the hook reads `~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript.jsonl` to see whether the current turn declared a route. Two safety valves: while the transcript does not yet show the guarded call, it allows; and it denies at most once per conversation turn, so a lagging transcript cannot loop. `brain/` and `knowledge/` are exempt. An example group is in `antigravity/templates/hooks-example.json`.
+
+Verified on real use (2026-10-24 12:00 to 10-25 03:00 +08:00, 10 conversations with edits, 20 turns): 5 denials, 0 turns denied twice, and all 5 declared a route and edited successfully in the same turn; 13 turns declared up front; 2 turns neither declared nor were denied, both short follow-ups to a declared turn (allowed by design). 63 tests.
+
 ## 2026-10-24 — Claude route-guard: fewer false blocks
 
 Two false-block patterns found in 30 days of real use (7,221 edits, 291 denials) are now allowed:

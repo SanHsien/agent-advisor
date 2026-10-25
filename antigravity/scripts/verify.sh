@@ -110,7 +110,11 @@ assert commands, "hooks example declares no hook command"
 for command in commands:
     assert '"' not in command, f"hook path must not be quoted: {command}"
     assert command.startswith("python "), f"hook must invoke python, not a bare bash: {command}"
-    assert " " not in command.split(" ", 1)[1], f"no shell means no spaces in the path: {command}"
+    # Flags may follow the script path (route-guard takes --agent antigravity),
+    # but the path itself must end in .py before the first space.
+    hook_path, _, hook_args = command[len("python "):].partition(" ")
+    assert hook_path.endswith(".py"), f"no shell means no spaces in the path: {command}"
+    assert not hook_args or hook_args.startswith("--"), f"only --flags may follow the script path: {command}"
     assert "<you>" in command, f"template must use the generic placeholder: {command}"
 
 fixer = (ag / "scripts" / "fix_hook_quoting.py").read_text(encoding="utf-8")

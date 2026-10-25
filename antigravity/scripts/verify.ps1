@@ -110,7 +110,11 @@ Assert-True ($commands.Count -gt 0) 'hooks example declares no hook command'
 foreach ($command in $commands) {
     Assert-True (-not $command.Contains('"')) "hook path must not be quoted: $command"
     Assert-True ($command.StartsWith('python ')) "hook must invoke python, not a bare bash: $command"
-    Assert-True (-not $command.Substring(7).Contains(' ')) "no shell means no spaces in the path: $command"
+    # Flags may follow the script path (route-guard takes --agent antigravity),
+    # but the path itself must end in .py before the first space.
+    $hookParts = $command.Substring(7) -split ' ', 2
+    Assert-True ($hookParts[0].EndsWith('.py')) "no shell means no spaces in the path: $command"
+    Assert-True ($hookParts.Count -eq 1 -or $hookParts[1].StartsWith('--')) "only --flags may follow the script path: $command"
     Assert-True ($command.Contains('<you>')) "template must use the generic placeholder: $command"
 }
 

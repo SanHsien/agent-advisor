@@ -410,7 +410,11 @@ def main() -> int:
         payload = read_payload()
     except (json.JSONDecodeError, ValueError, UnicodeDecodeError):
         payload = None
-    if isinstance(payload, dict) and not judge(payload):
+    try:
+        allowed = not isinstance(payload, dict) or judge(payload)
+    except Exception:  # noqa: BLE001 - fail-open: a parser surprise must never block edits
+        allowed = True
+    if not allowed:
         if antigravity_cli or is_antigravity(payload):
             sys.stdout.write(json.dumps({"decision": "deny", "reason": ANTIGRAVITY_REASON}, ensure_ascii=False))
             return 0

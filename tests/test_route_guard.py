@@ -291,6 +291,25 @@ class RouteGuardTests(unittest.TestCase):
 
     # --- fail-open: this hook blocks the tools needed to repair it --------
 
+    def test_unexpected_record_shape_allows(self):
+        # fail-open covers a record shape the parser did not anticipate, too.
+        self.write(user("change the config"),
+                   {"type": "assistant", "message": {"role": "assistant", "content": None}})
+        proc = self.run_hook()
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+
+    def test_non_string_transcript_path_allows(self):
+        raw = json.dumps({"tool_name": "Edit", "tool_input": {"file_path": "C:/repo/a.py"},
+                          "transcript_path": 123}).encode("utf-8")
+        proc = self.run_hook(raw=raw)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+
+    def test_antigravity_unexpected_args_shape_still_answers_ask(self):
+        self.ag_write(self.ag_user(self.AG_TASK),
+                      {"type": "PLANNER_RESPONSE", "content": "OK",
+                       "tool_calls": [{"name": "write_to_file", "args": ["not", "a", "dict"]}]})
+        self.assertEqual(self.ag_run(), (0, "ask"))
+
     def test_missing_transcript_path_allows(self):
         self.assertEqual(self.run_hook(transcript=False).returncode, 0)
 

@@ -66,7 +66,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
-        config = json.loads(path.read_text(encoding="utf-8"))
+        # utf-8-sig: Windows PowerShell 5 writes JSON with a BOM, and json refuses it.
+        config = json.loads(path.read_text(encoding="utf-8-sig"))
     except json.JSONDecodeError as exc:
         print(f"{path} is not valid JSON, refusing to touch it: {exc}", file=sys.stderr)
         return 2

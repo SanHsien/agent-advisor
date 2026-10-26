@@ -209,6 +209,22 @@ class FixHookQuotingTests(unittest.TestCase):
             self.commands(), [r"python C:\g\route_guard.py --agent antigravity"]
         )
 
+    def test_file_with_a_utf8_bom_is_repaired(self):
+        # Windows PowerShell 5 writes UTF-8 with a BOM; that is still a hooks.json.
+        self.path.write_bytes(b"\xef\xbb\xbf" + json.dumps(BROKEN).encode("ascii"))
+        code, _, err = run("--path", str(self.path), "--apply")
+        self.assertEqual(code, 0, err)
+        self.assertEqual(len(self.backups()), 1)
+        self.assertEqual(
+            sorted(self.commands()),
+            sorted(
+                [
+                    "python C:\\Users\\me\\.claude\\hooks\\danger_zone_guard.py",
+                    "python3 /home/me/hooks/lint_gate.py",
+                ]
+            ),
+        )
+
     def test_missing_file_exits_non_zero(self):
         code, _, err = run("--path", str(self.tmp / "nope.json"), "--apply")
         self.assertEqual(code, 2)

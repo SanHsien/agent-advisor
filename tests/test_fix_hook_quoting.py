@@ -184,6 +184,31 @@ class FixHookQuotingTests(unittest.TestCase):
         self.assertEqual(self.path.read_text(encoding="utf-8"), "{ not json")
         self.assertEqual(self.backups(), [])
 
+    def test_flags_after_the_quoted_path_are_kept(self):
+        # route-guard is registered as `python <path> --agent antigravity`; the
+        # quoted form of that line must be repaired too, flags intact.
+        self.write(
+            {
+                "route-guard": {
+                    "PreToolUse": [
+                        {
+                            "hooks": [
+                                {
+                                    "type": "command",
+                                    "command": r'python "C:\g\route_guard.py" --agent antigravity',
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        )
+        code, _, _ = run("--path", str(self.path), "--apply")
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            self.commands(), [r"python C:\g\route_guard.py --agent antigravity"]
+        )
+
     def test_missing_file_exits_non_zero(self):
         code, _, err = run("--path", str(self.tmp / "nope.json"), "--apply")
         self.assertEqual(code, 2)

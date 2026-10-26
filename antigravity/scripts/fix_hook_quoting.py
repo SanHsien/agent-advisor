@@ -29,8 +29,10 @@ import re
 import shutil
 import sys
 
-# "python \"C:\\path\\x.py\"" -> interpreter, then a fully quoted remainder.
-QUOTED = re.compile(r'^(python3?|py)\s+"(.+)"$')
+# python "C:\path\x.py" --flag -> interpreter, quoted script path, then any flags.
+# The path ends at the first closing quote, so a quoted argument after it is not
+# swallowed into the path.
+QUOTED = re.compile(r'^(python3?|py)\s+"([^"]+)"((?:\s.*)?)$')
 
 DEFAULT_PATH = pathlib.Path.home() / ".gemini" / "config" / "hooks.json"
 
@@ -42,7 +44,7 @@ def rewrite(node: object, found: list[tuple[str, str]]) -> None:
             if key == "command" and isinstance(value, str):
                 match = QUOTED.match(value)
                 if match:
-                    fixed = f"{match.group(1)} {match.group(2)}"
+                    fixed = f"{match.group(1)} {match.group(2)}{match.group(3)}"
                     found.append((value, fixed))
                     node[key] = fixed
             else:

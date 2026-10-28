@@ -66,3 +66,7 @@ Use Traditional Chinese for user-facing collaboration unless the user asks other
   just PRs, pushes, and releases.
 - Run `pwsh -NoProfile -File tools/dev_check.ps1` before reporting completion — this is the
   same Windows gate `ci.yml` runs, per the automated-checks section above.
+
+## 路線圖
+
+- `ROADMAP.md` 是本 repo 後續工作的單一真相源。完成或新增工作時，在同一個 commit 更新它：做完的列刪掉、新工作加進去。不要在其他文件另列待辦。

@@ -41,10 +41,20 @@ def load_baseline(path: Path = BASELINE_PATH) -> dict:
         raise UpstreamCheckError(f"cannot read {path}: {error}") from error
     except ValueError as error:
         raise UpstreamCheckError(f"invalid JSON in {path}: {error}") from error
-    missing = [field for field in REQUIRED_FIELDS if not baseline.get(field)]
+    if not isinstance(baseline, dict):
+        raise UpstreamCheckError("baseline must be a JSON object")
+    missing = [field for field in REQUIRED_FIELDS if field not in baseline]
     if missing:
         raise UpstreamCheckError(f"baseline missing fields: {', '.join(missing)}")
-    if len(str(baseline["reviewed_through"])) != FULL_SHA_LENGTH:
+    for field in REQUIRED_FIELDS:
+        if not isinstance(baseline[field], str) or not baseline[field].strip():
+            raise UpstreamCheckError(f"baseline field {field} must be a non-empty string")
+    for field in ("reviewed_pr_through", "reviewed_issue_through"):
+        if field in baseline and (
+            type(baseline[field]) is not int or baseline[field] < 0
+        ):
+            raise UpstreamCheckError(f"baseline field {field} must be a non-negative integer")
+    if len(baseline["reviewed_through"]) != FULL_SHA_LENGTH:
         raise UpstreamCheckError("reviewed_through must be a full 40-character SHA")
     return baseline
 
@@ -77,7 +87,11 @@ def collect_new_commits(baseline: dict) -> list[dict]:
         if not line.strip():
             continue
         sha, date, subject = line.split(UNIT_SEPARATOR, 2)
-        files = [f for f in run_git(["show", "--name-only", "--format=", sha]).split() if f]
+        files = [
+            name for name in run_git(
+                ["show", "--name-only", "--format=", "-z", sha]
+            ).split("\0") if name
+        ]
         commits.append({"sha": sha, "short": sha[:7], "date": date, "subject": subject, "files": files})
     return commits
 

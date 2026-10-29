@@ -11,7 +11,6 @@
 | --- | --- | --- | --- | --- |
 | 改寫跨 CLI 工人的 Antigravity 段：拿掉經 agy-staff 或 `agent_relay send --run agy` 呼叫 `agy` 的建議，改列被允許的派法——`python -m agent_relay send --to antigravity --kind task --project <repo> --ref antigravity-session:new`（Antigravity Desktop 在側邊欄開新對話、用自己的登入執行） | 維護者 2026-10-27 政策：第三方 agent 不得經 `agy -p` 等方式使用 Antigravity 個人訂閱，但派工給 Desktop App 本身視同人下指令；現行文件把 `agy` CLI 列為省額度首選，卻沒寫 Desktop 這條路 | ``grep -rnE "agy-staff\|--run agy" claude/plugins/agent-advisor-claude/skills/orchestration`` 只剩位於政策說明段的行；`cross-cli.md` 的工人表有 Desktop App 那一列、沒有 agy-staff 列；`SKILL.md:83-86` 不再建議直接呼叫 agy；`pwsh -NoProfile -File tools\dev_check.ps1` PASSED；CHANGELOG 中英兩份同步 | Claude Sonnet | `claude/plugins/agent-advisor-claude/skills/orchestration/references/cross-cli.md:7-8`、`:17-18`、`:26`；`claude/plugins/agent-advisor-claude/skills/orchestration/SKILL.md:83-86` |
 | 審上游 PR #33「Add minimal GPT-6 family compatibility」，判定 adopt／skip／defer 並推進 PR 水位 | 高於 baseline 的新 PR；內容是 Codex 版的模型清單相容性，可能影響 `codex/` 的 lane 對應 | `docs/UPSTREAM.md` 新增一列附理由；`codex/tools/upstream_baseline.json` 的 `reviewed_pr_through` 推進；`Upstream check` 轉 success | Codex | `gh api repos/DannyMac180/sol-advisor/issues/33`；`codex/tools/upstream_baseline.json` |
-| `check_upstream_updates.py` 改用 `-z` 取檔名、baseline 欄位型別錯誤時印明確錯誤而非 traceback | 含空白的檔名會被 `split()` 拆開，報告列出錯的路徑；壞 baseline 直接 traceback | 新 `unittest`：含空白檔名的 commit 報告路徑完整；型別錯誤的 baseline 回非 0 且訊息指出欄位；`python -m unittest discover -s tests` 綠 | Codex | `codex/tools/check_upstream_updates.py:80` |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |

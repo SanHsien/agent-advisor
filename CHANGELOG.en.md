@@ -9,6 +9,10 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-29 — Upstream check input fixes
+
+`check_upstream_updates.py` now reads NUL-delimited filenames with Git `-z`, preserving complete paths containing spaces and Chinese characters. Baseline loading validates the JSON object, required strings, and non-negative integer watermarks; type errors name the field and return exit code 2 instead of a traceback. Added offline `unittest` regression coverage.
+
 ## 2026-10-25 — route-guard supports Antigravity
 
 The same `claude/templates/route-guard.py` now guards Antigravity: register it in `hooks.json` with `--agent antigravity`, and every allow answers `{"decision": "ask"}`. Antigravity's PreToolUse payload carries only `toolCall` and `conversationId`, so the hook reads `~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript.jsonl` to see whether the current turn declared a route. Two safety valves: while the transcript does not yet show the guarded call, it allows; and it denies at most once per conversation turn, so a lagging transcript cannot loop. `brain/` and `knowledge/` are exempt. An example group is in `antigravity/templates/hooks-example.json`.

@@ -8,6 +8,10 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-29（上游檢查輸入修正）
+
+`check_upstream_updates.py` 改用 Git `-z` 的 NUL 分隔檔名，保留含空白與中文的完整路徑。讀取 baseline 時先檢查 JSON 物件、必要字串與非負整數水位；型別錯誤會指出欄位並回傳 exit code 2，不再出現 traceback。新增離線 `unittest` 回歸測試。
+
 ## 2026-10-25（route-guard 支援 Antigravity）
 
 `claude/templates/route-guard.py` 同一支檔案也能守 Antigravity：`hooks.json` 登記時帶 `--agent antigravity`，放行一律回 `{"decision": "ask"}`。Antigravity 的 PreToolUse 只給 `toolCall` 與 `conversationId`，hook 依對話 ID 找 `~/.gemini/antigravity/brain/<id>/.system_generated/logs/transcript.jsonl` 判斷這一輪有沒有宣告。兩道保險：transcript 還看不到這次改檔呼叫就放行；每個對話每一輪最多擋一次，transcript 落後也不會擋成死循環。`brain/`、`knowledge/` 豁免。範例群組補進 `antigravity/templates/hooks-example.json`。

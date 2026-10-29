@@ -9,6 +9,10 @@ The Codex edition is derived from
 
 ---
 
+## 2026-10-30 — Claude cross-CLI workers: redirect Antigravity to Desktop App
+
+Aligned the Claude cross-CLI documentation and orchestration skill with the maintainer's 2026-10-27 policy: removed recommendations to invoke `agy` via agy-staff or `agent_relay send --run agy` (`agy -p` headless CLI execution against the personal subscription), added a policy note, and documented the permitted path of dispatching tasks to Antigravity Desktop App via agent-relay (`python -m agent_relay send --to antigravity --subject <title> --kind task --project <repo> --ref antigravity-session:new`), opening a new conversation in Desktop's sidebar under its own login. Desktop dispatch has no `--timeout` (the primary session bounds its wait), runs directly in the configured repository (confirm a clean working tree before dispatch), and sidecar only prompts the worker to reply with `--kind result` without auto-replying.
+
 ## 2026-10-29 — Upstream check input fixes
 
 `check_upstream_updates.py` now reads NUL-delimited filenames with Git `-z`, preserving complete paths containing spaces and Chinese characters. Baseline loading validates the JSON object, required strings, and non-negative integer watermarks; type errors name the field and return exit code 2 instead of a traceback. Added offline `unittest` regression coverage.

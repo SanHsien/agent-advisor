@@ -4,12 +4,11 @@
 > 現況段的數字是 2026-10-29 依 `main` `7dacc8c1242d` 查的快照，開工前先重查 GitHub。
 
 ## 現況
-`DannyMac180/sol-advisor` 的衍生版，負責「要不要派工、派給誰」的風險分流路由（`solo`／`delegate`／`audit`／`full`），分 Codex、Claude Code、Cursor、Antigravity 四個版本與 Hermes skill（`AGENTS.md` 的 runtime 分目錄規則）。2026-10-29 查：open PR 0、issue 已停用（未查到 issue 數）、Dependabot 與 code scanning open 0，`main` 上 CI、CodeQL 最近一次 success，Upstream check 最近一次（10-26 05:09 排程）success（2026-10-29 `gh run list -R SanHsien/agent-advisor -b main`）；上游 PR #33（2026-10-26 14:36，`gh api repos/DannyMac180/sol-advisor/issues/33`）已於 2026-10-29 審過，裁決 defer（理由與重看條件見 `docs/UPSTREAM.md` 2026-10-29 一節），`codex/tools/upstream_baseline.json` 的 PR 水位已推進到 33；Upstream check 實際狀態以 `gh run list -R SanHsien/agent-advisor -w "Upstream check"` 為準。Claude 版的跨 CLI 工人文件仍建議經 agy-staff／agent-relay 把工作交給 `agy`，與維護者 2026-10-27 的 Antigravity 個人訂閱政策衝突；同一份文件也還沒寫出被允許的那條路：寄信給 Antigravity Desktop App，由 App 用自己的登入執行。
+`DannyMac180/sol-advisor` 的衍生版，負責「要不要派工、派給誰」的風險分流路由（`solo`／`delegate`／`audit`／`full`），分 Codex、Claude Code、Cursor、Antigravity 四個版本與 Hermes skill（`AGENTS.md` 的 runtime 分目錄規則）。2026-10-29 查：open PR 0、issue 已停用（未查到 issue 數）、Dependabot 與 code scanning open 0，`main` 上 CI、CodeQL 最近一次 success，Upstream check 最近一次（10-26 05:09 排程）success（2026-10-29 `gh run list -R SanHsien/agent-advisor -b main`）；上游 PR #33（2026-10-26 14:36，`gh api repos/DannyMac180/sol-advisor/issues/33`）已於 2026-10-29 審過，裁決 defer（理由與重看條件見 `docs/UPSTREAM.md` 2026-10-29 一節），`codex/tools/upstream_baseline.json` 的 PR 水位已推進到 33；Upstream check 實際狀態以 `gh run list -R SanHsien/agent-advisor -w "Upstream check"` 為準。Claude 版跨 CLI 工人文件已依維護者 2026-10-27 政策改寫，拿掉經 agy-staff 或 `--run agy` 呼叫 `agy` 的建議，改列寄信給 Antigravity Desktop App（由 Desktop 在側邊欄開新對話、用自己的登入執行）。
 
 ## 近期：可以直接動手
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
-| 改寫跨 CLI 工人的 Antigravity 段：拿掉經 agy-staff 或 `agent_relay send --run agy` 呼叫 `agy` 的建議，改列被允許的派法——`python -m agent_relay send --to antigravity --kind task --project <repo> --ref antigravity-session:new`（Antigravity Desktop 在側邊欄開新對話、用自己的登入執行） | 維護者 2026-10-27 政策：第三方 agent 不得經 `agy -p` 等方式使用 Antigravity 個人訂閱，但派工給 Desktop App 本身視同人下指令；現行文件把 `agy` CLI 列為省額度首選，卻沒寫 Desktop 這條路 | ``grep -rnE "agy-staff\|--run agy" claude/plugins/agent-advisor-claude/skills/orchestration`` 只剩位於政策說明段的行；`cross-cli.md` 的工人表有 Desktop App 那一列、沒有 agy-staff 列；`SKILL.md:83-86` 不再建議直接呼叫 agy；`pwsh -NoProfile -File tools\dev_check.ps1` PASSED；CHANGELOG 中英兩份同步 | Claude Sonnet | `claude/plugins/agent-advisor-claude/skills/orchestration/references/cross-cli.md:7-8`、`:17-18`、`:26`；`claude/plugins/agent-advisor-claude/skills/orchestration/SKILL.md:83-86` |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |

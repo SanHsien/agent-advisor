@@ -80,10 +80,13 @@ risk classification changed.
 Auxiliary work substitutes for primary implementation; it must not duplicate it.
 One auxiliary is the default maximum. `full` is the explicit exception.
 
-A `delegate` worker may also be another CLI (Antigravity `agy` through agy-staff, or a
-task mailed through agent-relay to Codex, agy, or another Claude Code). It counts as
-the one auxiliary, needs a timeout and an isolated worktree, and its report is a
-claim the primary verifies. Read [跨 CLI 工人](references/cross-cli.md).
+A `delegate` worker may also be an external runtime (a task mailed through
+agent-relay to Codex, another Claude Code, or Antigravity Desktop via
+`antigravity-session:new`). It counts as the one auxiliary and its report is
+a claim the primary verifies. CLI workers use `--timeout` and an isolated worktree;
+Desktop dispatch has no `--timeout` (the primary bounds its wait) and runs in the
+configured repository, so confirm a clean tree before dispatch.
+Read [跨 CLI 工人](references/cross-cli.md).
 
 ## Preflight and runtime evidence
 

@@ -8,6 +8,10 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-10-30（Claude 跨 CLI 工人 Antigravity 改向 Desktop App）
+
+依維護者 2026-10-27 政策改寫 Claude 版跨 CLI 工人文件與編排 skill：拿掉經 agy-staff 或 `agent_relay send --run agy`（`agy -p` 等無頭 CLI 方式）使用個人訂閱呼叫 `agy` 的建議，新增政策說明；改列合規派法為透過 agent-relay 寄信給 Antigravity Desktop App（`python -m agent_relay send --to antigravity --subject <title> --kind task --project <repo> --ref antigravity-session:new`），由 Desktop 在側邊欄建立新對話並以自身的登入執行。Desktop 派法沒有 `--timeout`（等待上限由主 session 自己控制）、在設定的 repo 裡執行（派工前先確認工作樹乾淨），且 sidecar 僅在通知提示以 `--kind result` 回信而非自動回信。
+
 ## 2026-10-29（上游檢查輸入修正）
 
 `check_upstream_updates.py` 改用 Git `-z` 的 NUL 分隔檔名，保留含空白與中文的完整路徑。讀取 baseline 時先檢查 JSON 物件、必要字串與非負整數水位；型別錯誤會指出欄位並回傳 exit code 2，不再出現 traceback。新增離線 `unittest` 回歸測試。

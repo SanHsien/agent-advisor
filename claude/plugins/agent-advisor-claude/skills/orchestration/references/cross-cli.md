@@ -1,29 +1,33 @@
 # 跨 CLI 工人（Cross-CLI workers）
 
-本檔說明 `delegate` 路由的一個變化：把工作交給**另一個 CLI**（Antigravity `agy`、Codex），而不是 Claude Code 的 plugin subagent。路由仍是四選一，這不是第五條路。
+本檔說明 `delegate` 路由的一個變化：把工作交給**另一個 CLI 或外部 runtime**（Codex、Antigravity Desktop），而不是 Claude Code 的 plugin subagent。路由仍是四選一，這不是第五條路。
 
 ## 什麼時候用
 
-- 機械式、範圍清楚的修改，想省 Claude 額度：交給 `agy`（Gemini Flash）。
-- 想要不同模型家族做第二意見：`agy` 的 research／review 模式。
+- 機械式、範圍清楚的修改，想省 Claude 額度：交給 Codex（例如 GPT-6 Luna／Terra）或 Antigravity Desktop。
+- 想要不同模型家族做第二意見：Codex 或 Antigravity Desktop。
 - 工作要在**另一台機器**或另一個 repo 跑，或要排隊等額度：用 agent-relay 寄派工信。
 
 跨 CLI 工人**算作那一個 auxiliary**，預設上限不變。工人的報告仍只是聲明：主 session 照 [cost-policy.md](cost-policy.md) 自己驗證 diff 與測試。
+
+## 政策說明（Antigravity 與 agy）
+
+維護者 2026-10-27 政策：第三方 agent 不得經 agy-staff 或 `agent_relay send --run agy`（例如 `agy -p` 等無頭 CLI 方式）使用 Antigravity 個人訂閱；但透過 agent-relay 派工給 Antigravity Desktop App（由 Desktop 在側邊欄開新對話、用自己的登入執行）視同人下指令，為被允許的派法。
 
 ## 兩種呼叫方式
 
 | 方式 | 指令 | 適合 |
 | --- | --- | --- |
-| 本機技能 | [agy-staff](https://github.com/SanHsien/agy-staff)：`node <agy-staff>/companion/agy-companion.mjs implement --timeout 10m --prompt-file <brief>`，再 `wait <job-id> --timeout 10m` | 同一台機器、同一個 repo，要馬上拿結果 |
-| 信件派工 | [agent-relay](https://github.com/SanHsien/agent-relay)：`python -m agent_relay send --kind task --run agy\|codex\|claude --repo <repo> --body-file <brief>` | 跨機器、跨 repo、要留紀錄、可排隊 |
+| Antigravity Desktop App | [agent-relay](https://github.com/SanHsien/agent-relay)：`python -m agent_relay send --to antigravity --subject <title> --kind task --project <repo> --ref antigravity-session:new --body-file <brief>` | 本機 Desktop 在側邊欄開新對話、用自己的登入執行 |
+| CLI 信件派工 | [agent-relay](https://github.com/SanHsien/agent-relay)：`python -m agent_relay send --kind task --run codex\|claude --repo <repo> --body-file <brief>` | 跨機器、跨 repo、要留紀錄、可排隊 |
 
-agent-relay 派工會在收件端開 git worktree（分支 `relay/<id>`），指令沿用 [agent-cortex](https://github.com/SanHsien/agent-cortex) launcher 的權限模式，做完自動回 `kind=result` 信。細節見 agent-relay 的 SPEC.md 第 7 節。
+agent-relay 派工會在收件端開 git worktree（分支 `relay/<id>`，CLI 工人，做完自動回 `kind=result` 信）或直接在指定 repo 建立新會話（Desktop 工人，sidecar 僅在通知提示用 `--kind result` 回信，不會自動回信）。細節見 agent-relay 的 SPEC.md 第 7 節。
 
 ## 防呆與逾時
 
-- **一定要給逾時**：agy-staff `--timeout`（最多 120m）；agent-relay `--timeout`（分鐘，最多 120）。超時要結束整棵行程，不能讓主流程卡住。
+- **逾時**：agent-relay CLI 派工帶 `--timeout`（分鐘，最多 120），超時要結束整棵行程，不能讓主流程卡住；Desktop 派法沒有 `--timeout`，等待上限由主 session 自己控制。
 - **隔離**：交給會改檔的工人前，先開 worktree 或確認工作樹乾淨，事後才看得出它改了什麼。
-- **權限**：agy-staff 的 implement／research 預設會帶 `--dangerously-skip-permissions`（agy-staff 的設計）。只在可丟棄的 worktree 裡用；要收緊就加 `--restricted`（需先跑 agy-staff 的 setup）。agent-relay 派 agy 一律 `plan + sandbox`，只讀。
+- **權限**：agent-relay 派工給 CLI 工人會在 worktree 執行；Desktop 在設定的 repo 裡執行，派工前先確認工作樹乾淨。
 - **brief 照 [role-contracts.md](role-contracts.md)**：OBJECTIVE、FILES AND OWNERSHIP、CONSTRAINTS、VERIFICATION、RETURN。外部 CLI 不認得 plugin agent 的格式，所以要把要求寫進 prompt 本文。
 
 ## 回報格式

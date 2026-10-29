@@ -72,6 +72,14 @@ Upstream `main` unchanged at `37b75cad...` (0 new commits). 4 new PRs and 2 new 
 | [Issue #29](https://github.com/DannyMac180/sol-advisor/issues/29) "N.V" | **not-applicable** | Spam, no technical content. |
 | [Issue #31](https://github.com/DannyMac180/sol-advisor/issues/31) link to astra-advisor | **not-applicable** | Promo link to an upstream-only repo; the fork is Codex/Claude-specific. |
 
+## 2026-10-29 review (through PR #33 / issue #31)
+
+Upstream `main` unchanged at `37b75cad...` (0 new commits); no new issues. One new PR, still open upstream.
+
+| Item | Decision | Reason |
+| --- | --- | --- |
+| [PR #33](https://github.com/DannyMac180/sol-advisor/pull/33) minimal GPT-6 family compatibility | **defer: version bump without a reproduced failure; model mapping is a maintainer policy call** | Diff read in full (10 files, +91/-35, based on `37b75ca`, mergeable, no comments or reviews). It re-pins the three auxiliary role templates (Luna `gpt-5.6-luna` to `gpt-6-luna`, Terra `gpt-5.6-terra` to `gpt-6-sol`, reviewer `gpt-5.6-sol` to `gpt-6.1-sol`), restates the primary as `gpt-6.1-sol`/`high` in README, SKILL and manifest text, and extends `install-agents.sh` with SHA-256 fingerprints of upstream's byte-exact v0.6.0 profiles so old installs migrate. Why not adopt now: (1) no failure to fix. The fork's auxiliary pins `gpt-5.6-*` are still advertised by the maintainer's local model catalog with the efforts the roles need (Luna `max`, Terra and reviewer `high`), and the PR's own evidence is a model listing, not an error from the old pins; this is the same footing as issue #7 (defer: no current reproduction). (2) The mapping is a policy choice, not a mechanical rename. The same local catalog also lists `gpt-6.1-terra`, so "Terra becomes `gpt-6-sol`" is one of at least two readings, and it changes cost and capability per lane. (3) The primary text contradicts fork policy (default `gpt-6.1-sol`/`medium`, with Luna/Medium and Astra/Low as the other exact pairs), so that third of the diff cannot be taken as is. (4) The migration half does not port. The fork installer has no fingerprint allowlist at all: any destination that is not byte-identical to the shipped template is `conflict` and refused, so re-pinning the templates alone would make every existing install fail `--check` and refuse re-install. Upstream's fingerprints cover upstream's `sol-advisor-*` profile bytes; the fork ships `agent-advisor-codex-*` templates with different content, so none of those digests match fork files. A fork adoption needs its own fingerprints for the fork's current three templates, in both `install-agents.sh` and `install-agents.ps1`, with the same refuse-customized-profile guarantee. Not cherry-picked, no write to upstream. Credit for the migration idea belongs to the upstream PR author and to Chamotrans/Sol-Advisor-GPT6 (commit 4293718), per the PR description. Re-review trigger is item 5 under Next review triggers. |
+
 ## Adopted in this fork review
 
 - 採用 [PR #24](https://github.com/DannyMac180/sol-advisor/pull/24)／
@@ -95,6 +103,14 @@ Upstream `main` unchanged at `37b75cad...` (0 new commits). 4 new PRs and 2 new 
    驗證新舊 task 與 compaction 行為後，再評估是否能移除 standing attestation。
 4. Upstream 恢復 MCP／`PLUGIN_DATA`：才重查 issue #20／PR #22；不能把 v0.5
    ACL patch 直接套在不存在的 surface。
+5. 重查 PR #33（GPT-6 輔助角色 pin）：任一成立才做——(a) fresh task 啟動
+   `gpt-5.6-luna`／`gpt-5.6-terra`／`gpt-5.6-sol` 輔助角色時，host 回報 unknown 或
+   retired model 的 exact 錯誤；(b) 維護者決定輔助角色的 GPT-6 對應（含 Terra 是對應
+   `gpt-6-sol` 還是 `gpt-6.1-terra`）與成本取捨；(c) 上游 merge 該 PR。採用時移植
+   設計、不移植 diff：三個 TOML 的 pin、`WORKFLOW.zh-TW.md`／`operations.md`／
+   `role-contracts.md` 的角色表，以及 `verify.sh`／`verify.ps1`，並替本 fork 現行三份
+   template 在 `install-agents.sh` 與 `install-agents.ps1` 各補自己的 SHA-256 遷移
+   指紋（自訂過的 profile 仍須拒絕改寫，附 dry-run／備份／冪等／壞輸入四項測試）。
 
 ## 分支
 
@@ -111,8 +127,8 @@ open PR 的分支——那才代表有東西被丟在分支上沒走流程。
 | 欄位 | 值 | 意義 |
 | --- | --- | --- |
 | `reviewed_through` | `37b75ca…` | commit 審到哪 |
-| `reviewed_pr_through` | `24` | PR 審到哪 |
-| `reviewed_issue_through` | `25` | issue 審到哪 |
+| `reviewed_pr_through` | `33` | PR 審到哪 |
+| `reviewed_issue_through` | `31` | issue 審到哪 |
 
 `gh` 未授權、API 失敗或回傳不可解析時，check 必須 fail closed，不能把
 「未檢查」當成「沒有待審」。處理完新項目後，先把逐項判斷寫進本檔並完成

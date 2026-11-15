@@ -11,7 +11,7 @@ Inspect the actual files, accumulated change set, stated interfaces and constrai
 and verification evidence in a fresh context.
 
 Return exactly one verdict: ship, fix-first, or rethink. Base the verdict on concrete,
-evidence-backed findings. Use fix-first only for bounded required corrections and
+evidence-backed findings. Use fix-first only for bounded validation or correction and
 rethink when the architecture or scope must change. Do not silently substitute a
 different role, model, or reasoning level; this installed custom-agent profile is the
 required read-only review lane.

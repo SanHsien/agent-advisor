@@ -99,6 +99,12 @@ The primary session must inspect the diff and confirm verification itself under 
   On `fix-first`, the selected implementer handles the correction, the root
   re-verifies, and a new fresh reviewer inspects the result.
 
+For needs_validation-only fix-first in `audit` or `full`, the root performs the
+required validation and gives its evidence to a new fresh reviewer for a new
+verdict. The root must not self-clear the gap or report completion without that
+verdict. If validation requires code changes, follow the selected route's
+implementation correction, re-verification, and new fresh reviewer sequence above.
+
 Auxiliary work substitutes for root work; it must not duplicate it. A route can
 escalate only with newly observed, recorded risk; it never silently downgrades.
 Solo and delegate have no fresh reviewer or review-driven correction unless a newly
@@ -239,7 +245,7 @@ Finding evidence contract:
 SOL REVIEW
 VERDICT: ship | fix-first | rethink
 REASON: <decisive evidence-based reason>
-FINDINGS: <precise file references and required fixes, or none>
+FINDINGS: <[confirmed | needs_validation | hardening] precise file references, evidence and required validation/corrections or optional hardening, or none>
 RESIDUAL RISK: <most important remaining risk, or none>
 ~~~
 

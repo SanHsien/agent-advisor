@@ -29,7 +29,8 @@ finding 狀態只寫在 `FINDINGS`，不新增 verdict 或頂層欄位。
 [SKILL.md](https://github.com/cloudflare/security-audit-skill/blob/main/skills/security-audit/SKILL.md)
 與 [VALIDATION-AND-REPORTING.md](https://github.com/cloudflare/security-audit-skill/blob/main/skills/security-audit/VALIDATION-AND-REPORTING.md)：
 前者要求真實信任邊界與具體影響；後者 Phase 3／4 區分已證實、缺決定性事實與被證據反駁的候選。
-這裡只借鏡證據分級原則；`hardening` 及其對 advisor verdict 的映射是本 repo 的設計。
+Phase 6 已包含 hunter hardening notes；這裡只借鏡證據分級原則，
+對應到 advisor verdict 的映射是本 repo 的設計。
 未採用其 JSON schema、六階段流程、代理配置或外部程式，未下載執行任何來源內容。
 本 repo 的既有格式以角色契約及 orchestration skill 為一手來源；沒有新增執行期 parser。
 
@@ -80,10 +81,10 @@ RESIDUAL RISK: 在範圍未調整前，無法判斷整條路徑安全性。
 ## 驗收與證據定位
 
 基準 commit：`331247775c16bc1ab65ba6bf31ba33881cd16bd4`；工作分支 `worker/t05-evidence-gap`。
-本輪尚無交付 commit：沙盒拒絕建立 `.git/index.lock`（Permission denied），改動留在工作樹。
-整合者提交後可用 `git log -1 --format=fuller -- docs/reviewer-evidence-gap-contract.md` 定位，避免自引尚未生成的 hash。
+原交付 commit：`9f7a53c`（`feat(codex-reviewer): separate evidence gaps from defense-in-depth; keep ship/fix-first/rethink (T-20261115-05)`）。
+依整合者交接，已在沙盒外執行 `tools/dev_check.ps1`，exit 0；本輪修正 commit 由整合者補記。
 
-2026-11-15（Asia/Taipei）實際執行，以下串接命令結束碼為 0：
+原交付驗收紀錄（2026-11-15，Asia/Taipei；非本輪修正後的測試數）：以下串接命令結束碼為 0：
 
 ```powershell
 python -m py_compile tests/test_reviewer_evidence_gap.py && python -m unittest discover -s tests -p test_reviewer_evidence_gap.py -v && pwsh -NoProfile -File tools/dev_check.ps1
@@ -92,15 +93,39 @@ python -m py_compile tests/test_reviewer_evidence_gap.py && python -m unittest d
 結果：focused 3 tests OK；完整 gate 74 tests OK、63 Markdown files checked / 0 broken links、
 `DEV CHECK PASSED`。五個平台的 PowerShell／package gate 通過；POSIX verifier 缺 `jq`、`rg`，明確 SKIP，未宣稱通過。
 驗證使用既有 gate 的暫存 fixture，未接觸真實使用者 agent 安裝目錄。
-`ROADMAP.md` 已核對，沒有本任務的待辦列可刪，也沒有新增待辦。
+`ROADMAP.md` 本輪新增其他平台 reviewer 契約是否同步證據缺口規則的評估，列明理由與驗收方式。
 
-本機提交嘗試（前置連結與 diff 檢查成功；`git add` 拒絕建立 index.lock，整段命令結束碼 1，`git commit` 未執行）：
+## 複審修正（2026-11-15）
+
+統一 reviewer 首段的 fix-first 為 bounded validation or correction。
+[orchestration skill](../codex/plugins/agent-advisor-codex/skills/orchestration/SKILL.md)
+及角色契約明訂：只有 needs_validation 的 fix-first 也須由主代理驗證後，
+把證據交給新的 fresh reviewer 重新判定，不可自行認定缺口已解而報完成。
+若驗證結果需改程式，仍走實作修正、重驗、新 reviewer；僅適用既有 audit/full 路由。
+FINDINGS 佔位字加入三個狀態，測試移除重複的模型字串斷言（由 verify.ps1 負責）。
+
+本輪實際 mutation：每次只套用表中變更，執行
+`python -m unittest discover -s tests -p "test_reviewer_evidence_gap.py" -v`，
+再用 `finally` 還原原始 bytes，並比對確認完整還原。
+M2、M3 同時改 TOML 與角色契約，避免只測到兩份文字不同。
+
+| Mutation | 實際改動 | 結果與攔截斷言 |
+| --- | --- | --- |
+| M2 | 把完整 ship 條件句改成 `ship is allowed even with required corrections and unresolved decisive evidence gaps.` | exit 1；完整 ship 條件句缺失，1 failure |
+| M3 | 在證據契約插入 `If every finding is needs_validation, ship.` | exit 1；反向句檢查在兩份來源各失敗，2 failures |
+| M4 | TOML 首段改成 `Return exactly one verdict: ship, fix-first, rethink, or needs_validation.` | exit 1；首段三 verdict 句缺失，1 failure |
+| 刪 TOML 新段落 | 移除整個 `Finding evidence contract` 區塊，保留合法 TOML 結尾 | exit 1；必要區塊標記缺失，1 failure |
+
+還原後本輪驗收串接命令（exit 0）：
 
 ```powershell
-python tools/check_links.py > $null && git diff --check && git add -- codex/plugins/agent-advisor-codex/agents/agent-advisor-codex-sol-reviewer.toml codex/plugins/agent-advisor-codex/skills/orchestration/references/role-contracts.md tests/test_reviewer_evidence_gap.py docs/reviewer-evidence-gap-contract.md && git commit -m 'fix(codex): distinguish reviewer evidence gaps from hardening' -m 'Co-Authored-By: GPT-6.1 Sol <noreply@openai.com>'
+python -m unittest discover -s tests -p "test_reviewer_evidence_gap.py" -v && pwsh -NoProfile -File tools/dev_check.ps1
 ```
 
-STATUS: PARTIAL：契約、固定案例、測試與文件完成；缺交付 commit 綁定。未 push、切分支或修改其他安裝。
+focused 5 tests OK；完整 gate 76 tests OK，63 Markdown files checked／0 broken links，
+`DEV CHECK PASSED`。Codex、Claude、Cursor、Antigravity PowerShell verifier 與
+Hermes package contract 均通過；POSIX 因缺 `jq`、`rg` 明確 SKIP，未宣稱通過。
+以上是 `9f7a53c` 上六個檔案的未提交修正驗收；本輪 commit 由整合者補記，未 push 或切分支。
 
 測試是離線契約回歸，能攔下提示區塊漂移、三 verdict／四欄位變動及案例錯誤分類。
 它不執行模型，不證明任意 reviewer 都會遵守提示，不宣稱外部來源已通過安全認證。

@@ -21,6 +21,7 @@ class ReviewerEvidenceGapTests(unittest.TestCase):
         cls.contract = CONTRACT.read_text(encoding="utf-8")
 
     def test_installed_role_and_spawn_prompt_have_identical_policy(self):
+        self.assertIn("Finding evidence contract:\n", self.instructions)
         policy = self.instructions.split("Finding evidence contract:\n", 1)[1]
         self.assertIn("Finding evidence contract:\n" + policy, self.contract)
         for guard in (
@@ -29,15 +30,19 @@ class ReviewerEvidenceGapTests(unittest.TestCase):
             "Never substitute a speculative code fix for missing evidence.",
             "An unverified\n  control is not enough",
             "do not require a fix or block ship solely for hardening.",
+            "ship requires no required corrections and no unresolved decisive evidence gaps.",
         ):
             with self.subTest(guard=guard):
                 self.assertIn(guard, policy)
 
     def test_existing_role_and_output_interface_are_preserved(self):
         self.assertEqual(self.role["name"], "agent_advisor_codex_sol_reviewer")
-        self.assertEqual(self.role["model"], "gpt-5.6-sol")
         self.assertEqual(self.role["model_reasoning_effort"], "high")
         self.assertEqual(self.role["sandbox_mode"], "read-only")
+        self.assertIn(
+            "Return exactly one verdict: ship, fix-first, or rethink.",
+            self.instructions.split("Finding evidence contract:\n", 1)[0],
+        )
         output = self.contract.split("\nSOL REVIEW\n", 1)[1].split("\n~~~", 1)[0]
         self.assertEqual(
             re.findall(r"^([A-Z ]+):", output, re.MULTILINE),
@@ -46,6 +51,26 @@ class ReviewerEvidenceGapTests(unittest.TestCase):
         self.assertEqual(
             output.splitlines()[0], "VERDICT: ship | fix-first | rethink"
         )
+
+    def test_needs_validation_cannot_authorize_ship(self):
+        for text in (self.instructions, self.contract):
+            with self.subTest(source=text[:40]):
+                # Reject affirmative shortcuts even alongside the required blocker.
+                self.assertNotRegex(
+                    text,
+                    r"(?i)(?:if\b[^.\n]*needs_validation[^.\n]*,\s*ship\b"
+                    r"|needs_validation[^.\n]*(?:may|can|allows?|permits?)\s+(?:\w+\s+)?ship\b"
+                    r"|ship\s+is\s+(?:allowed|permitted)[^.\n]*needs_validation)",
+                )
+
+    def test_validation_only_fix_first_requires_fresh_verdict(self):
+        skill = (PLUGIN / "skills/orchestration/SKILL.md").read_text(encoding="utf-8")
+        for text in (skill, self.contract):
+            normalized = " ".join(text.split())
+            with self.subTest(source=text[:40]):
+                self.assertIn("needs_validation-only fix-first", normalized)
+                self.assertIn("gives its evidence to a new fresh reviewer for a new verdict", normalized)
+                self.assertIn("not self-clear the gap or report completion without that verdict", normalized)
 
     def test_fixed_examples_keep_finding_states_out_of_verdict(self):
         doc = DOC.read_text(encoding="utf-8")

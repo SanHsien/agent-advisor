@@ -9,6 +9,7 @@
 ## 近期：可以直接動手
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
+| 其他平台（claude、cursor、antigravity、hermes）reviewer 契約是否同步證據缺口規則 | Codex 已區分 confirmed／needs_validation／hardening，其他平台需依各自契約評估，避免未知被當成 ship | 逐平台確認採用或不採用的理由；採用者保留原生隔離與 verdict，補未知阻擋 ship、驗證後 fresh review 的契約測試，dev_check 通過 | Codex | [Codex 證據缺口契約](docs/reviewer-evidence-gap-contract.md) |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |

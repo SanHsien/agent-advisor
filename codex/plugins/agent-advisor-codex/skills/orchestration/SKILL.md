@@ -137,6 +137,11 @@ implements its own fixes. `solo` and `delegate` do not receive a fresh reviewer.
 
 - ship: report completion with the verification evidence.
 - fix-first applies only to `audit` and `full`:
+  - For needs_validation-only fix-first, the root performs the required validation
+    and gives its evidence to a new fresh reviewer for a new verdict. The root must
+    not self-clear the gap or report completion without that verdict. If validation
+    requires code changes, follow the implementation correction, re-verification,
+    and new fresh reviewer sequence for the selected route below.
   - audit: the root implements the required correction, re-verifies, and obtains a new
     fresh reviewer.
   - full: the selected implementer handles the required correction, the root

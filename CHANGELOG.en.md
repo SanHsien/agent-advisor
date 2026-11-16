@@ -9,6 +9,10 @@ The Codex edition is derived from
 
 ---
 
+## 2026-11-17 — Claude cost policy: native advisor call cost
+
+The Claude `cost-policy.md` adds one rule: each Claude Code native advisor call re-reads the whole conversation, is not cached, is billed at the advisor model rate, and has no setting to cap call count (checked against the official docs on 2026-11-17). Do not turn the advisor on mid-way through a long conversation; dispatch a subagent or summarize to a file first. Claude edition only; other platforms have no such native feature.
+
 ## 2026-10-30 — Claude cross-CLI workers: redirect Antigravity to Desktop App
 
 Aligned the Claude cross-CLI documentation and orchestration skill with the maintainer's 2026-10-27 policy: removed recommendations to invoke `agy` via agy-staff or `agent_relay send --run agy` (`agy -p` headless CLI execution against the personal subscription), added a policy note, and documented the permitted path of dispatching tasks to Antigravity Desktop App via agent-relay (`python -m agent_relay send --to antigravity --subject <title> --kind task --project <repo> --ref antigravity-session:new`), opening a new conversation in Desktop's sidebar under its own login. Desktop dispatch has no `--timeout` (the primary session bounds its wait), runs directly in the configured repository (confirm a clean working tree before dispatch), and sidecar only prompts the worker to reply with `--kind result` without auto-replying.

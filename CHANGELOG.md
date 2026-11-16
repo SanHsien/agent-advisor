@@ -8,6 +8,10 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-11-17（Claude 版成本政策：原生顧問呼叫成本）
+
+Claude 版 `cost-policy.md` 新增一條：Claude Code 原生顧問每次被呼叫都重讀整段對話、不快取，以顧問模型費率計，且沒有限制呼叫次數的設定（依官方文件 2026-11-17 查證）。長對話不要中途開顧問，改派子代理或先整理成檔案再問。只改 Claude 版，其他平台沒有這個原生功能。
+
 ## 2026-10-30（Claude 跨 CLI 工人 Antigravity 改向 Desktop App）
 
 依維護者 2026-10-27 政策改寫 Claude 版跨 CLI 工人文件與編排 skill：拿掉經 agy-staff 或 `agent_relay send --run agy`（`agy -p` 等無頭 CLI 方式）使用個人訂閱呼叫 `agy` 的建議，新增政策說明；改列合規派法為透過 agent-relay 寄信給 Antigravity Desktop App（`python -m agent_relay send --to antigravity --subject <title> --kind task --project <repo> --ref antigravity-session:new`），由 Desktop 在側邊欄建立新對話並以自身的登入執行。Desktop 派法沒有 `--timeout`（等待上限由主 session 自己控制）、在設定的 repo 裡執行（派工前先確認工作樹乾淨），且 sidecar 僅在通知提示以 `--kind result` 回信而非自動回信。

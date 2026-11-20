@@ -40,6 +40,8 @@ Rules:
 3. One auxiliary is the default maximum; `full` is the explicit exception.
 4. Delegation never transfers user intent, architecture, security decisions, or final acceptance.
 5. Do not delegate tasks requiring user interaction, credentials, or destructive approval.
+6. In `audit` and `full`, reviewer findings are classified into `confirmed` (已證實), `needs_validation` (待驗證), or `hardening` (強化建議). Unresolved decisive `needs_validation` findings block claiming completion or final acceptance; unknown is neither a confirmed defect nor proof of safety.
+7. Validation of a `needs_validation` finding requires submitting evidence to a new fresh `delegate_task` reviewer; neither the primary nor the original reviewer may self-clear the gap or report completion without that review.
 
 ## Provider throttling is lane unavailability
 

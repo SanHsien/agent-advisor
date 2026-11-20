@@ -150,6 +150,36 @@ class PlatformReviewerEvidenceGapTests(unittest.TestCase):
         for verdict in ("fix-first", "rethink", "Finding evidence contract"):
             with self.subTest(verdict=verdict):
                 self.assertNotIn(verdict, skill_text)
+        for native_category in ("`confirmed`", "`needs_validation`", "`hardening`"):
+            with self.subTest(category=native_category):
+                self.assertIn(native_category, skill_text)
+
+    def test_hermes_unresolved_validation_findings_block_completion_and_acceptance(self):
+        skill_text = (HERMES_ROOT / "skills/agent-advisor-orchestration/SKILL.md").read_text(encoding="utf-8")
+        normalized = " ".join(skill_text.split())
+        self.assertIn(
+            "Unresolved decisive `needs_validation` findings block claiming completion or final acceptance",
+            normalized,
+        )
+        self.assertIn("unknown is neither a confirmed defect nor proof of safety", normalized)
+        shortcut_regex = re.compile(
+            r"(?i)(?:if\b[^.\n]*needs_validation[^.\n]*,\s*(?:claim\s+completion|final\s+acceptance)\b"
+            r"|needs_validation[^.\n]*(?:may|can|allows?|permits?)\s+(?:\w+\s+)?(?:completion|acceptance)\b"
+            r"|(?:completion|acceptance)\s+is\s+(?:allowed|permitted)[^.\n]*needs_validation)"
+        )
+        self.assertNotRegex(skill_text, shortcut_regex)
+
+    def test_hermes_validation_requires_new_fresh_reviewer_and_blocks_self_clear(self):
+        skill_text = (HERMES_ROOT / "skills/agent-advisor-orchestration/SKILL.md").read_text(encoding="utf-8")
+        normalized = " ".join(skill_text.split())
+        self.assertIn(
+            "Validation of a `needs_validation` finding requires submitting evidence to a new fresh `delegate_task` reviewer",
+            normalized,
+        )
+        self.assertIn(
+            "neither the primary nor the original reviewer may self-clear the gap or report completion without that review",
+            normalized,
+        )
 
 
 if __name__ == "__main__":

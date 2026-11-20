@@ -80,4 +80,31 @@ is active before scheduling or resuming the lane.
 
 Provide the reviewer with the user outcome, changed-file scope, important interfaces,
 actual accumulated diff, and verification evidence. Require behavioral read-only
-operation and exactly one verdict: `ship`, `fix-first`, or `rethink`.
+operation and exactly one verdict: `ship`, `fix-first`, or `rethink`, followed by
+concise, evidence-backed findings.
+
+Finding evidence contract:
+- Keep finding status separate from the final verdict. Label each finding
+  `confirmed`, `needs_validation`, or `hardening`; these are not additional verdicts.
+- `confirmed` requires a source-grounded path, affected principal/resource, and
+  reproducible boundary violation with demonstrated impact. State the conditions,
+  evidence, and smallest required correction; do not infer a stronger result.
+- `needs_validation` requires a source-grounded candidate and a decisive missing fact.
+  State the known evidence, exact missing fact, and smallest safe validation plan
+  with an expected observation. Unknown is neither a confirmed defect nor proof of safety.
+- Unresolved decisive `needs_validation` blocks `ship`. Use `fix-first` for bounded
+  validation or correction; use `rethink` when resolving it requires architecture or
+  scope changes. Never substitute a speculative code fix for missing evidence.
+- `hardening` is an optional defense-in-depth suggestion when an evidenced existing
+  control blocks the path and no impact is demonstrated. Name that control and its
+  evidence; do not require a fix or block `ship` solely for `hardening`. An unverified
+  control is not enough to downgrade a candidate to `hardening`.
+- `ship` requires no required corrections and no unresolved decisive evidence gaps.
+  Keep exactly one final verdict: `ship`, `fix-first`, or `rethink`, with concise,
+  evidence-backed findings.
+
+For `needs_validation`-only `fix-first` in `audit` or `full`, the primary performs the
+required validation and gives its evidence to a new fresh reviewer for a new verdict.
+The primary must not self-clear the gap or report completion without that verdict. If
+validation requires code changes, implement the correction, re-verify, and obtain a
+new fresh reviewer.

@@ -16,5 +16,25 @@ Inspect the accumulated diff, actual files, interfaces, constraints, and verific
 evidence in a fresh context.
 
 Return exactly one verdict: `ship`, `fix-first`, or `rethink`, followed by concise,
-evidence-backed findings. Use `fix-first` only for bounded required corrections and
+evidence-backed findings. Use `fix-first` only for bounded validation or correction and
 `rethink` when architecture or scope must change. Never implement your own findings.
+
+Finding evidence contract:
+- Keep finding status separate from the final verdict. Label each finding
+  `confirmed`, `needs_validation`, or `hardening`; these are not additional verdicts.
+- `confirmed` requires a source-grounded path, affected principal/resource, and
+  reproducible boundary violation with demonstrated impact. State the conditions,
+  evidence, and smallest required correction; do not infer a stronger result.
+- `needs_validation` requires a source-grounded candidate and a decisive missing fact.
+  State the known evidence, exact missing fact, and smallest safe validation plan
+  with an expected observation. Unknown is neither a confirmed defect nor proof of safety.
+- Unresolved decisive `needs_validation` blocks `ship`. Use `fix-first` for bounded
+  validation or correction; use `rethink` when resolving it requires architecture or
+  scope changes. Never substitute a speculative code fix for missing evidence.
+- `hardening` is an optional defense-in-depth suggestion when an evidenced existing
+  control blocks the path and no impact is demonstrated. Name that control and its
+  evidence; do not require a fix or block `ship` solely for `hardening`. An unverified
+  control is not enough to downgrade a candidate to `hardening`.
+- `ship` requires no required corrections and no unresolved decisive evidence gaps.
+  Keep exactly one final verdict: `ship`, `fix-first`, or `rethink`, with concise,
+  evidence-backed findings.

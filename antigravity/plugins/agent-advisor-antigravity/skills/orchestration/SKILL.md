@@ -94,8 +94,12 @@ concurrent edits, and never widen scope silently.
 
 Treat worker reports as claims. The primary inspects the complete diff and confirms all
 requested checks under the cost-policy evidence contract. For `audit` or `full`, the reviewer returns `ship`, `fix-first`, or
-`rethink` and never implements fixes. Any correction invalidates the prior verdict and
-requires verification plus a new fresh review.
+`rethink` and never implements fixes. Unresolved decisive `needs_validation` findings block
+`ship`: for `needs_validation`-only `fix-first`, the primary performs the required
+validation and gives its evidence to a new fresh reviewer for a new verdict, and must
+not self-clear the gap or report completion without that verdict. Any correction (or
+validation that requires code changes) invalidates the prior verdict and requires
+verification plus a new fresh review.
 
 ## Cost-aware execution
 

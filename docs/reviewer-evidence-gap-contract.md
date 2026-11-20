@@ -129,3 +129,16 @@ Hermes package contract 均通過；POSIX 因缺 `jq`、`rg` 明確 SKIP，未�
 
 測試是離線契約回歸，能攔下提示區塊漂移、三 verdict／四欄位變動及案例錯誤分類。
 它不執行模型，不證明任意 reviewer 都會遵守提示，不宣稱外部來源已通過安全認證。
+
+## 其他平台評估與同步決定（2026-11-20）
+
+依各平台的原生隔離機制與 verdict 格式逐一評估後，結論如下：
+
+| 平台 | 決定 | 原生隔離方式 | Verdict 格式 | 理由與同步內容 |
+| --- | --- | --- | --- | --- |
+| `claude/` | 採用 | 受限工具白名單（`tools: Read, Glob, Grep, Bash`、`disallowedTools: Agent, Edit, Write`）＋行為唯讀＋父代理前後 `git status --short`／hash 比對（plugin subagent 忽略 `permissionMode`） | `ship`、`fix-first`、`rethink`，接精簡證據條列（無 `SOL REVIEW` 四欄標頭） | 已有專屬 fresh-context reviewer（[advisor-opus-reviewer.md](../claude/plugins/agent-advisor-claude/agents/advisor-opus-reviewer.md)）與三種 verdict；保留原生工具隔離與條列格式，於 reviewer、[role-contracts.md](../claude/plugins/agent-advisor-claude/skills/orchestration/references/role-contracts.md) 與 [SKILL.md](../claude/plugins/agent-advisor-claude/skills/orchestration/SKILL.md) 同步 `Finding evidence contract`（未知阻擋 `ship`、僅 `needs_validation` 的 `fix-first` 驗證後須交由新 fresh reviewer 重判）。 |
+| `cursor/` | 採用 | runtime 強制 `readonly: true`＋禁止變更性 shell 指令＋父代理前後 `git status --short`／hash 比對 | `ship`、`fix-first`、`rethink`，接精簡證據條列 | 已有專屬 fresh-context reviewer（[advisor-opus-reviewer.md](../cursor/plugins/agent-advisor-cursor/agents/advisor-opus-reviewer.md)）與三種 verdict；保留 `readonly: true` 與條列格式，於 reviewer、[role-contracts.md](../cursor/plugins/agent-advisor-cursor/skills/orchestration/references/role-contracts.md) 與 [SKILL.md](../cursor/plugins/agent-advisor-cursor/skills/orchestration/SKILL.md) 同步同一證據缺口與驗證後 fresh review 契約。 |
+| `antigravity/` | 採用 | `commandExecutionPolicy: off`（停用 shell，刻意不設未公開的 `tools` 欄位）＋行為唯讀＋父代理前後 `git status --short`／hash 比對 | `ship`、`fix-first`、`rethink`，接精簡證據條列 | 已有專屬 fresh-context reviewer（[advisor-pro-reviewer.md](../antigravity/plugins/agent-advisor-antigravity/agents/advisor-pro-reviewer.md)）與三種 verdict；保留 `commandExecutionPolicy: off` 與條列格式，於 reviewer、[role-contracts.md](../antigravity/plugins/agent-advisor-antigravity/skills/orchestration/references/role-contracts.md) 與 [SKILL.md](../antigravity/plugins/agent-advisor-antigravity/skills/orchestration/SKILL.md) 同步同一證據缺口與驗證後 fresh review 契約。 |
+| `hermes/` | 不採用 | `delegate_task` 無保證的唯讀沙盒，僅靠行為唯讀與父代理前後工作區／hash 檢查 | 無專用 verdict 格式 | Hermes 只安裝原生 skill（[SKILL.md](../hermes/skills/agent-advisor-orchestration/SKILL.md)），沒有獨立 reviewer 角色定義檔、`role-contracts.md` 或 `ship`／`fix-first`／`rethink` verdict 契約（`AGENTS.md` 禁止把其他平台角色設定複製進 Hermes）；強套會憑空造出不存在的角色與裁決格式，故不採用。若未來 Hermes 新增獨立 reviewer 角色或三裁決格式，再依 `ROADMAP.md` 中期條件重評。 |
+
+跨平台契約測試見 [test_platform_reviewer_evidence_gap.py](../tests/test_platform_reviewer_evidence_gap.py)，檢查三個採納平台的原生隔離欄位與 verdict 保留、reviewer／packet 契約同步、未知阻擋 `ship`、僅驗證型 `fix-first` 不得自清且須再經 fresh review，以及 `hermes/` 未混入外部角色或裁決格式。

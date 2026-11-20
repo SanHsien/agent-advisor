@@ -9,11 +9,11 @@
 ## 近期：可以直接動手
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
-| 其他平台（claude、cursor、antigravity、hermes）reviewer 契約是否同步證據缺口規則 | Codex 已區分 confirmed／needs_validation／hardening，其他平台需依各自契約評估，避免未知被當成 ship | 逐平台確認採用或不採用的理由；採用者保留原生隔離與 verdict，補未知阻擋 ship、驗證後 fresh review 的契約測試，dev_check 通過 | Codex | [Codex 證據缺口契約](docs/reviewer-evidence-gap-contract.md) |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
+| 評估 Hermes 補入證據缺口與鮮審契約 | Hermes 新增獨立 reviewer 角色設定或 `ship`／`fix-first`／`rethink` 裁決格式 | 依 Hermes 原生隔離與新裁決格式重評，採用則補契約測試與 `dev_check` PASSED | Claude Sonnet | [證據缺口契約](docs/reviewer-evidence-gap-contract.md) |
 | 依 `docs/UPSTREAM.md`「Next review triggers」重查對應上游項目（issue #1 runtime 部分、PR #2、issue #20／PR #22、PR #33 等） | 該節列出的任一條件成立（上游 `main` 超過 watermark、host 提供穩定 agent UUID 或 task-scoped model metadata、上游恢復 MCP／`PLUGIN_DATA`） | 只重查被觸發的項目，結論寫回 `docs/UPSTREAM.md`；採用者附契約測試，dev_check PASSED | Codex | `docs/UPSTREAM.md:94-112` |
 | 恢復跨 CLI 交給 Gemini 的建議 | 維護者改用 `GEMINI_API_KEY` 或 Vertex，且 agent-relay／agy-staff 提供不經個人訂閱的呼叫方式 | `cross-cli.md` 指向該正式 API 路徑；dev_check PASSED | Claude Sonnet | `claude/plugins/agent-advisor-claude/skills/orchestration/references/cross-cli.md` |
 | `fix_hook_quoting` 處理含空白的引號路徑 | Antigravity 的 hook 指令能以引數陣列或其他方式表達含空白路徑（目前無 shell，無法表達） | 新契約測試涵蓋含空白路徑的 dry-run、備份、冪等、壞輸入拒絕四項；`agy plugin validate` 由維護者實機確認 | Claude Sonnet | `antigravity/scripts/fix_hook_quoting.py`；`AGENTS.md`「修復類腳本」四項規則 |

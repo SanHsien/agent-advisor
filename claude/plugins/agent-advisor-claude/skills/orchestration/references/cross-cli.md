@@ -4,7 +4,7 @@
 
 ## 什麼時候用
 
-- 機械式、範圍清楚的修改，想省 Claude 額度：交給 Codex（例如 GPT-6 Luna／Terra）或 Antigravity Desktop。
+- 機械式、範圍清楚的修改，想省 Claude 額度：交給 Codex 或 Antigravity Desktop。
 - 想要不同模型家族做第二意見：Codex 或 Antigravity Desktop。
 - 工作要在**另一台機器**或另一個 repo 跑，或要排隊等額度：用 agent-relay 寄派工信。
 

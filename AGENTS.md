@@ -20,7 +20,10 @@ Use Traditional Chinese for user-facing collaboration unless the user asks other
   Code uses a restricted tool set, Cursor uses `readonly`, Antigravity uses
   `commandExecutionPolicy`. Do not ship a frontmatter field whose accepted values are
   not documented by that runtime — a guessed identifier fails silently.
-- Do not commit, push, create releases, or open pull requests unless explicitly asked.
+- The maintaining session commits and pushes routine changes straight to `origin/main`
+  (see 維護慣例 below). Releases and pull requests still need an explicit request.
+  Delegated workers and subagents do not commit, push, release, or open pull requests;
+  they hand the change back to the session that dispatched them.
 - Follow the platform workflows in
   [codex/docs/WORKFLOW.zh-TW.md](codex/docs/WORKFLOW.zh-TW.md),
   [claude/docs/WORKFLOW.zh-TW.md](claude/docs/WORKFLOW.zh-TW.md),

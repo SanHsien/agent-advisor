@@ -2,7 +2,7 @@
 
 ## 決定
 
-GPT-6.1 Sol／medium 取代 GPT-6 Sol／medium 為 Codex 預設 primary；舊 Sol／medium 保留相容。
+GPT-6.2 Sol／medium 為 Codex 預設 primary，GPT-6.2 Astra／low 為替代；舊 GPT-6.1 Sol／medium、GPT-6 Sol／medium、GPT-6 Astra／low 保留相容。
 輔助 implementer／reviewer 精準配對不變。五版新增成本紀律；Claude 加入原生與 3P profile 合約；Hermes 交付原生 skill。
 
 直接採用短工作包、查核後沿用相同輸入的驗證證據、停止重複查詢與誠實用量記錄。
@@ -12,7 +12,7 @@ GPT-6.1 Sol／medium 取代 GPT-6 Sol／medium 為 Codex 預設 primary；舊 So
 
 ## 各版
 
-- Codex：GPT-6.1 Sol／medium 預設；保留 Luna、Astra 與 legacy Sol 合約。
+- Codex：GPT-6.2 Sol／medium 預設；GPT-6.2 Astra／low 替代；保留 Luna 與 legacy 配對合約。
 - Claude：原生 Opus primary；3P 明確選定高能力 primary，分別查核實際解析模型；子角色家族合約不變。
 - Cursor：明確選定高能力 primary，不使用 auto；保留原生 readonly reviewer。
 - Antigravity：pro／high primary；原生 flash／pro 分工與 commandExecutionPolicy 不變。

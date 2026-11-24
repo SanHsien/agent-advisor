@@ -40,7 +40,7 @@ gh repo set-default SanHsien/agent-advisor，不要加不存在的 --repo 旗標
 ### PowerShell（主要路徑）
 
 需要已啟用 plugin 的 Codex CLI 或 ChatGPT desktop app，以及 primary session 的
-GPT-6.1 Sol / Medium（預設）、GPT-6 Luna / Medium 或 GPT-6 Astra / Low。只有選到 delegate 或 full 時才需要 Luna / Max 或
+GPT-6.2 Sol / Medium（預設）、GPT-6 Luna / Medium 或 GPT-6.2 Astra / Low。只有選到 delegate 或 full 時才需要 Luna / Max 或
 Terra / High 的權限。
 
 ~~~
@@ -133,12 +133,12 @@ Test-Path -LiteralPath $globalOverride
 `AGENTS.md` 放入一行精準的持久聲明：
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-sol/medium
 ~~~
 
 若改用其他合法組合且 runtime 欄位不可觀測，可將上列唯一 marker 改為
 `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium` 或
-`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`，不要同時放兩筆。
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-astra/low`，不要同時放兩筆。
 完整可觀測的三種合法組合都可直接通過，不受預設 marker 限制；部分欄位缺失時，
 聲明只能補足與已觀測欄位相容的值，不得跨模型混用 effort。
 
@@ -148,7 +148,7 @@ project `AGENTS.md` 也能仿造文字。先宣告 route，再把 skill 內建
 call；它必須只讀確認實際 user-level/global `AGENTS.md` 恰有一筆 marker、是一般
 檔案、大小合理，且沒有 user-level `AGENTS.override.md`。通過前不得使用其他工具
 或派 agent。觀測到的 metadata 永遠優先：若明確顯示不是
-`gpt-6-luna/medium`、`gpt-6.1-sol/medium` 或 `gpt-6-astra/low` 任一完整組合，必須停止；若只缺 model、effort 或兩者，通過來源驗證的聲明
+`gpt-6-luna/medium`、`gpt-6.2-sol/medium` 或 `gpt-6.2-astra/low` 任一完整組合，必須停止；若只缺 model、effort 或兩者，通過來源驗證的聲明
 只補足缺失欄位，並標記為 operator-attested with verified user-level provenance，
 不得在新 task 或 compaction 後再詢問。
 

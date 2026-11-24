@@ -56,7 +56,15 @@ class AdvisoryContent(unittest.TestCase):
         An advisory that implied effort had been observed would weaken the very
         gate it exists to strengthen.
         """
-        for model in ("gpt-6-luna", "gpt-6-sol", "gpt-6-astra", "gpt-5.6-luna"):
+        for model in (
+            "gpt-6-luna",
+            "gpt-6.2-sol",
+            "gpt-6.2-astra",
+            "gpt-6.1-sol",
+            "gpt-6-sol",
+            "gpt-6-astra",
+            "gpt-5.6-luna",
+        ):
             line = hook.advisory_for(payload(model=model))
             assert line is not None
             for effort_claim in (
@@ -80,7 +88,7 @@ class AdvisoryContent(unittest.TestCase):
         self.assertIn("/model", line)
 
     def test_sol_and_astra_remain_supported_primaries(self) -> None:
-        for model in ("gpt-6-sol", "gpt-6-astra"):
+        for model in ("gpt-6.2-sol", "gpt-6.2-astra", "gpt-6.1-sol", "gpt-6-sol", "gpt-6-astra"):
             with self.subTest(model=model):
                 line = hook.advisory_for(payload(model=model))
                 assert line is not None

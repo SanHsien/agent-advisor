@@ -9,6 +9,10 @@ The Codex edition is derived from
 
 ---
 
+## 2026-11-22 — Codex GPT-6.2 and weekly allowance routing
+
+The Codex primary default is now `gpt-6.2-sol/medium`, with `gpt-6.2-astra/low` for exceptional complex work. The inspector and hook support both new pairs while retaining legacy compatibility; the Codex plugin is version 1.1.1. Within 24 hours of a weekly allowance reset, authorized pending work may use a stronger eligible auxiliary and necessary verification within its selected risk route to aim to use the remaining subscription allowance. Do not dispatch or repeat work just to consume allowance.
+
 ## 2026-11-17 — Claude cost policy: native advisor call cost
 
 The Claude `cost-policy.md` adds one rule: each Claude Code native advisor call re-reads the whole conversation, is not cached, is billed at the advisor model rate, and has no setting to cap call count (checked against the official docs on 2026-11-17). Do not turn the advisor on mid-way through a long conversation; dispatch a subagent or summarize to a file first. Claude edition only; other platforms have no such native feature.

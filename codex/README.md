@@ -5,7 +5,7 @@
 > [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-advisor). It retains
 > the original author attribution and MIT license.
 
-**GPT-6.1 Sol / Medium is the default primary; Luna / Medium and Astra / Low are supported alternatives. It declares a risk-gated route before task tools, keeps
+**GPT-6.2 Sol / Medium is the default primary; Luna / Medium and GPT-6.2 Astra / Low are supported alternatives. It declares a risk-gated route before task tools, keeps
 solo as the default, and uses a single auxiliary only when that improves delivery.**
 
 Agent Advisor for Codex is the Codex-native edition of Agent Advisor for capability-routed
@@ -18,8 +18,8 @@ Windows-first fork、安裝、四種 route、委派工作包、驗證與維護�
 
 ## Quick start
 
-You need a current Codex CLI or ChatGPT desktop app with plugins enabled, GPT-6
-GPT-6.1 Sol / Medium (default), GPT-6 Luna / Medium, or GPT-6 Astra / Low for the primary session, native custom-agent support, and jq. GPT-5.6
+You need a current Codex CLI or ChatGPT desktop app with plugins enabled,
+GPT-6.2 Sol / Medium (default), GPT-6 Luna / Medium, or GPT-6.2 Astra / Low for the primary session, native custom-agent support, and jq. GPT-5.6
 Luna / Max or Terra / High access is needed only when the selected route delegates.
 Maintainer POSIX verification also requires Python 3.11+ because `verify.sh` uses
 the standard-library `tomllib` module, as documented in upstream
@@ -33,13 +33,18 @@ To enable that fallback, place this exact line once in the regular user-level
 `~/.codex/AGENTS.md` and do not create a user-level `AGENTS.override.md`:
 
 ~~~text
-AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium
+AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-sol/medium
 ~~~
 
 To use another supported fallback when runtime metadata is missing, replace that one marker
 with `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium` or
-`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`; do not add a second marker.
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-astra/low`; do not add a second marker.
 Fully observed supported runtime selections take priority over the default.
+
+For authorized pending work within 24 hours of the weekly allowance reset, the
+selected risk route may use a stronger eligible auxiliary and needed checks to aim
+to use the remaining allowance. This does not create tasks or change role pins;
+see [cost policy](plugins/agent-advisor-codex/skills/orchestration/references/cost-policy.md).
 
 ~~~sh
 codex plugin marketplace add SanHsien/agent-advisor --ref main

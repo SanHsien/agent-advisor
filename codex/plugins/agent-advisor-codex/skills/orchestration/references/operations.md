@@ -40,13 +40,13 @@ unobservable role/model/effort is a hard stop; never substitute another role.
 
 ## Selective route declaration, preflight, and caching
 
-The default primary is GPT-6.1 Sol / Medium; Luna / Medium and Astra / Low are supported
+The default primary is GPT-6.2 Sol / Medium; Luna / Medium and GPT-6.2 Astra / Low are supported
 alternatives. Observed primary runtime metadata is authoritative: any exact supported
 pair passes and other pairs stop. If one or both primary fields are
 unobservable, the exact line
-`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium` (or the alternatives
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-sol/medium` (or the alternatives
 `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium` and
-`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`) in active instructions is only a
+`AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-astra/low`) in active instructions is only a
 candidate. Declare the route before task tools, then use the platform-specific bundled
 inspector as the first and only preflight call:
 
@@ -257,6 +257,6 @@ git status --short
 git diff --stat
 ~~~
 
-The verifier covers the Agent Advisor for Codex 1.1.0 manifest, exact three-role
+The verifier covers the Agent Advisor for Codex 1.1.1 manifest, exact three-role
 TOMLs, selective-routing and primary-attestation contracts, installer safety fixtures,
 JSON/TOML validity, and shell syntax.

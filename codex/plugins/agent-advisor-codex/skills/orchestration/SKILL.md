@@ -17,17 +17,18 @@ preflight, runtime-evidence, isolation, and maintainer procedures.
 
 ## Confirm the primary session
 
-Default to `gpt-6.1-sol/medium`; `gpt-6-luna/medium` and `gpt-6-astra/low` are
-supported primary alternative selections. `gpt-6-sol/medium` remains an explicit legacy-compatible pair. These are exact pairs, not freely
-interchangeable models and efforts.
+Default to `gpt-6.2-sol/medium`; `gpt-6-luna/medium` and `gpt-6.2-astra/low` are
+supported primary alternative selections. `gpt-6.1-sol/medium`, `gpt-6-sol/medium`,
+and `gpt-6-astra/low` remain explicit legacy-compatible pairs. Models and efforts
+must remain paired exactly.
 
 1. Observed runtime metadata is authoritative. Any supported pair passes,
    even when it differs from the standing default. Unsupported observed pairs stop
    work; a standing attestation cannot override them.
 2. For unobservable fields, accept one candidate line in active instructions:
-   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.1-sol/medium` (default),
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-sol/medium` (default),
    `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-luna/medium`, or
-   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6-astra/low`.
+   `AGENT_ADVISOR_CODEX_PRIMARY_ATTESTATION: gpt-6.2-astra/low`.
    Declare the route before task tools, then run the bundled
    `inspect-primary-attestation` as the first and only preflight call. It must verify
    exactly one marker across all choices in the actual regular user-level/global
@@ -64,8 +65,8 @@ escalation. Details and the task-scoped preflight matrix are in operations.md.
 
 ## Preflight selected auxiliaries only
 
-Confirm Luna / Medium, Sol / Medium, or Astra / Low in the primary session. Preflight only an auxiliary selected by the
-declared route: none for solo; Luna / Max or Terra / High for delegate; fresh Sol / High
+Confirm the exact selected primary pair in the primary session. Preflight only an
+auxiliary selected by the declared route: none for solo; Luna / Max or Terra / High for delegate; fresh Sol / High
 for audit; and the selected implementer plus fresh Sol reviewer for full. Public metadata
 for role, model, and effort is authoritative. If it omits a model or effort, use the
 local inspector only for that omitted field. Missing, conflicting, unavailable, or

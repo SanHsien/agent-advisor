@@ -8,6 +8,10 @@ Codex 版衍生自 [DannyMac180/sol-advisor](https://github.com/DannyMac180/sol-
 
 ---
 
+## 2026-11-22（Codex GPT-6.2 與週額度派工策略）
+
+Codex primary 預設改為 `gpt-6.2-sol/medium`，`gpt-6.2-astra/low` 為複雜工作替代選項；inspector 與 hook 支援新配對，保留舊配對相容。Codex plugin 升至 1.1.1。距週額度重置不足 24 小時且有已授權待辦時，依原本風險路由動態選擇合格輔助模型與必要驗證，目標用完剩餘訂閱額度；不為耗額度另派工作或重複驗證。
+
 ## 2026-11-17（Claude 版成本政策：原生顧問呼叫成本）
 
 Claude 版 `cost-policy.md` 新增一條：Claude Code 原生顧問每次被呼叫都重讀整段對話、不快取，以顧問模型費率計，且沒有限制呼叫次數的設定（依官方文件 2026-11-17 查證）。長對話不要中途開顧問，改派子代理或先整理成檔案再問。只改 Claude 版，其他平台沒有這個原生功能。
